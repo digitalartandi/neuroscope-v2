@@ -59,6 +59,7 @@ export interface Einstellungen {
   farbe: Farbe;
   ruhig: boolean;
   stimme?: string; // Name der Vorlese-Stimme
+  nurGeraetestimme?: boolean; // nur Stimmen, die auf dem Gerät laufen
   tempo: number; // Vorlesetempo
   intro: boolean; // Einführung schon gesehen
   land?: "AT" | "DE";

@@ -77,7 +77,7 @@ export function Datenschutz() {
         <li>Bestwerte der Konzentrationsspiele werden nur auf deinen Wunsch dauerhaft in deinem Browser gespeichert (localStorage). Du kannst sie jederzeit löschen.</li>
         <li>Einträge in „Mein Bereich“ (Stimmung, Energie, ein Wort pro Tag, deine Einschätzung der Lebensbereiche) liegen ebenfalls nur im Sitzungsspeicher. Nur wenn du dort ausdrücklich „Auf diesem Gerät merken“ wählst, werden sie dauerhaft in deinem Browser gespeichert (localStorage). Sie verlassen das Gerät nie. „Nicht mehr merken“ oder „Löschen“ entfernt sie wieder vom Gerät.</li>
         <li>Die Gesprächsvorbereitung entsteht als PDF in deinem Browser. Sie wird nicht hochgeladen.</li>
-        <li>Die Vorlesefunktion nutzt die Stimmen deines Geräts. Neuroscope wählt dafür von sich aus nur Stimmen, die auf dem Gerät selbst laufen. Wählst du in den Einstellungen eine Stimme „über das Internet“, schickt dein Browser den vorgelesenen Text an seinen Anbieter, zum Beispiel Google oder Microsoft.</li>
+        <li>Die Vorlesefunktion nutzt die Stimmen deines Browsers. Vorgelesen werden nur die allgemeinen Wissens- und Übungstexte, nie deine Eingaben. Neuroscope wählt die natürlichste verfügbare Stimme. Ist das eine Online-Stimme, schickt dein Browser den vorgelesenen Text an seinen Anbieter, zum Beispiel Google oder Microsoft. In den Einstellungen kannst du „Nur Stimmen auf dem Gerät“ einschalten.</li>
         <li>Es gibt keine Cookies, kein Tracking, keine Analyse-Werkzeuge und keine eingebundenen Inhalte von Drittanbietern. Schriften werden mit der App ausgeliefert und nicht von fremden Servern geladen.</li>
       </ul>
       <p>

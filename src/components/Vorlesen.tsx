@@ -10,11 +10,29 @@ export function deutscheStimmen(): SpeechSynthesisVoice[] {
   return window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith("de"));
 }
 
-// Wahl: gespeicherte Stimme, sonst lokale Frauenstimme, sonst irgendeine lokale deutsche Stimme.
-export function stimmeWaehlen(name?: string): SpeechSynthesisVoice | undefined {
-  const alle = deutscheStimmen();
-  const lokal = alle.filter((v) => v.localService);
-  return (name && alle.find((v) => v.name === name)) || lokal.find((v) => WEIBLICH.test(v.name)) || lokal[0];
+// Neuronale Stimmen klingen deutlich natürlicher. Browser kennzeichnen sie unterschiedlich.
+const NATUERLICH = /natural|neural|premium|enhanced|erweitert|wavenet|studio|online|google/i;
+
+export function istNatuerlich(v: SpeechSynthesisVoice) { return NATUERLICH.test(v.name) || !v.localService; }
+
+// Je höher, desto lieber: natürliche Stimme, Frauenstimme, Deutsch aus Deutschland oder Österreich.
+function punkte(v: SpeechSynthesisVoice) {
+  let p = 0;
+  if (NATUERLICH.test(v.name)) p += 100;
+  if (!v.localService) p += 40;
+  if (WEIBLICH.test(v.name)) p += 20;
+  if (/^de-(de|at)/i.test(v.lang)) p += 5;
+  return p;
+}
+
+export function stimmenSortiert(nurGeraet = false): SpeechSynthesisVoice[] {
+  return deutscheStimmen().filter((v) => !nurGeraet || v.localService).sort((a, b) => punkte(b) - punkte(a));
+}
+
+// Wahl: gespeicherte Stimme, sonst die natürlichste verfügbare (auf Wunsch nur Gerätestimmen).
+export function stimmeWaehlen(name?: string, nurGeraet = false): SpeechSynthesisVoice | undefined {
+  const liste = stimmenSortiert(nurGeraet);
+  return (name && liste.find((v) => v.name === name)) || liste[0];
 }
 
 export function useStimmen() {
@@ -47,7 +65,7 @@ export function Vorlesen() {
   const moeglich = "speechSynthesis" in window;
   const [geprueft, setGeprueft] = useState(false);
   useEffect(() => { const t = window.setTimeout(() => setGeprueft(true), 1500); return () => window.clearTimeout(t); }, []);
-  const stimme = stimmeWaehlen(einstellungen.stimme);
+  const stimme = stimmeWaehlen(einstellungen.stimme, einstellungen.nurGeraetestimme);
 
   const markieren = (el: HTMLElement | null) => {
     aktiv.current?.classList.remove("wird-gelesen");
@@ -118,7 +136,7 @@ export function Vorlesen() {
           <span className="vorlesen__welle" aria-hidden="true"><i /><i /><i /><i /></span>
         </div>
       )}
-      {keineStimme && <p className="hinweis-feld">Auf diesem Gerät ist keine deutsche Stimme installiert, die ohne Internet arbeitet.</p>}
+      {keineStimme && <p className="hinweis-feld">Auf diesem Gerät ist keine passende deutsche Stimme verfügbar. In den Einstellungen unter Darstellung findest du Hinweise dazu.</p>}
     </div>
   );
 }

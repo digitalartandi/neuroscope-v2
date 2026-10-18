@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { stimmeWaehlen, useStimmen } from "../components/Vorlesen";
+import { istNatuerlich, stimmenSortiert, stimmeWaehlen, useStimmen } from "../components/Vorlesen";
 import { REGIONEN } from "../content/hilfe";
 import { AchsenWahl, BEREICH_NAMEN, Schalter } from "../components/IchIntro";
 import { SYMBOLE, WISSEN_SYMBOLE } from "../components/Icons";
@@ -25,7 +25,7 @@ export default function Einstellungen() {
   const probe = () => {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance("Hallo. So klingt Neuroscope, wenn es dir Texte vorliest.");
-    u.lang = "de-DE"; const v = stimmeWaehlen(e.stimme); if (v) u.voice = v; u.rate = e.tempo ?? 1;
+    u.lang = "de-DE"; const v = stimmeWaehlen(e.stimme, e.nurGeraetestimme); if (v) u.voice = v; u.rate = e.tempo ?? 1;
     window.speechSynthesis.speak(u);
   };
 
@@ -122,10 +122,30 @@ export default function Einstellungen() {
         ) : (
           <>
             <label className="feld" htmlFor="e-stimme" style={{ marginTop: 0 }}>Stimme</label>
-            <select id="e-stimme" value={stimmeWaehlen(e.stimme)?.name ?? ""} onChange={(ev) => z.setEinstellungen({ stimme: ev.target.value })}>
-              {stimmen.map((v) => <option key={v.name} value={v.name}>{v.name}{v.localService ? "" : " (über das Internet)"}</option>)}
+            <select id="e-stimme" value={stimmeWaehlen(e.stimme, e.nurGeraetestimme)?.name ?? ""} onChange={(ev) => z.setEinstellungen({ stimme: ev.target.value })}>
+              {stimmenSortiert(e.nurGeraetestimme).map((v) => (
+                <option key={v.name} value={v.name}>{v.name}{istNatuerlich(v) ? " · natürlich" : ""}{v.localService ? "" : " (online)"}</option>
+              ))}
             </select>
-            <p className="hinweis-feld">Stimmen „über das Internet“ schicken den Text an den Anbieter deines Browsers. Die anderen laufen nur auf deinem Gerät.</p>
+            <div className="schalter-liste" style={{ marginTop: ".75rem" }}>
+              <Schalter an={!!e.nurGeraetestimme} titel="Nur Stimmen auf dem Gerät"
+                text="Klingt oft weniger natürlich. Dafür bleibt auch der vorgelesene Text auf dem Gerät."
+                aendern={(an) => z.setEinstellungen({ nurGeraetestimme: an, stimme: undefined })} />
+            </div>
+            <p className="hinweis-feld">
+              Vorgelesen werden nur die allgemeinen Wissens- und Übungstexte, nie deine eigenen Einträge.
+              Online-Stimmen schicken diesen Text an den Anbieter deines Browsers, zum Beispiel Google oder Microsoft.
+            </p>
+            <details className="tabelle">
+              <summary>Klingt die Stimme hölzern? So geht es besser</summary>
+              <ul className="klein">
+                <li><strong>Android:</strong> Einstellungen → „Text-in-Sprache“ (meist unter Allgemeine Verwaltung oder Bedienungshilfen) → als Engine „Speech Services von Google“ wählen → beim Zahnrad unter „Sprache installieren“ Deutsch laden und eine Stimme auswählen.</li>
+                <li><strong>iPhone und iPad:</strong> Einstellungen → Bedienungshilfen → Gesprochene Inhalte → Stimmen → Deutsch → eine Stimme mit „Premium“ oder „Erweitert“ laden, etwa Anna.</li>
+                <li><strong>Windows:</strong> In Microsoft Edge stehen sehr natürliche Stimmen bereit, zum Beispiel „Katja Online (Natural)“ oder „Seraphina“.</li>
+                <li><strong>Mac:</strong> Systemeinstellungen → Bedienungshilfen → Gesprochene Inhalte → Systemstimme → Stimmen verwalten → Deutsch, „Anna (Premium)“ laden.</li>
+              </ul>
+              <p className="klein">Danach Neuroscope neu laden und hier die neue Stimme wählen.</p>
+            </details>
             <p className="feld">Tempo</p>
             <div className="segment" role="group" aria-label="Tempo">
               {([[0.85, "ruhig"], [1, "normal"], [1.15, "zügig"]] as const).map(([t, n]) => (
