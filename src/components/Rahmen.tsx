@@ -22,7 +22,7 @@ function Krisenband() {
 
 const NAV: [string, string][] = [
   ["/reflexion", "Selbstreflexion"],
-  ["/spiegel", "Spiegel"],
+  ["/ich", "Mein Bereich"],
   ["/wissen", "Wissen"],
   ["/uebungen", "Übungen"],
   ["/spiele", "Spiele"],
@@ -30,7 +30,7 @@ const NAV: [string, string][] = [
 ];
 
 export function Rahmen({ route, children }: { route: string; children: ReactNode }) {
-  const aktiv = (p: string) => route === p || route.startsWith(p + "/");
+  const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern"));
   return (
     <>
       <div className="hintergrund" aria-hidden="true"><span /><span /><span /></div>
@@ -51,7 +51,7 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
         {NAV.map(([p, t]) => (
           <a key={p} href={"#" + p} aria-current={aktiv(p) ? "page" : undefined} data-hilfe={p === "/hilfe" ? "ja" : undefined}>
             {SYMBOLE[p.slice(1)]}
-            <span>{p === "/reflexion" ? "Reflexion" : p === "/hilfe" ? "Hilfe" : t}</span>
+            <span>{p === "/reflexion" ? "Reflexion" : p === "/hilfe" ? "Hilfe" : p === "/ich" ? "Ich" : t}</span>
           </a>
         ))}
       </nav>

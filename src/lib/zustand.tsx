@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Antworten } from "./spiegel";
-import { sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
+import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
+import type { Eintrag, RadStand } from "./ich";
 
 export type Land = "AT" | "DE";
 export type Markierung = "beschaeftigt" | "kraft";
@@ -20,6 +21,13 @@ interface Zustand {
   setPlan: (p: string[]) => void;
   region: string;
   setRegion: (r: string) => void;
+  ichMerken: boolean;
+  setIchMerken: (m: boolean) => void;
+  eintraege: Eintrag[];
+  setEintraege: (f: (alt: Eintrag[]) => Eintrag[]) => void;
+  rad: RadStand[];
+  setRad: (f: (alt: RadStand[]) => RadStand[]) => void;
+  ichLoeschen: () => void;
   allesLoeschen: () => void;
   laden: (d: Sicherung) => void;
   sicherung: () => Sicherung;
@@ -32,6 +40,8 @@ export interface Sicherung {
   markierungen: Record<string, Markierung[]>;
   gespraech: string;
   plan: string[];
+  eintraege?: Eintrag[];
+  rad?: RadStand[];
 }
 
 const Ctx = createContext<Zustand | null>(null);
@@ -47,6 +57,15 @@ function useSitzung<T>(key: string, start: T) {
   return [wert, setWert] as const;
 }
 
+// „Mein Bereich“: im Sitzungsspeicher, oder nach ausdrücklicher Zustimmung dauerhaft auf dem Gerät.
+function useIch<T>(key: string, merken: boolean, start: T) {
+  const [wert, setWert] = useState<T>(() => (merken ? geraetLesen(key, start) : sitzungLesen(key, start)));
+  useEffect(() => {
+    if (merken) geraetSchreiben(key, wert); else sitzungSchreiben(key, wert);
+  }, [key, wert, merken]);
+  return [wert, setWert] as const;
+}
+
 export function ZustandProvider({ children }: { children: ReactNode }) {
   const [land, setLand] = useSitzung<Land>("land", startLand());
   const [antworten, setAntworten] = useSitzung<Antworten>("antworten", {});
@@ -55,6 +74,9 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
   const [gespraech, setGespraech] = useSitzung<string>("gespraech", "");
   const [plan, setPlan] = useSitzung<string[]>("plan", []);
   const [region, setRegion] = useSitzung<string>("region", "");
+  const [ichMerken, setIchMerkenState] = useState<boolean>(() => geraetLesen("ich-merken", false));
+  const [eintraege, setEintraege] = useIch<Eintrag[]>("ich-eintraege", ichMerken, []);
+  const [rad, setRad] = useIch<RadStand[]>("ich-rad", ichMerken, []);
 
   const wert: Zustand = {
     land, setLand,
@@ -74,14 +96,31 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     gespraech, setGespraech,
     plan, setPlan,
     region, setRegion,
+    ichMerken,
+    // Einschalten legt die bisherigen Einträge auf dem Gerät ab, Ausschalten entfernt sie dort wieder (in der Sitzung bleiben sie).
+    setIchMerken: (m) => {
+      setIchMerkenState(m);
+      if (m) geraetSchreiben("ich-merken", true);
+      else geraetEntfernen((k) => k.startsWith("ich-"));
+    },
+    eintraege, setEintraege,
+    rad, setRad,
+    ichLoeschen: () => {
+      geraetEntfernen((k) => k.startsWith("ich-"));
+      setIchMerkenState(false); setEintraege(() => []); setRad(() => []);
+    },
     allesLoeschen: () => {
       sitzungLoeschen();
-      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]);
+      geraetEntfernen((k) => k.startsWith("ich-"));
+      setIchMerkenState(false);
+      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []);
     },
-    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan }),
+    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad }),
     laden: (d) => {
       setAntworten(d.antworten ?? {}); setNotizen(d.notizen ?? {}); setMarkierungen(d.markierungen ?? {});
       setGespraech(d.gespraech ?? ""); setPlan(Array.isArray(d.plan) ? d.plan : []);
+      if (Array.isArray(d.eintraege)) setEintraege(() => d.eintraege!);
+      if (Array.isArray(d.rad)) setRad(() => d.rad!);
     },
   };
   return <Ctx.Provider value={wert}>{children}</Ctx.Provider>;

@@ -2,7 +2,7 @@
 // Zeitmessung: Event-Zeitstempel (event.timeStamp) gegen Reizbeginn aus
 // requestAnimationFrame, beide auf derselben Zeitbasis wie performance.now().
 import { useEffect, useState } from "react";
-import { geraetLesen, geraetLoeschen, geraetSchreiben, sitzungLesen, sitzungSchreiben } from "./speicher";
+import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben } from "./speicher";
 
 export function mischen<T>(a: T[]): T[] {
   const r = [...a];
@@ -44,7 +44,7 @@ export function useBestwert(spiel: string, besser: "kleiner" | "groesser") {
   // Abwählen löscht alle Bestmarken auf dem Gerät und hinterlässt nichts.
   const setMerken = (m: boolean) => {
     setMerkenState(m);
-    if (m) geraetSchreiben("merken", true); else geraetLoeschen();
+    if (m) geraetSchreiben("merken", true); else geraetEntfernen((k) => k === "merken" || k.startsWith("best-"));
   };
   const melden = (wert: number) => {
     const neu = best == null || (besser === "kleiner" ? wert < best : wert > best);

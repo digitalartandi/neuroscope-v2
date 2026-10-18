@@ -3,6 +3,7 @@ import { SYMBOLE } from "../components/Icons";
 
 const WEGE: [string, string, string][] = [
   ["/reflexion", "Selbstreflexion", "Acht Themen, rund 50 kurze Fragen. Du kannst jede überspringen."],
+  ["/ich", "Mein Bereich", "Stimmung, Verlauf und Lebensbereiche als Bild. Nur deine eigenen Einträge."],
   ["/spiegel", "Persönlicher Spiegel", "Deine Antworten in Worten. Du entscheidest, was dich beschäftigt."],
   ["/gespraech", "Gesprächsvorbereitung", "Deine Notizen als PDF, falls du mit jemandem darüber sprechen willst."],
   ["/wissen", "Wissen", "Kurz erklärt, mit Quellen aus Österreich und Deutschland."],

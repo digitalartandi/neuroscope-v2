@@ -30,3 +30,10 @@ export function geraetLoeschen() {
     Object.keys(window.localStorage).filter((k) => k.startsWith("ns2:")).forEach((k) => window.localStorage.removeItem(k));
   } catch { /* nichts */ }
 }
+
+// Entfernt nur ausgewählte Einträge vom Gerät (z. B. nur Spiele oder nur „Mein Bereich“).
+export function geraetEntfernen(passt: (key: string) => boolean) {
+  try {
+    Object.keys(window.localStorage).filter((k) => k.startsWith("ns2:") && passt(k.slice(4))).forEach((k) => window.localStorage.removeItem(k));
+  } catch { /* nichts */ }
+}

@@ -12,6 +12,7 @@ import Spiele from "./pages/Spiele";
 import { Datenschutz, Impressum, Ueber } from "./pages/Recht";
 import Plan from "./pages/Plan";
 import Sichern from "./pages/Sichern";
+import Ich from "./pages/Ich";
 
 const Spur = lazy(() => import("./games/Spur"));
 const Farbwort = lazy(() => import("./games/Farbwort"));
@@ -23,6 +24,7 @@ function Seite({ route }: { route: string }) {
   switch (a) {
     case "": case undefined: return <Start />;
     case "reflexion": return <Reflexion themaId={b} key={b ?? "uebersicht"} />;
+    case "ich": return <Ich />;
     case "spiegel": return <Spiegel />;
     case "gespraech": return <Gespraech />;
     case "plan": return <Plan />;

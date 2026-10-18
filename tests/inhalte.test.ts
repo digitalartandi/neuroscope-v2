@@ -66,6 +66,15 @@ describe("Spiegel bewertet nicht", () => {
   });
 });
 
+describe("Mein Bereich zeigt nur, rechnet nicht", () => {
+  it("keine Summen, Durchschnitte oder Schwellen in Logik und Diagrammen", () => {
+    for (const f of ["src/lib/ich.ts", "src/components/Diagramme.tsx", "src/pages/Ich.tsx"]) {
+      const code = readFileSync(f, "utf8").replace(/\/\/.*$/gm, "");
+      expect(code, f).not.toMatch(/reduce\(|\bsum\b|summe|durchschnitt|mittelwert|average|schwelle/i);
+    }
+  });
+});
+
 describe("Inhalte vollständig", () => {
   it("jede Frage hat genau einen Platzhalter", () => {
     for (const t of THEMEN) for (const f of t.fragen) expect(f.spiegel.split("{h}").length, f.id).toBe(2);

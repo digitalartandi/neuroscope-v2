@@ -22,6 +22,8 @@ export const SYMBOLE: Record<string, ReactNode> = {
   uebungen: <Symbol><path d="M3 8.5h10a2.5 2.5 0 1 0-2.5-2.5" /><path d="M3 12.5h14a2.5 2.5 0 1 1-2.5 2.5" /><path d="M3 16.5h6" /></Symbol>,
   // Puzzleteil
   spiele: <Symbol><path d="M4 8h3.5a2.5 2.5 0 1 1 5 0H16v3.5a2.5 2.5 0 1 1 0 5V20H4v-3.5a2.5 2.5 0 1 0 0-5z" /></Symbol>,
+  // Mein Bereich: Kurve in einem Rahmen
+  ich: <Symbol><rect x="3.5" y="4" width="17" height="16" rx="3" /><path d="m7 15 3-3.5 3 2 4-5.5" /><circle cx="17" cy="8" r=".6" fill="currentColor" /></Symbol>,
   // Rettungsring
   hilfe: <Symbol><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="3.5" /><path d="m6 6 3.5 3.5M18 6l-3.5 3.5M6 18l3.5-3.5M18 18l-3.5-3.5" /></Symbol>,
 };
@@ -55,3 +57,11 @@ export const THEMA_SYMBOL: Record<string, string> = {
   beziehungen: "beziehungen", alltag: "tagesablauf", gewohnheiten: "gewohnheiten", staerken: "staerken",
 };
 export const themaSymbol = (id: string) => WISSEN_SYMBOLE[THEMA_SYMBOL[id] ?? "alltag"];
+
+// Symbole je Übung.
+export const UEBUNG_SYMBOL: Record<string, ReactNode> = {
+  atmung: <Symbol><path d="M3 8.5h10a2.5 2.5 0 1 0-2.5-2.5" /><path d="M3 12.5h14a2.5 2.5 0 1 1-2.5 2.5" /><path d="M3 16.5h6" /></Symbol>,
+  abendroutine: <Symbol><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" /><path d="M17 3.5v3M15.5 5h3" /></Symbol>,
+  staerken: <Symbol><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></Symbol>,
+  wochenrueckblick: <Symbol><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9.5h16M8.5 3v4M15.5 3v4" /><path d="M8 13.5h3M8 16.5h6" /></Symbol>,
+};
