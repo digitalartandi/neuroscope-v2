@@ -6,6 +6,7 @@ import { TRAUMA, ERGAENZUNG as TRAUMA_ERGAENZUNG } from "./trauma";
 import { VERTIEFUNG_1, ZUGANG } from "./vertiefung1";
 import { VERTIEFUNG_2 } from "./vertiefung2";
 import { NS_ERGAENZUNG } from "./ns-erziehung";
+import { DROGEN } from "./drogen";
 export { ZUGANG };
 
 export interface VerstehenSeite {
@@ -126,4 +127,12 @@ for (const quelle of [TRAUMA_ERGAENZUNG, VERTIEFUNG_1, VERTIEFUNG_2] as Record<s
 (ERGAENZUNGEN.transgenerational ??= []).push({ ...NS_ERGAENZUNG, angehoerige: [], nachAbsatz: 1 });
 const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
 ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
+// „Im Notfall“ gehört direkt hinter die Substanzen, nicht ans Ende.
+const notfall = DROGEN.vertiefung.filter((a) => /notfall/i.test(a.titel));
+const nachSubstanzen = DROGEN.absaetze.findIndex((a) => /anfühlen/i.test(a.titel));
+ALLE.splice(ALLE.findIndex((v) => v.id === "alkohol") + 1, 0, {
+  ...DROGEN,
+  absaetze: [...DROGEN.absaetze.slice(0, nachSubstanzen), ...notfall, ...DROGEN.absaetze.slice(nachSubstanzen)],
+  vertiefung: DROGEN.vertiefung.filter((a) => !/notfall/i.test(a.titel)),
+});
 export const VERSTEHEN: VerstehenSeite[] = ALLE.map((v) => (ERGAENZUNGEN[v.id] ?? []).reduce(ergaenze, v));

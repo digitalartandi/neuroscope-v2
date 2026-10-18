@@ -2,6 +2,7 @@ import { GEPRUEFT_AM, KRISE, KRISEN_UEBERSICHT_AT, REGIONEN, WEGE, type Nummer }
 import { useEffect } from "react";
 import { useZustand } from "../lib/zustand";
 import { ANLAUFSTELLEN } from "../content/trauma";
+import { KONSUM_STELLEN, KONSUM_HILFE, istGiftnotruf } from "../content/drogen";
 
 export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
   const { land, setLand, region, setRegion } = useZustand();
@@ -74,6 +75,18 @@ export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
         </ul>
       </section>
 
+      <section id="drogen" className="abschnitt">
+        <h2>{KONSUM_HILFE.titel}</h2>
+        <p>{KONSUM_HILFE.text}</p>
+        <Stellen liste={KONSUM_STELLEN.filter((a) => a.land === land && !istGiftnotruf(a.name) && !(a.nummer && sofort.has(a.nummer)))} />
+        {KONSUM_STELLEN.some((a) => a.land === land && istGiftnotruf(a.name)) && (
+          <details className="tabelle" style={{ marginTop: "1rem" }}>
+            <summary>{KONSUM_HILFE.gift}</summary>
+            <Stellen liste={KONSUM_STELLEN.filter((a) => a.land === land && istGiftnotruf(a.name))} />
+          </details>
+        )}
+      </section>
+
       {WEGE[land].length > 0 && (
         <>
           <h2 className="abschnitt">Wege zu regulärer Hilfe</h2>
@@ -90,6 +103,23 @@ export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
       )}
       <p className="quellen">Alle Nummern und Links geprüft am {GEPRUEFT_AM} auf den Seiten der jeweiligen Anbieter.</p>
     </div>
+  );
+}
+
+function Stellen({ liste }: { liste: { name: string; nummer?: string; web: string; text: string }[] }) {
+  return (
+    <ul className="liste-ruhig">
+      {liste.map((a) => (
+        <li key={a.name}>
+          <h3 style={{ marginBottom: ".3rem" }}>{a.name}</h3>
+          <p style={{ margin: "0 0 .5rem" }}>{a.text}</p>
+          <p className="knopfreihe" style={{ margin: 0 }}>
+            {a.nummer && <a className="tel" href={`tel:${a.nummer.replace(/[^0-9+]/g, "")}`} aria-label={`${a.name} anrufen: ${a.nummer}`}>{a.nummer}</a>}
+            <a href={a.web} target="_blank" rel="noopener noreferrer">Website</a>
+          </p>
+        </li>
+      ))}
+    </ul>
   );
 }
 

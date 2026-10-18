@@ -358,6 +358,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
       <p className="sprungmarken">
         <a href="#/hilfe">Hilfe finden</a>
         {["trauma", "ptbs", "kptbs"].includes(v.id) && <a href="#/hilfe/gewalt">Bei Gewalt und Mobbing</a>}
+        {["drogen", "alkohol", "gaming"].includes(v.id) && <a href="#/hilfe/drogen">Beratung und Notfall</a>}
       </p>
       <Teile teile={teile} />
       <Verwandt id={v.id} bereich={bereich} />
