@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SYMBOLE } from "./Icons";
 
 export function Logo() {
   return <span className="marke__punkt" aria-hidden="true" />;
@@ -8,10 +9,10 @@ function Krisenband() {
   return (
     <aside className="krisenband" aria-label="Hilfe in einer Krise">
       <div className="krisenband__innen">
-        <span><strong>In einer Krise?</strong></span>
-        <span>Österreich <a href="tel:142">142</a></span>
-        <span>Deutschland <a href="tel:08001110111">0800 111 0 111</a></span>
-        <span>Notruf <a href="tel:144">144</a> / <a href="tel:112">112</a></span>
+        <span><strong><span className="lang">In einer Krise?</span><span className="kurz">Krise?</span></strong></span>
+        <span><span className="lang">Österreich</span><abbr className="kurz" title="Österreich">AT</abbr> <a href="tel:142">142</a></span>
+        <span><span className="lang">Deutschland</span><abbr className="kurz" title="Deutschland">DE</abbr> <a href="tel:08001110111">0800 111 0 111</a></span>
+        <span><span className="lang">Notruf </span><a href="tel:144">144</a> / <a href="tel:112">112</a></span>
         <a className="krisenband__link" href="#/hilfe">Hilfe finden</a>
       </div>
     </aside>
@@ -45,6 +46,14 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
         </div>
       </header>
       <main id="inhalt" tabIndex={-1}>{children}</main>
+      <nav className="tabs" aria-label="Hauptmenü">
+        {NAV.map(([p, t]) => (
+          <a key={p} href={"#" + p} aria-current={aktiv(p) ? "page" : undefined} data-hilfe={p === "/hilfe" ? "ja" : undefined}>
+            {SYMBOLE[p.slice(1)]}
+            <span>{p === "/reflexion" ? "Reflexion" : p === "/hilfe" ? "Hilfe" : t}</span>
+          </a>
+        ))}
+      </nav>
       <footer className="fuss">
         <div className="fuss__innen">
           <p className="leise" style={{ margin: 0, maxWidth: "48ch" }}>
