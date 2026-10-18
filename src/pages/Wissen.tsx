@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
 import { ICD_INFO, VERSTEHEN } from "../content/verstehen";
-import { SYMBOLE, WISSEN_SYMBOLE as S } from "../components/Icons";
+import { SYMBOLE, THEMA_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
 
 // Bereiche für den Filter. „gruppen“ verweist auf VerstehenSeite.gruppe, „alltag“ auf die Seiten in WISSEN.
 interface Bereich { id: string; label: string; symbol: string; gruppen?: string[] }
@@ -20,10 +20,7 @@ const BEREICHE: Bereich[] = [
 const GRUPPE_SYMBOL: Record<string, string> = Object.fromEntries(
   BEREICHE.flatMap((b) => (b.gruppen ?? []).map((g) => [g, b.symbol])),
 );
-const ALLTAG_SYMBOL: Record<string, string> = {
-  schlaf: "schlaf", energie: "energie", stress: "stress", stimmung: "stimmung",
-  beziehungen: "beziehungen", alltag: "tagesablauf", gewohnheiten: "gewohnheiten", staerken: "staerken",
-};
+const ALLTAG_SYMBOL = THEMA_SYMBOL;
 // Suchbegriffe für die Alltagsseiten (werden nicht angezeigt).
 const ALLTAG_STICHWORTE: Record<string, string[]> = {
   schlaf: ["müde", "Einschlafen", "Schlafprobleme", "Erholung", "nachts"],
@@ -220,7 +217,7 @@ function Karten({ liste, mitGruppe = true }: { liste: Eintrag[]; mitGruppe?: boo
             <span className="wissen-karten__text">
               {mitGruppe && <span className="wissen-karten__gruppe">{e.bereich === "alltag" ? "Alltag" : e.gruppe}</span>}
               <strong>{e.titel}</strong>
-              <span>{e.teaser}</span>
+              <span className="wissen-karten__teaser">{e.teaser}</span>
             </span>
           </a>
         </li>

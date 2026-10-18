@@ -48,3 +48,10 @@ export const WISSEN_SYMBOLE: Record<string, ReactNode> = {
   staerken: <Symbol><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></Symbol>,
   suche: <Symbol><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 5 5" /></Symbol>,
 };
+
+// Symbol je Alltagsthema (gleiche IDs in Selbstreflexion und Wissen).
+export const THEMA_SYMBOL: Record<string, string> = {
+  schlaf: "schlaf", energie: "energie", stress: "stress", stimmung: "stimmung",
+  beziehungen: "beziehungen", alltag: "tagesablauf", gewohnheiten: "gewohnheiten", staerken: "staerken",
+};
+export const themaSymbol = (id: string) => WISSEN_SYMBOLE[THEMA_SYMBOL[id] ?? "alltag"];

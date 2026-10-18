@@ -1,25 +1,37 @@
 import { HAEUFIGKEIT, THEMEN, ZEITRAUM } from "../content/reflexion";
 import { schluessel } from "../lib/spiegel";
 import { useZustand } from "../lib/zustand";
+import { themaSymbol } from "../components/Icons";
 
 export default function Reflexion({ themaId }: { themaId?: string }) {
   const { antworten, antworte, notizen, notiere } = useZustand();
 
   if (!themaId) {
     return (
-      <div className="spalte">
+      <div className="spalte spalte--breit">
         <h1>Selbstreflexion</h1>
         <p className="einleitung">
           Acht Themen mit je sechs Fragen. Es geht immer darum, wie es dir {ZEITRAUM} ging.
           Es gibt keine richtigen oder falschen Antworten, und nichts wird ausgewertet.
         </p>
-        <ul className="liste-ruhig" style={{ marginTop: "2rem" }}>
+        <ul className="wissen-karten reflexion-karten">
           {THEMEN.map((t, i) => {
             const n = t.fragen.filter((f) => antworten[schluessel(t.id, f.id)] !== undefined).length;
+            const fertig = n === t.fragen.length;
             return (
               <li key={t.id}>
-                <a className="titel" href={`#/reflexion/${t.id}`}>{i + 1}. {t.titel}</a>
-                <div className="leise klein">{t.einleitung} {n > 0 && `(${n} von ${t.fragen.length} beantwortet)`}</div>
+                <a href={`#/reflexion/${t.id}`} data-stand={fertig ? "fertig" : n > 0 ? "begonnen" : undefined}>
+                  <span className="wissen-karten__symbol">{themaSymbol(t.id)}</span>
+                  <span className="wissen-karten__text">
+                    <span className="wissen-karten__gruppe">Thema {i + 1}</span>
+                    <strong>{t.titel}</strong>
+                    <span className="wissen-karten__teaser">{t.einleitung}</span>
+                    <span className="stand" aria-label={`${n} von ${t.fragen.length} Fragen beantwortet`}>
+                      <span className="stand__balken" aria-hidden="true"><span style={{ width: `${(n / t.fragen.length) * 100}%` }} /></span>
+                      {fertig ? "fertig" : `${n} von ${t.fragen.length}`}
+                    </span>
+                  </span>
+                </a>
               </li>
             );
           })}
@@ -46,7 +58,7 @@ export default function Reflexion({ themaId }: { themaId?: string }) {
             const fertig = t.fragen.every((f) => antworten[schluessel(t.id, f.id)] !== undefined);
             return (
               <li key={t.id}>
-                <a href={`#/reflexion/${t.id}`} aria-current={i === index ? "step" : undefined} data-stand={fertig ? "fertig" : undefined}>{t.titel}</a>
+                <a href={`#/reflexion/${t.id}`} aria-current={i === index ? "step" : undefined} data-stand={fertig ? "fertig" : undefined}>{themaSymbol(t.id)}{t.titel}</a>
               </li>
             );
           })}
@@ -54,7 +66,10 @@ export default function Reflexion({ themaId }: { themaId?: string }) {
       </nav>
       <div className="fortschritt" aria-hidden="true"><span style={{ width: `${((index + 1) / THEMEN.length) * 100}%` }} /></div>
       <p className="leise klein">Thema {index + 1} von {THEMEN.length}</p>
-      <h1>{thema.titel}</h1>
+      <div className="artikel-kopf artikel-kopf--immer">
+        <span className="wissen-karten__symbol">{themaSymbol(thema.id)}</span>
+        <h1 style={{ margin: 0 }}>{thema.titel}</h1>
+      </div>
       <p className="einleitung">{thema.einleitung} Denk daran, wie es dir {ZEITRAUM} ging.</p>
 
       {thema.id === "stimmung" && (
