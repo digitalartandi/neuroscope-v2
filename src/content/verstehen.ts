@@ -14,7 +14,11 @@ export interface VerstehenSeite {
   hilft: string[];
   wannHilfe: string[];
   quellen: Quelle[];
+  irrtuemer?: Irrtum[];
+  angehoerige?: string[];
+  vertiefung?: { titel: string; text: string[] }[]; // nach „Was hilft“
 }
+export interface Irrtum { irrtum: string; richtig: string }
 
 export const ICD_INFO = {
   text: "Die Einordnung folgt der ICD-11, der Internationalen Klassifikation der Krankheiten der WHO, seit 1. Jänner 2022 in Kraft. Für Diagnosen und Abrechnung wird in Österreich und Deutschland derzeit noch die ICD-10 verwendet; die Umstellung in Deutschland dauert laut BfArM noch einige Jahre. Häufigkeiten für Deutschland stammen, wo nicht anders angegeben, aus der Studie DEGS1-MH (Erwachsene 18 bis 79 Jahre, innerhalb eines Jahres).",

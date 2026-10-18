@@ -10,6 +10,9 @@ export interface WissenSeite {
   hilft: string[];
   wannHilfe: string[];
   quellen: Quelle[];
+  hintergrund?: { titel: string; text: string[] }[];
+  schritte?: string[];
+  irrtuemer?: { irrtum: string; richtig: string }[];
 }
 
 export const WISSEN: WissenSeite[] = [

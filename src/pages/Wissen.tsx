@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
 import { ICD_INFO, VERSTEHEN } from "../content/verstehen";
 import { SYMBOLE, THEMA_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
@@ -86,27 +86,90 @@ export default function Wissen({ id }: { id?: string }) {
   if (v) return <VerstehenArtikel v={v} />;
   const w = WISSEN.find((x) => x.id === id);
   if (!w) return <div className="spalte"><h1>Seite nicht gefunden</h1><a href="#/wissen">Alle Themen</a></div>;
+  const teile: Teil[] = [
+    ...(w.hintergrund ?? []).map((h) => abschnitt(h.titel, h.text)),
+    { id: "was-hilft", titel: "Was im Alltag helfen kann", inhalt: <ul>{w.hilft.map((h, i) => <li key={i}>{h}</li>)}</ul> },
+    ...(w.schritte?.length ? [{ id: "schritte", titel: "Kleine Schritte für diese Woche", inhalt: <Schritte liste={w.schritte} /> }] : []),
+    ...(w.irrtuemer?.length ? [{ id: "irrtuemer", titel: "Häufige Irrtümer", inhalt: <Irrtuemer liste={w.irrtuemer} /> }] : []),
+    { id: "wann-hilfe", titel: "Wann ein Gespräch mit Fachleuten sinnvoll ist", kasten: true, inhalt: <WannHilfe liste={w.wannHilfe} /> },
+  ];
   return (
     <article className="spalte">
       <Zurueck />
       <Kopf symbol={ALLTAG_SYMBOL[w.id] ?? "alltag"} gruppe="Alltag und Wohlbefinden" titel={w.titel} />
       <p className="einleitung">{w.einleitung}</p>
-      <h2 className="abschnitt">Was im Alltag helfen kann</h2>
-      <ul>{w.hilft.map((h, i) => <li key={i} style={{ marginBottom: ".5rem" }}>{h}</li>)}</ul>
-      <div className="kasten kasten--licht">
-        <h2 style={{ fontSize: "1.3rem" }}>Wann ein Gespräch mit Fachleuten sinnvoll ist</h2>
-        <ul>{w.wannHilfe.map((h, i) => <li key={i}>{h}</li>)}</ul>
-        <p style={{ marginTop: "1rem" }}>
-          Erste Anlaufstelle ist deine Hausärztin oder dein Hausarzt. <a href="#/hilfe">Weitere Wege und Krisennummern</a>
-        </p>
-      </div>
+      <Teile teile={teile} />
       <Verwandt id={w.id} bereich="alltag" />
-      <div className="quellen">
-        <p><strong>Quellen</strong> (abgerufen im Oktober 2026)</p>
-        <ul>{w.quellen.map((q) => <li key={q.url}><a href={q.url} rel="noopener noreferrer" target="_blank">{q.text}</a></li>)}</ul>
-        <p>Die Texte fassen die Quellen in eigenen Worten zusammen. Sie sind allgemeine Information und keine Beratung im Einzelfall.</p>
-      </div>
+      <Quellen liste={w.quellen} schluss="Die Texte fassen die Quellen in eigenen Worten zusammen. Sie sind allgemeine Information und keine Beratung im Einzelfall." />
     </article>
+  );
+}
+
+// ---------- Bausteine für Artikel ----------
+interface Teil { id: string; titel: string; inhalt: ReactNode; kasten?: boolean; klein?: boolean }
+const slug = (t: string) => norm(t).slice(0, 40) || "abschnitt";
+const abschnitt = (titel: string, text: string[]): Teil => ({ id: slug(titel), titel, inhalt: <>{text.map((t, i) => <p key={i}>{t}</p>)}</> });
+
+function Teile({ teile }: { teile: Teil[] }) {
+  const sichtbar = teile.filter((t) => !t.klein);
+  return (
+    <>
+      {sichtbar.length > 3 && (
+        <details className="inhaltsverzeichnis">
+          <summary>Auf dieser Seite <span className="leise">({sichtbar.length} Abschnitte)</span></summary>
+          <ol>
+            {sichtbar.map((t) => (
+              <li key={t.id}><a href={"#" + t.id} onClick={(e) => { e.preventDefault(); document.getElementById(t.id)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>{t.titel}</a></li>
+            ))}
+          </ol>
+        </details>
+      )}
+      {teile.map((t) => (
+        <section key={t.id} id={t.id} className={t.kasten ? "kasten kasten--licht abschnitt" : t.klein ? "abschnitt abschnitt--klein" : undefined}>
+          <h2 className={t.kasten ? undefined : "abschnitt"}>{t.titel}</h2>
+          {t.inhalt}
+        </section>
+      ))}
+    </>
+  );
+}
+
+function WannHilfe({ liste }: { liste: string[] }) {
+  return (
+    <>
+      <ul>{liste.map((h, i) => <li key={i}>{h}</li>)}</ul>
+      <p style={{ marginTop: "1rem", marginBottom: 0 }}>
+        Erste Anlaufstelle ist deine Hausärztin oder dein Hausarzt. <a href="#/hilfe">Weitere Wege und Krisennummern</a>
+      </p>
+    </>
+  );
+}
+
+function Irrtuemer({ liste }: { liste: { irrtum: string; richtig: string }[] }) {
+  return (
+    <ul className="irrtuemer">
+      {liste.map((x) => (
+        <li key={x.irrtum}>
+          <p className="irrtuemer__irrtum"><span className="sr-only">Irrtum: </span>„{x.irrtum.replace(/^[„"]|[“"]$/g, "")}“</p>
+          <p className="irrtuemer__richtig">{x.richtig}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Schritte({ liste }: { liste: string[] }) {
+  return <ol className="schritte">{liste.map((x, i) => <li key={i}>{x}</li>)}</ol>;
+}
+
+function Quellen({ liste, schluss }: { liste: { text: string; url: string }[]; schluss: string }) {
+  const eindeutig = liste.filter((q, i) => liste.findIndex((x) => x.url === q.url) === i);
+  return (
+    <div className="quellen">
+      <p><strong>Quellen</strong> (abgerufen im Oktober 2026)</p>
+      <ul>{eindeutig.map((q) => <li key={q.url}><a href={q.url} rel="noopener noreferrer" target="_blank">{q.text}</a></li>)}</ul>
+      <p>{schluss}</p>
+    </div>
   );
 }
 
@@ -258,47 +321,29 @@ function Verwandt({ id, bereich }: { id: string; bereich: string }) {
 }
 
 function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
-  const ref = useRef<HTMLElement>(null);
   const bereich = BEREICHE.find((b) => b.gruppen?.includes(v.gruppe))?.id ?? "alle";
-  const inhalt: ReactNode = (
-    <>
-      {v.absaetze.map((a) => (
-        <section key={a.titel}>
-          <h2 className="abschnitt">{a.titel}</h2>
-          {a.text.map((t, i) => <p key={i}>{t}</p>)}
-        </section>
-      ))}
-    </>
-  );
+  const istIcd = (t: string) => /ICD-11/.test(t);
+  const teile: Teil[] = [
+    ...v.absaetze.filter((a) => !istIcd(a.titel)).map((a) => abschnitt(a.titel, a.text)),
+    { id: "was-hilft", titel: "Was hilft", inhalt: <ul>{v.hilft.map((h, i) => <li key={i}>{h}</li>)}</ul> },
+    ...(v.vertiefung ?? []).map((a) => abschnitt(a.titel, a.text)),
+    ...(v.irrtuemer?.length ? [{ id: "irrtuemer", titel: "Häufige Irrtümer", inhalt: <Irrtuemer liste={v.irrtuemer} /> }] : []),
+    ...(v.angehoerige?.length ? [{ id: "angehoerige", titel: "Für Angehörige und Freunde", inhalt: <ul>{v.angehoerige.map((h, i) => <li key={i}>{h}</li>)}</ul> }] : []),
+    { id: "wann-hilfe", titel: "Wann ein Gespräch mit Fachleuten sinnvoll ist", kasten: true, inhalt: <WannHilfe liste={v.wannHilfe} /> },
+    ...v.absaetze.filter((a) => istIcd(a.titel)).map((a) => ({ ...abschnitt(a.titel, a.text), klein: true })),
+  ];
   return (
-    <article className="spalte" ref={ref}>
+    <article className="spalte">
       <Zurueck />
       <Kopf symbol={GRUPPE_SYMBOL[v.gruppe] ?? "alle"} gruppe={v.gruppe} titel={v.titel} />
-      {v.icd && (
-        <p className="klein leise">
-          ICD-11: {v.icd.url ? <a href={v.icd.url} target="_blank" rel="noopener noreferrer">{v.icd.code} {v.icd.titel}</a> : <>{v.icd.code} {v.icd.titel}</>}
-        </p>
-      )}
+      {v.icd && <p className="klein leise">ICD-11: {v.icd.code} {v.icd.titel}</p>}
       <p className="einleitung">{v.einleitung}</p>
-      <nav className="sprungmarken" aria-label="Auf dieser Seite">
-        <a href="#was-hilft" onClick={(e) => { e.preventDefault(); document.getElementById("was-hilft")?.scrollIntoView({ behavior: "smooth" }); }}>Was hilft</a>
-        <a href="#wann-hilfe" onClick={(e) => { e.preventDefault(); document.getElementById("wann-hilfe")?.scrollIntoView({ behavior: "smooth" }); }}>Wann Hilfe holen</a>
+      <p className="sprungmarken">
         <a href="#/hilfe">Hilfe finden</a>
-      </nav>
-      {inhalt}
-      <h2 className="abschnitt" id="was-hilft">Was hilft</h2>
-      <ul>{v.hilft.map((h, i) => <li key={i} style={{ marginBottom: ".5rem" }}>{h}</li>)}</ul>
-      <div className="kasten kasten--licht" id="wann-hilfe">
-        <h2>Wann ein Gespräch mit Fachleuten sinnvoll ist</h2>
-        <ul>{v.wannHilfe.map((h, i) => <li key={i}>{h}</li>)}</ul>
-        <p style={{ marginTop: "1rem" }}>Erste Anlaufstelle ist deine Hausärztin oder dein Hausarzt. <a href="#/hilfe">Weitere Wege und Krisennummern</a></p>
-      </div>
+      </p>
+      <Teile teile={teile} />
       <Verwandt id={v.id} bereich={bereich} />
-      <div className="quellen">
-        <p><strong>Quellen</strong> (abgerufen im Oktober 2026)</p>
-        <ul>{v.quellen.map((q) => <li key={q.url}><a href={q.url} rel="noopener noreferrer" target="_blank">{q.text}</a></li>)}</ul>
-        <p>Allgemeine Information in eigenen Worten. Sie ersetzt keine Untersuchung und keine Diagnose durch Fachleute.</p>
-      </div>
+      <Quellen liste={v.quellen} schluss="Allgemeine Information in eigenen Worten. Sie ersetzt keine Untersuchung und keine Diagnose durch Fachleute." />
     </article>
   );
 }
