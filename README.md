@@ -29,6 +29,11 @@ npm run build     # Produktions-Build nach dist/
 Jeder Push auf `main` startet `.github/workflows/pages.yml`: Tests, Startklar-Prüfung, Build, Veröffentlichung.
 Einmalig im Repo einstellen: **Settings → Pages → Source: GitHub Actions**.
 Die App nutzt Hash-Routing (`#/hilfe`) und relative Pfade, sie läuft also auch unter `benutzer.github.io/repo/`.
+
+**Eigene Domain:** `neuroscope.at` (Inklusivdomain bei ALL-INKL, Nameserver ALL-INKL). DNS zeigt auf GitHub Pages:
+A `185.199.108–111.153`, AAAA `2606:50c0:8000–8003::153`, `www` CNAME `digitalartandi.github.io.`.
+Kein Wildcard-Eintrag. Die Domain ist in den Pages-Einstellungen eingetragen (bei Deployment über Actions
+wird keine CNAME-Datei gebraucht). HTTPS stellt GitHub aus („Enforce HTTPS“).
 Sicherheitsregeln stehen als Content-Security-Policy in `index.html`, `noindex` verhindert die Aufnahme in Suchmaschinen.
 
 ## Vor dem Livegang (Pflicht)
