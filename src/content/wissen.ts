@@ -15,7 +15,9 @@ export interface WissenSeite {
   irrtuemer?: { irrtum: string; richtig: string }[];
 }
 
-export const WISSEN: WissenSeite[] = [
+import { VERTIEFUNG_ALLTAG } from "./vertiefung-alltag";
+
+const BASIS: WissenSeite[] = [
   {
     id: "schlaf",
     titel: "Schlaf und Erholung",
@@ -198,3 +200,10 @@ export const WISSEN: WissenSeite[] = [
     ],
   },
 ];
+
+// Basisseiten plus Vertiefung (Hintergrund, kleine Schritte, Irrtümer, weitere Quellen).
+export const WISSEN: WissenSeite[] = BASIS.map((w) => {
+  const v = VERTIEFUNG_ALLTAG[w.id];
+  if (!v) return w;
+  return { ...w, hintergrund: v.absaetze, schritte: v.schritte, irrtuemer: v.irrtuemer, quellen: [...w.quellen, ...v.quellen] };
+});

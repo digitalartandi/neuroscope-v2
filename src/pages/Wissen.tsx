@@ -150,7 +150,7 @@ function Irrtuemer({ liste }: { liste: { irrtum: string; richtig: string }[] }) 
     <ul className="irrtuemer">
       {liste.map((x) => (
         <li key={x.irrtum}>
-          <p className="irrtuemer__irrtum"><span className="sr-only">Irrtum: </span>„{x.irrtum.replace(/^[„"]|[“"]$/g, "")}“</p>
+          <p className="irrtuemer__irrtum"><span className="irrtuemer__marke">Irrtum</span>„{x.irrtum.replace(/^[„"]|[“"]$/g, "")}“</p>
           <p className="irrtuemer__richtig">{x.richtig}</p>
         </li>
       ))}

@@ -512,14 +512,16 @@ input[type="checkbox"] { accent-color: var(--violett); width: 1.15rem; height: 1
 .inhaltsverzeichnis { margin: var(--s4) 0 0; border: 1px solid var(--linie); border-radius: 16px; background: var(--karte-voll); }
 .inhaltsverzeichnis summary { cursor: pointer; padding: .8rem 1.1rem; font-weight: 650; min-height: 2.75rem; list-style-position: inside; }
 .inhaltsverzeichnis ol { margin: 0; padding: 0 1.1rem 1rem 2.4rem; display: grid; gap: .15rem; }
-.inhaltsverzeichnis a { display: inline-block; padding: .3rem 0; }
+.inhaltsverzeichnis li { padding: .3rem 0; }
 section[id] { scroll-margin-top: 1rem; }
 .abschnitt--klein h2 { font-size: 1.05rem; color: var(--text-2); }
 .abschnitt--klein p { font-size: .925rem; color: var(--text-2); }
 .irrtuemer { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s3); }
 .irrtuemer li { border: 1px solid var(--linie); border-radius: 14px; background: var(--karte-voll); padding: var(--s4); }
 .irrtuemer p { margin: 0; }
-.irrtuemer__irrtum { font-weight: 650; color: var(--text-2); text-decoration: line-through; text-decoration-color: rgba(124, 58, 237, .45); text-decoration-thickness: 2px; margin-bottom: .4rem !important; }
+.irrtuemer__irrtum { font-weight: 650; color: var(--text); margin-bottom: .45rem !important; }
+.irrtuemer__marke { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: #9f1239; background: #ffe4e6; border-radius: 999px; padding: .1rem .55rem; margin-right: .5rem; vertical-align: .1em; }
+@media (prefers-color-scheme: dark) { .irrtuemer__marke { background: #4c0519; color: #fecdd3; } }
 .irrtuemer__richtig::before { content: "Richtig ist: "; font-weight: 650; color: var(--violett); }
 .schritte { list-style: none; counter-reset: schritt; padding: 0; margin: 0; display: grid; gap: var(--s2); }
 .schritte li { counter-increment: schritt; display: grid; grid-template-columns: 2rem 1fr; gap: var(--s3); align-items: start; padding: var(--s3) var(--s4); border-radius: 14px; background: var(--violett-hell); }
