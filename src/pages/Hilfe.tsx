@@ -1,8 +1,15 @@
 import { GEPRUEFT_AM, KRISE, KRISEN_UEBERSICHT_AT, REGIONEN, WEGE, type Nummer } from "../content/hilfe";
+import { useEffect } from "react";
 import { useZustand } from "../lib/zustand";
+import { ANLAUFSTELLEN } from "../content/trauma";
 
-export default function Hilfe() {
+export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
   const { land, setLand, region, setRegion } = useZustand();
+  useEffect(() => {
+    if (abschnitt) document.getElementById(abschnitt)?.scrollIntoView({ block: "start" });
+  }, [abschnitt]);
+  const sofort = new Set(KRISE[land].map((n) => n.nummer));
+  const gewalt = ANLAUFSTELLEN.filter((a) => a.land === land && !(a.nummer && sofort.has(a.nummer)) && !/telefonseelsorge/i.test(a.name));
   const regionen = REGIONEN[land];
   const gewaehlt = regionen.find((r) => r.name === region);
   const name = land === "AT" ? "Österreich" : "Deutschland";
@@ -46,6 +53,26 @@ export default function Hilfe() {
         <strong>Wichtig:</strong> Neuroscope liest nicht mit und kann niemanden verständigen.
         Wenn du Hilfe brauchst, melde dich bitte selbst bei einer der Nummern oder bei einem Menschen, dem du vertraust.
       </p>
+
+      <section id="gewalt" className="abschnitt">
+        <h2>Bei Gewalt, Missbrauch und Mobbing</h2>
+        <p>
+          Für Menschen, die Gewalt, Abwertung, Kontrolle, Missbrauch oder Mobbing erleben oder erlebt haben, und für Angehörige.
+          Auch wer unsicher ist, ob das Erlebte „schlimm genug“ ist, kann sich melden.
+        </p>
+        <ul className="liste-ruhig">
+          {gewalt.map((a) => (
+            <li key={a.name}>
+              <h3 style={{ marginBottom: ".3rem" }}>{a.name}</h3>
+              <p style={{ margin: "0 0 .5rem" }}>{a.text}</p>
+              <p className="knopfreihe" style={{ margin: 0 }}>
+                {a.nummer && <a className="tel" href={`tel:${a.nummer.replace(/\s/g, "")}`} aria-label={`${a.name} anrufen: ${a.nummer}`}>{a.nummer}</a>}
+                <a href={a.web} target="_blank" rel="noopener noreferrer">Website</a>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {WEGE[land].length > 0 && (
         <>

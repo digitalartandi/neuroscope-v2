@@ -2,6 +2,7 @@
 // Nie mit den Antworten der Person verknüpft. Kein Selbsttest, keine Kriterienliste.
 import type { Quelle } from "./wissen";
 import { SEITEN } from "./verstehen-seiten";
+import { TRAUMA, ERGAENZUNG as TRAUMA_ERGAENZUNG } from "./trauma";
 
 export interface VerstehenSeite {
   id: string;
@@ -91,4 +92,26 @@ export const TRANSGENERATIONAL: VerstehenSeite = {
   ],
 };
 
-export const VERSTEHEN: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
+// Ergänzungen aus den Vertiefungen. Abschnitte zu Behandlung und Selbsthilfe kommen nach „Was hilft“, der Rest davor.
+export interface Ergaenzung { einleitung?: string; absaetze: { titel: string; text: string[] }[]; irrtuemer: Irrtum[]; angehoerige: string[]; quellen: Quelle[] }
+const NACH_HILFT = /behandlung|selbst tun|erholung/i;
+
+function ergaenze(v: VerstehenSeite, e?: Ergaenzung): VerstehenSeite {
+  if (!e) return v;
+  const icd = v.absaetze.filter((a) => /ICD-11/.test(a.titel));
+  const rest = v.absaetze.filter((a) => !/ICD-11/.test(a.titel));
+  return {
+    ...v,
+    einleitung: e.einleitung ?? v.einleitung,
+    absaetze: [...rest, ...e.absaetze.filter((a) => !NACH_HILFT.test(a.titel)), ...icd],
+    vertiefung: [...(v.vertiefung ?? []), ...e.absaetze.filter((a) => NACH_HILFT.test(a.titel))],
+    irrtuemer: [...(v.irrtuemer ?? []), ...e.irrtuemer],
+    angehoerige: [...(v.angehoerige ?? []), ...e.angehoerige],
+    quellen: [...v.quellen, ...e.quellen],
+  };
+}
+
+const ERGAENZUNGEN: Record<string, Ergaenzung> = { ...TRAUMA_ERGAENZUNG };
+const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
+ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
+export const VERSTEHEN: VerstehenSeite[] = ALLE.map((v) => ergaenze(v, ERGAENZUNGEN[v.id]));

@@ -29,7 +29,7 @@ function Seite({ route }: { route: string }) {
     case "sichern": return <Sichern />;
     case "wissen": return <Wissen id={b} />;
     case "uebungen": return <Uebungen id={b} key={b ?? "liste"} />;
-    case "hilfe": return <Hilfe />;
+    case "hilfe": return <Hilfe abschnitt={b} />;
     case "spiele":
       if (b === "spur") return <Spur />;
       if (b === "farbwort") return <Farbwort />;
