@@ -5,6 +5,7 @@ import { SEITEN } from "./verstehen-seiten";
 import { TRAUMA, ERGAENZUNG as TRAUMA_ERGAENZUNG } from "./trauma";
 import { VERTIEFUNG_1, ZUGANG } from "./vertiefung1";
 import { VERTIEFUNG_2 } from "./vertiefung2";
+import { NS_ERGAENZUNG } from "./ns-erziehung";
 export { ZUGANG };
 
 export interface VerstehenSeite {
@@ -96,25 +97,33 @@ export const TRANSGENERATIONAL: VerstehenSeite = {
 };
 
 // Ergänzungen aus den Vertiefungen. Abschnitte zu Behandlung und Selbsthilfe kommen nach „Was hilft“, der Rest davor.
-export interface Ergaenzung { einleitung?: string; absaetze: { titel: string; text: string[] }[]; irrtuemer: Irrtum[]; angehoerige: string[]; quellen: Quelle[] }
+export interface Ergaenzung { einleitung?: string; absaetze: { titel: string; text: string[] }[]; vertiefung?: { titel: string; text: string[] }[]; irrtuemer: Irrtum[]; angehoerige: string[]; quellen: Quelle[]; stichworte?: string[]; nachAbsatz?: number }
 const NACH_HILFT = /behandlung|selbst tun|erholung/i;
 
 function ergaenze(v: VerstehenSeite, e?: Ergaenzung): VerstehenSeite {
   if (!e) return v;
   const icd = v.absaetze.filter((a) => /ICD-11/.test(a.titel));
   const rest = v.absaetze.filter((a) => !/ICD-11/.test(a.titel));
+  const neu = e.absaetze.filter((a) => !NACH_HILFT.test(a.titel));
+  // nachAbsatz: neue Abschnitte nach dem n-ten bestehenden einfügen statt ans Ende
+  const vorne = e.nachAbsatz === undefined ? rest : rest.slice(0, e.nachAbsatz);
+  const hinten = e.nachAbsatz === undefined ? [] : rest.slice(e.nachAbsatz);
   return {
     ...v,
     einleitung: e.einleitung ?? v.einleitung,
-    absaetze: [...rest, ...e.absaetze.filter((a) => !NACH_HILFT.test(a.titel)), ...icd],
-    vertiefung: [...(v.vertiefung ?? []), ...e.absaetze.filter((a) => NACH_HILFT.test(a.titel))],
+    stichworte: [...(v.stichworte ?? []), ...(e.stichworte ?? [])],
+    absaetze: [...vorne, ...neu, ...hinten, ...icd],
+    vertiefung: [...(v.vertiefung ?? []), ...e.absaetze.filter((a) => NACH_HILFT.test(a.titel)), ...(e.vertiefung ?? [])],
     irrtuemer: [...(v.irrtuemer ?? []), ...e.irrtuemer],
     angehoerige: [...(v.angehoerige ?? []), ...e.angehoerige],
     quellen: [...v.quellen, ...e.quellen],
   };
 }
 
-const ERGAENZUNGEN: Record<string, Ergaenzung> = { ...TRAUMA_ERGAENZUNG, ...VERTIEFUNG_1, ...VERTIEFUNG_2 };
+const ERGAENZUNGEN: Record<string, Ergaenzung[]> = {};
+for (const quelle of [TRAUMA_ERGAENZUNG, VERTIEFUNG_1, VERTIEFUNG_2] as Record<string, Ergaenzung>[])
+  for (const [id, e] of Object.entries(quelle)) (ERGAENZUNGEN[id] ??= []).push(e);
+(ERGAENZUNGEN.transgenerational ??= []).push({ ...NS_ERGAENZUNG, angehoerige: [], nachAbsatz: 1 });
 const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
 ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
-export const VERSTEHEN: VerstehenSeite[] = ALLE.map((v) => ergaenze(v, ERGAENZUNGEN[v.id]));
+export const VERSTEHEN: VerstehenSeite[] = ALLE.map((v) => (ERGAENZUNGEN[v.id] ?? []).reduce(ergaenze, v));
