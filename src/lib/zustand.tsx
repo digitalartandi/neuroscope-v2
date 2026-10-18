@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Antworten } from "./spiegel";
 import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
-import type { Eintrag, RadStand } from "./ich";
+import { EINSTELLUNGEN_START, type Einstellungen, type Eintrag, type RadStand } from "./ich";
 
 export type Land = "AT" | "DE";
 export type Markierung = "beschaeftigt" | "kraft";
@@ -27,6 +27,8 @@ interface Zustand {
   setEintraege: (f: (alt: Eintrag[]) => Eintrag[]) => void;
   rad: RadStand[];
   setRad: (f: (alt: RadStand[]) => RadStand[]) => void;
+  einstellungen: Einstellungen;
+  setEinstellungen: (aenderung: Partial<Einstellungen>) => void;
   ichLoeschen: () => void;
   allesLoeschen: () => void;
   laden: (d: Sicherung) => void;
@@ -42,6 +44,7 @@ export interface Sicherung {
   plan: string[];
   eintraege?: Eintrag[];
   rad?: RadStand[];
+  einstellungen?: Einstellungen;
 }
 
 const Ctx = createContext<Zustand | null>(null);
@@ -77,6 +80,21 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
   const [ichMerken, setIchMerkenState] = useState<boolean>(() => geraetLesen("ich-merken", false));
   const [eintraege, setEintraege] = useIch<Eintrag[]>("ich-eintraege", ichMerken, []);
   const [rad, setRad] = useIch<RadStand[]>("ich-rad", ichMerken, []);
+  const [einstellungenRoh, setEinstellungenRoh] = useIch<Einstellungen>("ich-einstellungen", ichMerken, EINSTELLUNGEN_START);
+  const einstellungen: Einstellungen = { ...EINSTELLUNGEN_START, ...einstellungenRoh, bereiche: { ...EINSTELLUNGEN_START.bereiche, ...einstellungenRoh.bereiche } };
+
+  // Gemerktes Land und Bundesland für „Hilfe finden“ übernehmen (einmal beim Start).
+  useEffect(() => {
+    if (einstellungen.land) setLand(einstellungen.land);
+    if (einstellungen.region) setRegion(einstellungen.region);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // Schriftgröße und ruhige Darstellung gelten für die ganze App.
+  useEffect(() => {
+    const h = document.documentElement;
+    if (einstellungen.schrift === "gross") h.dataset.schrift = "gross"; else delete h.dataset.schrift;
+    if (einstellungen.ruhig) h.dataset.ruhig = "ja"; else delete h.dataset.ruhig;
+  }, [einstellungen.schrift, einstellungen.ruhig]);
 
   const wert: Zustand = {
     land, setLand,
@@ -108,22 +126,25 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     },
     eintraege, setEintraege,
     rad, setRad,
+    einstellungen,
+    setEinstellungen: (a) => setEinstellungenRoh((alt) => ({ ...alt, ...a })),
     ichLoeschen: () => {
       geraetEntfernen((k) => k.startsWith("ich-"));
-      setIchMerkenState(false); setEintraege(() => []); setRad(() => []);
+      setIchMerkenState(false); setEintraege(() => []); setRad(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
     },
     allesLoeschen: () => {
       sitzungLoeschen();
       geraetEntfernen((k) => k.startsWith("ich-"));
       setIchMerkenState(false);
-      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []);
+      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
     },
-    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad }),
+    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad, einstellungen }),
     laden: (d) => {
       setAntworten(d.antworten ?? {}); setNotizen(d.notizen ?? {}); setMarkierungen(d.markierungen ?? {});
       setGespraech(d.gespraech ?? ""); setPlan(Array.isArray(d.plan) ? d.plan : []);
       if (Array.isArray(d.eintraege)) setEintraege(() => d.eintraege!);
       if (Array.isArray(d.rad)) setRad(() => d.rad!);
+      if (d.einstellungen && typeof d.einstellungen === "object") setEinstellungenRoh({ ...EINSTELLUNGEN_START, ...d.einstellungen });
     },
   };
   return <Ctx.Provider value={wert}>{children}</Ctx.Provider>;

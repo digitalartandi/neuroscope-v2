@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { IchIntro } from "../components/IchIntro";
+import { WISSEN_SYMBOLE } from "../components/Icons";
 import { HAEUFIGKEIT, THEMEN } from "../content/reflexion";
 import { Kalender, Netz, Punktreihe, Verlauf, type Achse } from "../components/Diagramme";
 import { themaSymbol } from "../components/Icons";
@@ -13,7 +15,7 @@ const KURZ: Record<string, string> = {
 const FRAGE_RAD: Record<string, string> = {
   stress: "Umgang mit Belastung",
 };
-const ACHSEN: Achse[] = THEMEN.map((t) => ({ id: t.id, kurz: KURZ[t.id] ?? t.titel }));
+const ALLE_ACHSEN: Achse[] = THEMEN.map((t) => ({ id: t.id, kurz: KURZ[t.id] ?? t.titel }));
 
 // Gesichter für die Stimmungsauswahl: eigene, schlichte Linien.
 function Gesicht({ stufe }: { stufe: number }) {
@@ -41,7 +43,11 @@ export default function Ich() {
   const [energie, setEnergie] = useState<number | undefined>(vorhanden?.energie);
   const [wort, setWort] = useState(vorhanden?.wort ?? "");
   const [gespeichert, setGespeichert] = useState(false);
-  const [zeitraum, setZeitraum] = useState(14);
+  const e = z.einstellungen;
+  const [zeitraum, setZeitraum] = useState<number>(e.zeitraum);
+  const [introOffen, setIntroOffenRoh] = useState(!e.intro);
+  const setIntroOffen = (o: boolean) => { setIntroOffenRoh(o); window.scrollTo(0, 0); };
+  const ACHSEN = ALLE_ACHSEN.filter((a) => e.achsen.includes(a.id));
 
   const letzterRad = z.rad[z.rad.length - 1];
   const [werte, setWerte] = useState<Record<string, number>>(() => letzterRad?.werte ?? Object.fromEntries(THEMEN.map((t) => [t.id, 5])));
@@ -51,8 +57,8 @@ export default function Ich() {
   const vergleich = frueher.find((r) => r.datum === vergleichDatum);
 
   const eintragenKlick = () => {
-    if (stimmung === undefined || energie === undefined) return;
-    z.setEintraege((alt) => eintragen(alt, { datum: heuteTag, stimmung, energie, wort: wort.trim() || undefined }));
+    if (stimmung === undefined || (e.energie && energie === undefined)) return;
+    z.setEintraege((alt) => eintragen(alt, { datum: heuteTag, stimmung, energie: e.energie ? energie : undefined, wort: e.wort ? wort.trim() || undefined : undefined }));
     setGespeichert(true);
     window.setTimeout(() => setGespeichert(false), 2400);
   };
@@ -64,17 +70,26 @@ export default function Ich() {
 
   const beantwortet = THEMEN.map((t) => ({ t, n: t.fragen.filter((f) => z.antworten[schluessel(t.id, f.id)] !== undefined).length }));
 
+  if (introOffen) return <div className="spalte spalte--breit ich"><IchIntro fertig={() => setIntroOffen(false)} /></div>;
+
+  const gruss = (() => { const h = new Date().getHours(); return h < 11 ? "Guten Morgen" : h < 18 ? "Hallo" : "Guten Abend"; })();
+  const nichtsSichtbar = !Object.values(e.bereiche).some(Boolean);
+
   return (
     <div className="spalte spalte--breit ich">
-      <h1>Mein Bereich</h1>
-      <p className="einleitung">
-        Hier siehst du, was du selbst eingetragen hast, als Bild statt als Text. Neuroscope rechnet nichts aus und bewertet nichts.
-      </p>
-
-      <SpeicherKarte />
+      <div className="ich-kopf">
+        <div>
+          <h1>{e.name.trim() ? `${gruss}, ${e.name.trim()}` : "Mein Bereich"}</h1>
+          <a className="speicher-chip" href="#/einstellungen" data-an={z.ichMerken ? "ja" : undefined}>
+            <span aria-hidden="true" />{z.ichMerken ? "Auf diesem Gerät gemerkt" : "Nur für diese Sitzung"}
+          </a>
+        </div>
+        <a className="rund-knopf" href="#/einstellungen" aria-label="Einstellungen" title="Einstellungen">{WISSEN_SYMBOLE.zahnrad}</a>
+      </div>
+      {nichtsSichtbar && <p className="leer" style={{ marginTop: "1rem" }}>Alle Bereiche sind ausgeblendet. <a href="#/einstellungen">In den Einstellungen einblenden</a></p>}
 
       {/* ---------- Check-in ---------- */}
-      <section className="ich-karte" aria-labelledby="heute-titel">
+      {e.bereiche.checkin && <section className="ich-karte" aria-labelledby="heute-titel">
         <h2 id="heute-titel">Wie geht es dir heute?</h2>
         <p className="leise klein" style={{ marginTop: 0 }}>{datumLang(heuteTag)}{vorhanden ? " · bereits eingetragen, du kannst es ändern" : ""}</p>
         <fieldset className="wahl">
@@ -88,6 +103,7 @@ export default function Ich() {
             ))}
           </div>
         </fieldset>
+        {e.energie && (
         <fieldset className="wahl">
           <legend>Energie</legend>
           <div className="wahl__reihe">
@@ -99,18 +115,23 @@ export default function Ich() {
             ))}
           </div>
         </fieldset>
+        )}
+        {e.wort && (
+          <>
         <label className="feld" htmlFor="wort">Ein Wort für heute <span className="leise" style={{ fontWeight: 400 }}>(freiwillig)</span></label>
         <input id="wort" type="text" maxLength={40} value={wort} onChange={(e) => setWort(e.target.value)} placeholder="zum Beispiel: müde, dankbar, unruhig" />
+          </>
+        )}
         <div className="knopfreihe">
-          <button className={`knopf${gespeichert ? " knopf--erledigt" : ""}`} type="button" onClick={eintragenKlick} disabled={stimmung === undefined || energie === undefined}>
+          <button className={`knopf${gespeichert ? " knopf--erledigt" : ""}`} type="button" onClick={eintragenKlick} disabled={stimmung === undefined || (e.energie && energie === undefined)}>
             {gespeichert ? <><Haken /> Eingetragen</> : vorhanden ? "Eintrag aktualisieren" : "Eintragen"}
           </button>
         </div>
         <p className="sr-only" role="status">{gespeichert ? "Dein Eintrag für heute ist gespeichert." : ""}</p>
-      </section>
+      </section>}
 
       {/* ---------- Verlauf ---------- */}
-      <section className="ich-karte" aria-labelledby="verlauf-titel">
+      {e.bereiche.verlauf && <section className="ich-karte" aria-labelledby="verlauf-titel">
         <div className="ich-karte__kopf">
           <h2 id="verlauf-titel">Dein Verlauf</h2>
           <div className="segment" role="group" aria-label="Zeitraum">
@@ -121,18 +142,16 @@ export default function Ich() {
           <Leer text="Sobald du oben etwas einträgst, entsteht hier dein Verlauf. Ein Eintrag am Tag reicht." />
         ) : (
           <>
-            <Verlauf tage={tageZurueck(zeitraum)} eintraege={z.eintraege} />
+            <Verlauf tage={tageZurueck(zeitraum)} eintraege={z.eintraege} energie={e.energie} />
             <h3 className="ich-unter">Die letzten fünf Wochen</h3>
             <Kalender eintraege={z.eintraege} />
           </>
         )}
-        {!z.ichMerken && z.eintraege.length > 0 && (
-          <p className="hinweis-feld">Ohne „Auf diesem Gerät merken“ verschwinden die Einträge, wenn du den Tab schließt.</p>
-        )}
       </section>
 
+      }
       {/* ---------- Lebensrad ---------- */}
-      <section className="ich-karte" aria-labelledby="rad-titel">
+      {e.bereiche.rad && <section className="ich-karte" aria-labelledby="rad-titel">
         <h2 id="rad-titel">Deine Lebensbereiche</h2>
         <p className="leise" style={{ marginTop: 0 }}>
           Wie zufrieden bist du gerade mit diesen Bereichen deines Lebens? 0 heißt gar nicht, 10 heißt völlig. Es zählt nur deine eigene Sicht.
@@ -140,7 +159,7 @@ export default function Ich() {
         <div className="rad">
           <Netz achsen={ACHSEN} jetzt={werte} vergleich={vergleich?.werte} />
           <div className="rad__regler">
-            {THEMEN.map((t) => (
+            {THEMEN.filter((t) => e.achsen.includes(t.id)).map((t) => (
               <label key={t.id} className="regler">
                 <span className="regler__kopf">
                   <span className="regler__symbol">{themaSymbol(t.id)}</span>
@@ -172,8 +191,9 @@ export default function Ich() {
         <p className="sr-only" role="status">{radGespeichert ? "Dein Stand ist festgehalten." : ""}</p>
       </section>
 
+      }
       {/* ---------- Selbstreflexion auf einen Blick ---------- */}
-      <section className="ich-karte" aria-labelledby="muster-titel">
+      {e.bereiche.muster && <section className="ich-karte" aria-labelledby="muster-titel">
         <h2 id="muster-titel">Deine Selbstreflexion auf einen Blick</h2>
         <p className="leise" style={{ marginTop: 0 }}>
           Jede Punktreihe ist eine Frage, von „nie“ links bis „fast immer“ rechts. Der gefüllte Punkt ist deine Antwort.
@@ -219,47 +239,7 @@ export default function Ich() {
           <a className="knopf knopf--leise" href="#/spiegel">Persönlicher Spiegel in Worten</a>
           <a className="knopf knopf--leise" href="#/gespraech">Gesprächsvorbereitung</a>
         </div>
-      </section>
-    </div>
-  );
-}
-
-function SpeicherKarte() {
-  const z = useZustand();
-  const [fragen, setFragen] = useState(false);
-  if (z.ichMerken) {
-    return (
-      <div className="speicher speicher--an">
-        <span className="speicher__punkt" aria-hidden="true" />
-        <p>
-          Deine Einträge hier werden <strong>auf diesem Gerät gemerkt</strong>. Nur hier, nirgendwo sonst.
-          <span className="speicher__hinweis">
-            Manche Browser, vor allem Safari, löschen gespeicherte Daten nach einiger Zeit ohne Besuch. Sichere deinen Verlauf
-            deshalb ab und zu <a href="#/sichern">als verschlüsselte Datei</a>.
-          </span>
-        </p>
-        <div className="speicher__knoepfe">
-          <button className="textknopf" type="button" onClick={() => z.setIchMerken(false)}>Nicht mehr merken</button>
-          {fragen ? (
-            <>
-              <button className="textknopf textknopf--warn" type="button" onClick={() => { z.ichLoeschen(); setFragen(false); }}>Ja, alles hier löschen</button>
-              <button className="textknopf" type="button" onClick={() => setFragen(false)}>Abbrechen</button>
-            </>
-          ) : <button className="textknopf" type="button" onClick={() => setFragen(true)}>Löschen</button>}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="speicher">
-      <div>
-        <p style={{ margin: 0 }}><strong>Möchtest du einen Verlauf über mehrere Tage sehen?</strong></p>
-        <p className="leise klein" style={{ margin: ".25rem 0 0" }}>
-          Dann kann sich Neuroscope deine Einträge in diesem Bereich auf diesem Gerät merken. Sie verlassen das Gerät nie und lassen sich jederzeit löschen.
-          Ohne Zustimmung gilt alles nur, bis du den Tab schließt. Für längere Zeit sicher ist nur eine <a href="#/sichern">Sicherungsdatei</a>.
-        </p>
-      </div>
-      <button className="knopf" type="button" onClick={() => z.setIchMerken(true)}>Auf diesem Gerät merken</button>
+      </section>}
     </div>
   );
 }

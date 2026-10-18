@@ -785,3 +785,75 @@ main > .start { animation: none; }
 .nav a[data-hilfe="ja"] { display: inline-flex; align-items: center; gap: .45rem; }
 .nav a[data-hilfe="ja"]::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--rot); }
 .speicher__hinweis { display: block; margin-top: .35rem; font-size: .85rem; color: var(--text-2); }
+
+/* ---------- Mein Bereich: Kopf, Einführung, Einstellungen ---------- */
+.ich-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s3); }
+.ich-kopf h1 { margin: 0 0 .35rem; }
+.speicher-chip { display: inline-flex; align-items: center; gap: .45rem; font-size: .8rem; font-weight: 600; color: var(--text-2); text-decoration: none;
+  padding: .3rem .7rem; border-radius: 999px; background: var(--linie-2); min-height: 2rem; }
+.speicher-chip span { width: .5rem; height: .5rem; border-radius: 50%; background: var(--text-3); }
+.speicher-chip[data-an] { background: rgba(16, 185, 129, .1); color: #047857; }
+.speicher-chip[data-an] span { background: var(--gruen); }
+@media (prefers-color-scheme: dark) { .speicher-chip[data-an] { color: #6ee7b7; } }
+.rund-knopf { flex: none; display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 50%; border: 1px solid var(--linie); background: var(--karte-voll); color: var(--text-2);
+  transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), color .2s; }
+.rund-knopf .symbol { width: 1.35rem; height: 1.35rem; }
+@media (hover: hover) { .rund-knopf:hover { transform: rotate(45deg); color: var(--violett); } }
+.ich > .ich-karte:first-of-type { margin-top: var(--s4); }
+
+.intro { display: grid; gap: var(--s4); }
+.intro__punkte { display: flex; gap: .4rem; list-style: none; padding: 0; margin: 0; }
+.intro__punkte li { height: 5px; flex: 1; border-radius: 999px; background: var(--linie); transition: background .3s; }
+.intro__punkte li.aktiv, .intro__punkte li.erledigt { background: var(--verlauf); }
+.intro__schritt { animation: auftauchen .4s cubic-bezier(.22, 1, .36, 1) both; }
+.intro__schritt h1 { margin-top: var(--s3); }
+.intro__liste { list-style: none; padding: 0; margin: var(--s4) 0; display: grid; gap: var(--s3); }
+.intro__liste li { display: flex; gap: var(--s3); align-items: flex-start; }
+.intro__liste strong { display: block; }
+.intro__liste li > span:last-child { color: var(--text-2); }
+.intro__notiz { padding: var(--s3) var(--s4); border-radius: 14px; background: var(--violett-hell); color: var(--text-2); font-size: .95rem; }
+.intro__knoepfe { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--linie-2); }
+.wahlkarten { display: grid; gap: var(--s3); margin: var(--s4) 0; }
+.wahlkarte { display: grid; gap: .25rem; text-align: left; font: inherit; cursor: pointer; padding: var(--s4) var(--s5); border-radius: 18px;
+  border: 1px solid var(--linie); background: var(--karte-voll); color: var(--text); transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s, border-color .2s; }
+.wahlkarte span { color: var(--text-2); font-size: .92rem; }
+.wahlkarte--haupt { background: var(--verlauf); color: #fff; border-color: transparent; box-shadow: 0 12px 26px -14px rgba(79, 70, 229, .7); }
+.wahlkarte--haupt span { color: rgba(255, 255, 255, .88); }
+.wahlkarte:active { transform: scale(.98); }
+@media (hover: hover) { .wahlkarte:not(.wahlkarte--haupt):hover { border-color: #c7d2fe; } }
+
+.schalter-liste { display: grid; gap: 2px; border-radius: 16px; overflow: hidden; border: 1px solid var(--linie); }
+.schalter { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s4); padding: .8rem 1rem; background: var(--karte-voll); cursor: pointer; min-height: 3.5rem; }
+.schalter + .schalter { border-top: 1px solid var(--linie-2); }
+.schalter__text { display: grid; gap: .1rem; }
+.schalter__text span { font-size: .85rem; color: var(--text-2); }
+.schalter input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.schalter__bahn { flex: none; width: 2.9rem; height: 1.7rem; border-radius: 999px; background: #cbd5e1; position: relative; transition: background .2s; }
+.schalter__bahn span { position: absolute; top: .2rem; left: .2rem; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  transition: transform .25s cubic-bezier(.34, 1.56, .64, 1); }
+.schalter input:checked + .schalter__bahn { background: var(--violett); }
+.schalter input:checked + .schalter__bahn span { transform: translateX(1.2rem); }
+.schalter input:focus-visible + .schalter__bahn { outline: 3px solid var(--fokus); outline-offset: 2px; }
+@media (prefers-color-scheme: dark) { .schalter__bahn { background: #475569; } }
+
+.achsen-wahl { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+.achse-chip { position: relative; display: inline-flex; align-items: center; gap: .4rem; min-height: 2.6rem; padding: .3rem .85rem .3rem .65rem; border-radius: 999px;
+  border: 1px solid var(--linie); background: var(--karte-voll); color: var(--text-2); font-size: .85rem; font-weight: 600; cursor: pointer; transition: background .2s, color .2s, transform .15s; }
+.achse-chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.achse-chip .symbol { width: 1.05rem; height: 1.05rem; }
+.achse-chip.an { background: var(--violett-hell); color: var(--violett); border-color: #ddd6fe; }
+.achse-chip:active { transform: scale(.95); }
+.achse-chip:focus-within { outline: 3px solid var(--fokus); outline-offset: 2px; }
+
+.erinnerung { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.erinnerung label { font-weight: 650; }
+.erinnerung input[type="time"] { font: inherit; min-height: 2.75rem; padding: .3rem .7rem; border: 1px solid var(--linie); border-radius: var(--r-klein); background: var(--karte-voll); color: var(--text); }
+.loeschen { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--linie-2); }
+.knopf--warn { background: var(--rot); }
+
+/* Größere Schrift und ruhige Darstellung (Einstellungen) */
+html[data-schrift="gross"] { font-size: 112.5%; }
+html[data-ruhig] *, html[data-ruhig] *::before, html[data-ruhig] *::after { animation: none !important; transition: none !important; }
+html[data-ruhig] .hintergrund span { animation: none !important; }
+html[data-ruhig] .linie, html[data-ruhig] .haken { stroke-dashoffset: 0; }
+p.feld { display: block; font-weight: 650; margin: var(--s5) 0 var(--s2); }

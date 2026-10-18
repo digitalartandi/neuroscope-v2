@@ -1,7 +1,7 @@
 // „Mein Bereich“: eigene Einträge der Person, nur dargestellt, nie ausgewertet.
 // Keine Summen, keine Durchschnitte, keine Schwellen. Ein Test prüft das.
 
-export interface Eintrag { datum: string; stimmung: number; energie: number; wort?: string }
+export interface Eintrag { datum: string; stimmung: number; energie?: number; wort?: string }
 export interface RadStand { datum: string; werte: Record<string, number> }
 
 export const STIMMUNG = ["sehr schwer", "eher schwer", "mittel", "eher gut", "sehr gut"];
@@ -34,4 +34,54 @@ export function datumKurz(tag: string) {
 // Ein Eintrag pro Tag: ein neuer ersetzt den des gleichen Tages.
 export function eintragen(liste: Eintrag[], neu: Eintrag): Eintrag[] {
   return [...liste.filter((e) => e.datum !== neu.datum), neu].sort((a, b) => a.datum.localeCompare(b.datum));
+}
+
+// Persönliche Einstellungen. Liegen wie alle Einträge nur im Browser
+// (Sitzung, oder mit Zustimmung dauerhaft auf dem Gerät).
+export interface Einstellungen {
+  name: string;
+  bereiche: { checkin: boolean; verlauf: boolean; rad: boolean; muster: boolean };
+  energie: boolean;
+  wort: boolean;
+  zeitraum: 7 | 14 | 30;
+  achsen: string[]; // Lebensbereiche im Netz
+  schrift: "normal" | "gross";
+  ruhig: boolean;
+  intro: boolean; // Einführung schon gesehen
+  land?: "AT" | "DE";
+  region?: string;
+}
+export const EINSTELLUNGEN_START: Einstellungen = {
+  name: "",
+  bereiche: { checkin: true, verlauf: true, rad: true, muster: true },
+  energie: true,
+  wort: true,
+  zeitraum: 14,
+  achsen: ["schlaf", "energie", "stress", "stimmung", "beziehungen", "alltag", "gewohnheiten", "staerken"],
+  schrift: "normal",
+  ruhig: false,
+  intro: false,
+};
+
+// Kalender-Erinnerung als .ics-Datei. Entsteht im Browser, wird nirgends hingeschickt.
+export function erinnerungIcs(uhrzeit: string, adresse: string): string {
+  const [h, m] = uhrzeit.split(":").map(Number);
+  const d = new Date();
+  const z = (n: number) => String(n).padStart(2, "0");
+  const start = `${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}T${z(h)}${z(m)}00`;
+  const jetzt = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  return [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Neuroscope//Erinnerung//DE", "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:neuroscope-erinnerung-${jetzt}@neuroscope.at`,
+    `DTSTAMP:${jetzt}`,
+    `DTSTART:${start}`,
+    "DURATION:PT5M",
+    "RRULE:FREQ=DAILY",
+    "SUMMARY:Kurz bei mir nachspüren",
+    `DESCRIPTION:Wie geht es dir heute? ${adresse}`,
+    `URL:${adresse}`,
+    "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Kurz bei mir nachspüren", "TRIGGER:PT0M", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR", "",
+  ].join("\r\n");
 }

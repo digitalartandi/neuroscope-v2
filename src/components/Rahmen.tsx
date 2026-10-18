@@ -16,7 +16,7 @@ const NAV: [string, string][] = [
 ];
 
 export function Rahmen({ route, children }: { route: string; children: ReactNode }) {
-  const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern"));
+  const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern" || route === "/einstellungen"));
   return (
     <>
       <div className="hintergrund" aria-hidden="true"><span /><span /><span /></div>

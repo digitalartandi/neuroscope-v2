@@ -17,7 +17,7 @@ function useBreite<T extends HTMLElement>() {
 }
 
 // ---------- Verlauf: Stimmung und Energie über die Tage ----------
-export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintrag[] }) {
+export function Verlauf({ tage, eintraege, energie = true }: { tage: string[]; eintraege: Eintrag[]; energie?: boolean }) {
   const [ref, breite] = useBreite<HTMLDivElement>();
   const [aktiv, setAktiv] = useState<number | null>(null);
   const nachTag = new Map(eintraege.map((e) => [e.datum, e]));
@@ -30,8 +30,9 @@ export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintra
     let d = "", offen = false;
     tage.forEach((t, i) => {
       const e = nachTag.get(t);
-      if (!e) { offen = false; return; }
-      d += `${offen ? "L" : "M"}${x(i).toFixed(1)},${y(e[feld]).toFixed(1)}`;
+      const v = e?.[feld];
+      if (v === undefined) { offen = false; return; }
+      d += `${offen ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`;
       offen = true;
     });
     return d;
@@ -57,7 +58,7 @@ export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintra
     <div className="diagramm" ref={ref}>
       <div className="legende" aria-hidden="true">
         <span><i className="legende__linie reihe-1" />Stimmung</span>
-        <span><i className="legende__linie reihe-2" />Energie</span>
+        {energie && <span><i className="legende__linie reihe-2" />Energie</span>}
       </div>
       <div className="diagramm__flaeche">
         <svg width={breite} height={H} role="img" tabIndex={0} onKeyDown={taste} onBlur={() => setAktiv(null)}
@@ -71,14 +72,14 @@ export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintra
           ))}
           {aktiv != null && <line className="fadenkreuz" x1={x(aktiv)} x2={x(aktiv)} y1={O} y2={O + h} />}
           <path className="linie reihe-1" d={linie("stimmung")} />
-          <path className="linie reihe-2" d={linie("energie")} />
+          {energie && <path className="linie reihe-2" d={linie("energie")} />}
           {tage.map((t, i) => {
             const e = nachTag.get(t);
             if (!e) return null;
             return (
               <g key={t} className={aktiv === i ? "punkte aktiv" : "punkte"}>
                 <circle className="punkt reihe-1" cx={x(i)} cy={y(e.stimmung)} r={aktiv === i ? 5.5 : 4} />
-                <circle className="punkt reihe-2" cx={x(i)} cy={y(e.energie)} r={aktiv === i ? 5.5 : 4} />
+                {e.energie !== undefined && <circle className="punkt reihe-2" cx={x(i)} cy={y(e.energie)} r={aktiv === i ? 5.5 : 4} />}
               </g>
             );
           })}
@@ -90,7 +91,7 @@ export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintra
             {ae ? (
               <>
                 <p><i className="legende__linie reihe-1" /><strong>{STIMMUNG[ae.stimmung]}</strong> <span>Stimmung</span></p>
-                <p><i className="legende__linie reihe-2" /><strong>{ENERGIE[ae.energie]}</strong> <span>Energie</span></p>
+                {ae.energie !== undefined && <p><i className="legende__linie reihe-2" /><strong>{ENERGIE[ae.energie]}</strong> <span>Energie</span></p>}
                 {ae.wort && <p className="tooltip__wort">„{ae.wort}“</p>}
               </>
             ) : <p className="leise">kein Eintrag</p>}
@@ -104,7 +105,7 @@ export function Verlauf({ tage, eintraege }: { tage: string[]; eintraege: Eintra
           <tbody>
             {tage.filter((t) => nachTag.has(t)).reverse().map((t) => {
               const e = nachTag.get(t)!;
-              return <tr key={t}><td>{datumLang(t)}</td><td>{STIMMUNG[e.stimmung]}</td><td>{ENERGIE[e.energie]}</td><td>{e.wort ?? ""}</td></tr>;
+              return <tr key={t}><td>{datumLang(t)}</td><td>{STIMMUNG[e.stimmung]}</td><td>{e.energie !== undefined ? ENERGIE[e.energie] : ""}</td><td>{e.wort ?? ""}</td></tr>;
             })}
           </tbody>
         </table>

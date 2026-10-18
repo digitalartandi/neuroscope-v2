@@ -13,6 +13,7 @@ import { Datenschutz, Impressum, Ueber } from "./pages/Recht";
 import Plan from "./pages/Plan";
 import Sichern from "./pages/Sichern";
 import Ich from "./pages/Ich";
+import Einstellungen from "./pages/Einstellungen";
 
 const Spur = lazy(() => import("./games/Spur"));
 const Farbwort = lazy(() => import("./games/Farbwort"));
@@ -25,6 +26,7 @@ function Seite({ route }: { route: string }) {
     case "": case undefined: return <Start />;
     case "reflexion": return <Reflexion themaId={b} key={b ?? "uebersicht"} />;
     case "ich": return <Ich />;
+    case "einstellungen": return <Einstellungen />;
     case "spiegel": return <Spiegel />;
     case "gespraech": return <Gespraech />;
     case "plan": return <Plan />;
