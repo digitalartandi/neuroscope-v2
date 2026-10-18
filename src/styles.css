@@ -1071,3 +1071,42 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
   .speicher-chip { background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); }
   .rund-knopf { border: 0; box-shadow: 0 1px 2px rgba(15, 23, 42, .06), inset 0 0 0 1px var(--m-trenn); }
 }
+
+/* ---------- Mobile: Linien und Spuren klar erkennbar ---------- */
+@media (max-width: 48rem) {
+  :root { --m-trenn: rgba(15, 23, 42, .1); --m-spur: #d3d7e2; }
+  /* Jede Frage als eigene weiße Fläche: keine Trennlinie auf getöntem Grund mehr */
+  .frage { background: var(--m-flaeche); border: 0; border-radius: var(--m-radius); padding: 1.15rem 1rem 1rem; margin-top: .85rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 6px 20px -12px rgba(15, 23, 42, .12); }
+  .frage legend { float: left; width: 100%; font-size: 1.05rem; line-height: 1.45; margin-bottom: 1rem; }
+  .frage legend + * { clear: both; }
+  .skala::before { background: var(--m-spur); height: 2px; }
+  .skala .punkt::before { border-width: 2px; }
+  /* Fortschritt: kräftigere Spur */
+  .fortschritt, .stand__balken { background: var(--m-spur); }
+  .fortschritt { height: 6px; }
+  /* Themenleiste: sanftes Ausblenden am Rand statt harter Kante, klare Chips */
+  .themen { margin-left: -1.25rem; margin-right: -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 1.25rem, #000 calc(100% - 2.5rem), transparent);
+            mask-image: linear-gradient(90deg, transparent 0, #000 1.25rem, #000 calc(100% - 2.5rem), transparent); }
+  .themen::-webkit-scrollbar { display: none; }
+  .themen a { box-shadow: inset 0 0 0 1px var(--m-trenn); }
+  .themen a[aria-current="step"] { box-shadow: inset 0 0 0 2px var(--blau); }
+  .themen a::after { background: var(--m-spur); }
+  /* Filter- und Reiterleisten ebenso */
+  .filter, .reiter, .sprungmarken {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
+            mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); }
+  /* Feine Linien in weißen Flächen etwas kräftiger */
+  .wissen-karten > li + li, .liste-ruhig > li + li, .muster > li + li, .irrtuemer > li + li, .nummern > li + li, .wegweiser li + li { border-top-color: var(--m-trenn); }
+  .raster { stroke: #e3e6ee; }
+  .kalender__tag { border-color: var(--m-spur); }
+}
+@media (max-width: 48rem) and (prefers-color-scheme: dark) {
+  :root { --m-trenn: rgba(255, 255, 255, .1); --m-spur: #2c3654; }
+  .raster { stroke: #2a3350; }
+}
+@media (max-width: 48rem) {
+  .tabs { background: color-mix(in srgb, var(--m-flaeche) 86%, transparent); box-shadow: 0 10px 30px -8px rgba(15, 23, 42, .28), 0 0 0 1px var(--m-trenn); }
+  .tabs__marke { background: var(--m-grund); box-shadow: inset 0 0 0 1px var(--m-trenn); }
+}
