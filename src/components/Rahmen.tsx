@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { useZustand, type Land } from "../lib/zustand";
 
 export function Logo() {
   return <span className="marke__punkt" aria-hidden="true" />;
@@ -29,7 +28,6 @@ const NAV: [string, string][] = [
 ];
 
 export function Rahmen({ route, children }: { route: string; children: ReactNode }) {
-  const { land, setLand } = useZustand();
   const aktiv = (p: string) => route === p || route.startsWith(p + "/");
   return (
     <>
@@ -44,14 +42,6 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
               <a key={p} href={"#" + p} aria-current={aktiv(p) ? "page" : undefined}>{t}</a>
             ))}
           </nav>
-          <div className="land" role="group" aria-label="Land für Hilfe-Angebote">
-            {(["AT", "DE"] as Land[]).map((l) => (
-              <button key={l} type="button" aria-pressed={land === l} onClick={() => setLand(l)}
-                title={l === "AT" ? "Österreich" : "Deutschland"} aria-label={l === "AT" ? "Österreich" : "Deutschland"}>
-                {l}
-              </button>
-            ))}
-          </div>
         </div>
       </header>
       <main id="inhalt" tabIndex={-1}>{children}</main>

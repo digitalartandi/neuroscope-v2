@@ -1,4 +1,5 @@
 import { useZustand } from "../lib/zustand";
+import { SYMBOLE } from "../components/Icons";
 
 const WEGE: [string, string, string][] = [
   ["/reflexion", "Selbstreflexion", "Acht Themen, rund 50 kurze Fragen. Du kannst jede überspringen."],
@@ -35,7 +36,7 @@ export default function Start() {
         <h2 id="was">Was du hier findest</h2>
         <ul className="wegweiser">
           {WEGE.map(([p, t, d]) => (
-            <li key={p}><a href={"#" + p}><strong>{t}</strong><span>{d}</span></a></li>
+            <li key={p}><a href={"#" + p}><span className="wegweiser__symbol">{SYMBOLE[p.slice(1)]}</span><strong>{t}</strong><span>{d}</span></a></li>
           ))}
         </ul>
       </section>
