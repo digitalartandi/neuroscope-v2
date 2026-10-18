@@ -7,6 +7,7 @@ export interface VerstehenSeite {
   id: string;
   titel: string;
   gruppe: string;
+  stichworte?: string[]; // nur für die Suche, wird nicht angezeigt
   icd?: { code: string; titel: string; url?: string };
   einleitung: string;
   absaetze: { titel: string; text: string[] }[];
@@ -28,6 +29,7 @@ export const TRANSGENERATIONAL: VerstehenSeite = {
   id: "transgenerational",
   titel: "Wenn Belastungen über Generationen wirken",
   gruppe: "Familie und Geschichte",
+  stichworte: ["Eltern", "Großeltern", "Kriegsenkel", "Krieg", "Flucht", "Familiengeschichte", "Holocaust", "Vertreibung"],
   einleitung:
     "Manche Menschen tragen Gefühle mit sich, die sich nicht aus dem eigenen Leben erklären: diffuse Angst, Schwere, ein Schweigen in der Familie. Fachleute sprechen von transgenerationaler Weitergabe. Gemeint ist, dass Folgen schwerer Erlebnisse der Eltern oder Großeltern das Familienleben prägen und so auch Kinder und Enkel berühren können.",
   absaetze: [

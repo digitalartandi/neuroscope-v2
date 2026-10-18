@@ -9,7 +9,7 @@ const LAENGER = "wenn Beschwerden über Wochen anhalten, belasten oder den Allta
 
 export const SEITEN: VerstehenSeite[] = [
   {
-    id: "depression", gruppe: "Stimmung", titel: "Depression",
+    id: "depression", stichworte: ["niedergeschlagen", "traurig", "Antriebslosigkeit", "Freudlosigkeit", "Antidepressiva", "Tief"], gruppe: "Stimmung", titel: "Depression",
     icd: { code: "6A7", titel: "Depressive disorders" },
     einleitung: "Eine Depression ist mehr als eine traurige Phase. Sie prägt über längere Zeit Stimmung, Antrieb, Denken und Körpergefühl. Freude und Interesse gehen verloren, und auch kleine Aufgaben werden schwer.",
     absaetze: [
@@ -25,7 +25,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "bipolar", gruppe: "Stimmung", titel: "Bipolare Erkrankung",
+    id: "bipolar", stichworte: ["Manie", "manisch", "manisch-depressiv", "Stimmungsschwankungen", "Hypomanie"], gruppe: "Stimmung", titel: "Bipolare Erkrankung",
     icd: { code: "6A6", titel: "Bipolar or related disorders" },
     einleitung: "Bei einer bipolaren Erkrankung wechseln sich depressive Phasen mit Phasen ab, in denen Stimmung und Antrieb krankhaft gehoben sind. Dazwischen kann es lange stabile Zeiten geben.",
     absaetze: [
@@ -40,7 +40,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "angst", gruppe: "Angst und Zwang", titel: "Angsterkrankungen",
+    id: "angst", stichworte: ["Panik", "Panikattacke", "Phobie", "Sorgen", "soziale Angst", "Herzrasen", "Prüfungsangst", "Flugangst"], gruppe: "Angst und Zwang", titel: "Angsterkrankungen",
     icd: { code: "6B0", titel: "Anxiety or fear-related disorders" },
     einleitung: "Angst ist ein wichtiges Schutzsignal. Bei einer Angsterkrankung ist sie aber so stark, so häufig oder so wenig begründet, dass sie das Leben einschränkt, oft verbunden mit Vermeiden.",
     absaetze: [
@@ -55,7 +55,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "zwang", gruppe: "Angst und Zwang", titel: "Zwangserkrankung",
+    id: "zwang", stichworte: ["Zwangsgedanken", "Kontrollieren", "Waschen", "Rituale", "Grübeln"], gruppe: "Angst und Zwang", titel: "Zwangserkrankung",
     icd: { code: "6B20", titel: "Obsessive-compulsive disorder" },
     einleitung: "Bei einer Zwangserkrankung drängen sich immer wieder belastende Gedanken, Bilder oder Impulse auf. Um die Anspannung zu lindern, fühlen sich Betroffene gedrängt, bestimmte Handlungen oder gedankliche Rituale auszuführen.",
     absaetze: [
@@ -70,7 +70,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "ptbs", gruppe: "Belastung, Trauma und Verlust", titel: "Posttraumatische Belastungsstörung",
+    id: "ptbs", stichworte: ["Trauma", "Flashback", "Albträume", "Unfall", "Gewalt", "Überfall"], gruppe: "Belastung, Trauma und Verlust", titel: "Posttraumatische Belastungsstörung",
     icd: { code: "6B40", titel: "Post traumatic stress disorder" },
     einleitung: "Nach einem extrem bedrohlichen oder entsetzlichen Erlebnis reagieren fast alle Menschen zunächst stark. Bei manchen klingt diese Reaktion nicht ab. Dann sprechen Fachleute von einer Posttraumatischen Belastungsstörung, kurz PTBS.",
     absaetze: [
@@ -87,7 +87,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "kptbs", gruppe: "Belastung, Trauma und Verlust", titel: "Komplexe Posttraumatische Belastungsstörung",
+    id: "kptbs", stichworte: ["Trauma", "Kindheit", "Missbrauch", "Gewalt", "Vernachlässigung"], gruppe: "Belastung, Trauma und Verlust", titel: "Komplexe Posttraumatische Belastungsstörung",
     icd: { code: "6B41", titel: "Complex post traumatic stress disorder" },
     einleitung: "Die Komplexe PTBS ist neu in der ICD-11. Sie entsteht meist nach lang andauernden oder wiederholten Traumatisierungen, denen man kaum entkommen konnte, etwa Gewalt in der Kindheit, Missbrauch oder Folter.",
     absaetze: [
@@ -102,7 +102,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "trauer", gruppe: "Belastung, Trauma und Verlust", titel: "Anhaltende Trauer",
+    id: "trauer", stichworte: ["Tod", "Verlust", "Trauern", "Hinterbliebene", "Sterben"], gruppe: "Belastung, Trauma und Verlust", titel: "Anhaltende Trauer",
     icd: { code: "6B42", titel: "Prolonged grief disorder" },
     einleitung: "Trauer ist keine Krankheit, sondern eine natürliche Antwort auf Verlust. Bei einem kleinen Teil der Trauernden bleibt sie aber über lange Zeit so intensiv, dass das Leben kaum weitergeht.",
     absaetze: [
@@ -117,7 +117,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "anpassung", gruppe: "Belastung, Trauma und Verlust", titel: "Anpassungsstörung",
+    id: "anpassung", stichworte: ["Trennung", "Scheidung", "Jobverlust", "Lebenskrise", "Krise", "Umzug"], gruppe: "Belastung, Trauma und Verlust", titel: "Anpassungsstörung",
     icd: { code: "6B43", titel: "Adjustment disorder" },
     einleitung: "Trennung, Krankheit, Jobverlust oder ein Umzug können das Leben aus dem Gleichgewicht bringen. Gelingt es über längere Zeit nicht, sich an die neue Lage anzupassen, sprechen Fachleute von einer Anpassungsstörung.",
     absaetze: [
@@ -131,7 +131,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "koerperbeschwerden", gruppe: "Körper, Essen und Schlaf", titel: "Belastende Körperbeschwerden",
+    id: "koerperbeschwerden", stichworte: ["Schmerzen", "psychosomatisch", "somatoform", "Bauchschmerzen", "Kopfschmerzen", "Erschöpfung"], gruppe: "Körper, Essen und Schlaf", titel: "Belastende Körperbeschwerden",
     icd: { code: "6C20", titel: "Bodily distress disorder" },
     einleitung: "Körperliche Beschwerden wie Schmerzen, Erschöpfung oder Verdauungsprobleme können so belastend werden, dass sie Gedanken und Alltag bestimmen, auch wenn Untersuchungen nicht dauerhaft beruhigen.",
     absaetze: [
@@ -146,7 +146,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "essen", gruppe: "Körper, Essen und Schlaf", titel: "Essstörungen",
+    id: "essen", stichworte: ["Magersucht", "Anorexie", "Bulimie", "Essanfälle", "Binge", "Gewicht", "Figur", "Diät"], gruppe: "Körper, Essen und Schlaf", titel: "Essstörungen",
     icd: { code: "6B8", titel: "Feeding or eating disorders" },
     einleitung: "Bei Essstörungen sind das Essen und die Gedanken über Essen, Gewicht und Figur so verändert, dass Gesundheit und Lebensqualität leiden.",
     absaetze: [
@@ -161,7 +161,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "insomnie", gruppe: "Körper, Essen und Schlaf", titel: "Anhaltende Schlafprobleme",
+    id: "insomnie", stichworte: ["Schlaflosigkeit", "Einschlafen", "Durchschlafen", "Schlafstörung", "nachts wach"], gruppe: "Körper, Essen und Schlaf", titel: "Anhaltende Schlafprobleme",
     icd: { code: "7A00", titel: "Chronic insomnia" },
     einleitung: "Schlecht schlafen kennt fast jede und jeder. Fällt das Ein- oder Durchschlafen aber über Monate schwer, obwohl genug Zeit zum Schlafen da ist, und leidet der Tag darunter, sprechen Fachleute von einer chronischen Insomnie.",
     absaetze: [
@@ -176,7 +176,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "adhs", gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "ADHS",
+    id: "adhs", stichworte: ["ADS", "ADHD", "Konzentration", "Aufmerksamkeit", "Hyperaktivität", "Unruhe", "Zappelig"], gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "ADHS",
     icd: { code: "6A05", titel: "Attention deficit hyperactivity disorder" },
     einleitung: "ADHS ist eine Besonderheit in der Entwicklung des Gehirns, die in der Kindheit beginnt. Sie zeigt sich in anhaltenden Schwierigkeiten mit der Aufmerksamkeit und oft in Unruhe und Impulsivität.",
     absaetze: [
@@ -192,7 +192,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "persoenlichkeit", gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "Persönlichkeitsstörungen",
+    id: "persoenlichkeit", stichworte: ["Borderline", "Narzissmus", "Persönlichkeit", "Gefühlsschwankungen"], gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "Persönlichkeitsstörungen",
     icd: { code: "6D10", titel: "Personality disorder" },
     einleitung: "Jeder Mensch hat eine eigene Persönlichkeit mit Ecken und Kanten. Von einer Persönlichkeitsstörung sprechen Fachleute, wenn lang anhaltende Muster im Erleben von sich selbst und im Umgang mit anderen viel Leid verursachen.",
     absaetze: [
@@ -207,7 +207,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "psychose", gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "Psychosen und Schizophrenie",
+    id: "psychose", stichworte: ["Stimmen hören", "Wahn", "Paranoia", "Schizophrenie", "Halluzination"], gruppe: "Entwicklung, Persönlichkeit und Wahrnehmung", titel: "Psychosen und Schizophrenie",
     icd: { code: "6A20", titel: "Schizophrenia" },
     einleitung: "Bei einer Psychose verändern sich Wahrnehmung, Denken und Erleben so stark, dass der Bezug zur gemeinsamen Wirklichkeit zeitweise verloren geht. Die Schizophrenie ist die bekannteste Form.",
     absaetze: [
@@ -222,7 +222,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "alkohol", gruppe: "Konsum und Verhalten", titel: "Probleme mit Alkohol",
+    id: "alkohol", stichworte: ["Sucht", "Trinken", "Abhängigkeit", "Entzug", "Rausch", "Bier", "Wein"], gruppe: "Konsum und Verhalten", titel: "Probleme mit Alkohol",
     icd: { code: "6C40", titel: "Disorders due to use of alcohol" },
     einleitung: "Alkohol ist in Österreich und Deutschland Alltag. Problematisch wird er, wenn er Körper, Psyche oder Beziehungen schadet, oder wenn man die Kontrolle über das Trinken verliert.",
     absaetze: [
@@ -238,7 +238,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "gaming", gruppe: "Konsum und Verhalten", titel: "Wenn Spielen zum Problem wird",
+    id: "gaming", stichworte: ["Sucht", "Zocken", "Computerspiele", "Handy", "Internet", "Online", "Smartphone", "Medien"], gruppe: "Konsum und Verhalten", titel: "Wenn Spielen zum Problem wird",
     icd: { code: "6C51", titel: "Gaming disorder" },
     einleitung: "Computerspiele gehören für viele Menschen zum Alltag und machen Spaß. Nur bei einem kleinen Teil der Spielenden wird daraus ein Problem, das Fachleute als Computerspielstörung bezeichnen.",
     absaetze: [
@@ -253,7 +253,7 @@ export const SEITEN: VerstehenSeite[] = [
     ],
   },
   {
-    id: "burnout", gruppe: "Arbeit", titel: "Burn-out",
+    id: "burnout", stichworte: ["Burnout", "Ausgebrannt", "Erschöpfung", "Überlastung", "Job", "Stress"], gruppe: "Arbeit", titel: "Burn-out",
     icd: { code: "QD85", titel: "Burnout" },
     einleitung: "Burn-out ist in aller Munde. Die WHO beschreibt es ausdrücklich nicht als Krankheit, sondern als arbeitsbezogenes Phänomen, das aus chronischem Stress am Arbeitsplatz entsteht.",
     absaetze: [
