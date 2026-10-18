@@ -231,7 +231,13 @@ function SpeicherKarte() {
     return (
       <div className="speicher speicher--an">
         <span className="speicher__punkt" aria-hidden="true" />
-        <p>Deine Einträge hier werden <strong>auf diesem Gerät gemerkt</strong>. Nur hier, nirgendwo sonst.</p>
+        <p>
+          Deine Einträge hier werden <strong>auf diesem Gerät gemerkt</strong>. Nur hier, nirgendwo sonst.
+          <span className="speicher__hinweis">
+            Manche Browser, vor allem Safari, löschen gespeicherte Daten nach einiger Zeit ohne Besuch. Sichere deinen Verlauf
+            deshalb ab und zu <a href="#/sichern">als verschlüsselte Datei</a>.
+          </span>
+        </p>
         <div className="speicher__knoepfe">
           <button className="textknopf" type="button" onClick={() => z.setIchMerken(false)}>Nicht mehr merken</button>
           {fragen ? (
@@ -250,7 +256,7 @@ function SpeicherKarte() {
         <p style={{ margin: 0 }}><strong>Möchtest du einen Verlauf über mehrere Tage sehen?</strong></p>
         <p className="leise klein" style={{ margin: ".25rem 0 0" }}>
           Dann kann sich Neuroscope deine Einträge in diesem Bereich auf diesem Gerät merken. Sie verlassen das Gerät nie und lassen sich jederzeit löschen.
-          Ohne Zustimmung gilt alles nur, bis du den Tab schließt.
+          Ohne Zustimmung gilt alles nur, bis du den Tab schließt. Für längere Zeit sicher ist nur eine <a href="#/sichern">Sicherungsdatei</a>.
         </p>
       </div>
       <button className="knopf" type="button" onClick={() => z.setIchMerken(true)}>Auf diesem Gerät merken</button>

@@ -100,8 +100,11 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     // Einschalten legt die bisherigen Einträge auf dem Gerät ab, Ausschalten entfernt sie dort wieder (in der Sitzung bleiben sie).
     setIchMerken: (m) => {
       setIchMerkenState(m);
-      if (m) geraetSchreiben("ich-merken", true);
-      else geraetEntfernen((k) => k.startsWith("ich-"));
+      if (m) {
+        geraetSchreiben("ich-merken", true);
+        // Browser um dauerhafte Speicherung bitten (Chrome, Firefox, Edge halten sich daran, Safari nur eingeschränkt).
+        try { void navigator.storage?.persist?.(); } catch { /* egal */ }
+      } else geraetEntfernen((k) => k.startsWith("ich-"));
     },
     eintraege, setEintraege,
     rad, setRad,

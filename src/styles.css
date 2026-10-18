@@ -784,3 +784,4 @@ main > .start { animation: none; }
 /* Hilfe im Hauptmenü: ruhiger roter Punkt statt eigener Krisenleiste */
 .nav a[data-hilfe="ja"] { display: inline-flex; align-items: center; gap: .45rem; }
 .nav a[data-hilfe="ja"]::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--rot); }
+.speicher__hinweis { display: block; margin-top: .35rem; font-size: .85rem; color: var(--text-2); }

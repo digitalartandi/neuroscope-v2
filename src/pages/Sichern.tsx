@@ -33,7 +33,7 @@ export default function Sichern() {
     <div className="spalte">
       <h1>Speichern und später weitermachen</h1>
       <p className="einleitung">
-        Deine Antworten, Notizen und dein Plan als verschlüsselte Datei auf deinem Gerät. Nur mit deinem Passwort lesbar,
+        Deine Antworten, Notizen, dein Plan und deine Einträge aus „Mein Bereich“ als verschlüsselte Datei auf deinem Gerät. Nur mit deinem Passwort lesbar,
         auch nicht für uns. Ohne Passwort lässt sich die Datei nicht mehr öffnen.
       </p>
       <p role="status" className={meldung ? "kasten" : undefined}>{meldung}</p>
