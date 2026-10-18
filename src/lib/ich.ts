@@ -58,6 +58,8 @@ export interface Einstellungen {
   schrift: "normal" | "gross";
   farbe: Farbe;
   ruhig: boolean;
+  stimme?: string; // Name der Vorlese-Stimme
+  tempo: number; // Vorlesetempo
   intro: boolean; // Einführung schon gesehen
   land?: "AT" | "DE";
   region?: string;
@@ -72,6 +74,7 @@ export const EINSTELLUNGEN_START: Einstellungen = {
   schrift: "normal",
   farbe: "standard",
   ruhig: false,
+  tempo: 1,
   intro: false,
 };
 

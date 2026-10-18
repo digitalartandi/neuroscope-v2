@@ -19,11 +19,11 @@ export const SYMBOLE: Record<string, ReactNode> = {
   // Aufgeschlagenes Buch
   wissen: <Symbol><path d="M3 5.5c3-1 6-1 9 1 3-2 6-2 9-1V19c-3-1-6-1-9 1-3-2-6-2-9-1z" /><path d="M12 6.5V20" /></Symbol>,
   // Atem: drei Wellen
-  uebungen: <Symbol><path d="M3 8.5h10a2.5 2.5 0 1 0-2.5-2.5" /><path d="M3 12.5h14a2.5 2.5 0 1 1-2.5 2.5" /><path d="M3 16.5h6" /></Symbol>,
+  uebungen: <Symbol><path d="M12 19c-3.5 0-7-2-8.5-5.5 2.5-.5 5 .3 6.6 2" /><path d="M12 19c3.5 0 7-2 8.5-5.5-2.5-.5-5 .3-6.6 2" /><path d="M12 19c-2.2-1.6-3.2-4-3.2-6.5S10.3 7.3 12 5c1.7 2.3 3.2 4.8 3.2 7.5S14.2 17.4 12 19z" /></Symbol>,
   // Puzzleteil
   spiele: <Symbol><path d="M4 8h3.5a2.5 2.5 0 1 1 5 0H16v3.5a2.5 2.5 0 1 1 0 5V20H4v-3.5a2.5 2.5 0 1 0 0-5z" /></Symbol>,
   // Mein Bereich: Kurve in einem Rahmen
-  ich: <Symbol><rect x="3.5" y="4" width="17" height="16" rx="3" /><path d="m7 15 3-3.5 3 2 4-5.5" /><circle cx="17" cy="8" r=".6" fill="currentColor" /></Symbol>,
+  ich: <Symbol><circle cx="12" cy="12" r="9" /><circle cx="12" cy="10" r="3.2" /><path d="M6.2 18.5a6.5 6.5 0 0 1 11.6 0" /></Symbol>,
   // Rettungsring
   hilfe: <Symbol><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="3.5" /><path d="m6 6 3.5 3.5M18 6l-3.5 3.5M6 18l3.5-3.5M18 18l-3.5-3.5" /></Symbol>,
 };
@@ -49,6 +49,10 @@ export const WISSEN_SYMBOLE: Record<string, ReactNode> = {
   gewohnheiten: <Symbol><path d="M4.5 10a7.5 7.5 0 0 1 13-3.5L20 9" /><path d="M20 4.5V9h-4.5" /><path d="M19.5 14a7.5 7.5 0 0 1-13 3.5L4 15" /><path d="M4 19.5V15h4.5" /></Symbol>,
   staerken: <Symbol><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></Symbol>,
   zahnrad: <Symbol><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></Symbol>,
+  profil: <Symbol><circle cx="12" cy="8" r="3.8" /><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" /></Symbol>,
+  farbe: <Symbol><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.2 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7h2a4.5 4.5 0 0 0 4.5-4.5C21.5 6.9 17.2 3.5 12 3.5z" /><circle cx="7.5" cy="11" r="1" /><circle cx="10" cy="7.5" r="1" /><circle cx="14.5" cy="7.5" r="1" /></Symbol>,
+  glocke: <Symbol><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" /><path d="M10 20.5a2 2 0 0 0 4 0" /></Symbol>,
+  schloss: <Symbol><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" /></Symbol>,
   suche: <Symbol><circle cx="10.5" cy="10.5" r="6" /><path d="m15 15 5 5" /></Symbol>,
 };
 
@@ -61,8 +65,16 @@ export const themaSymbol = (id: string) => WISSEN_SYMBOLE[THEMA_SYMBOL[id] ?? "a
 
 // Symbole je Übung.
 export const UEBUNG_SYMBOL: Record<string, ReactNode> = {
-  atmung: <Symbol><path d="M3 8.5h10a2.5 2.5 0 1 0-2.5-2.5" /><path d="M3 12.5h14a2.5 2.5 0 1 1-2.5 2.5" /><path d="M3 16.5h6" /></Symbol>,
+  atmung: <Symbol><path d="M12 3.5v8" /><path d="M12 9.5c-1 0-1.6.4-2 1" /><path d="M12 9.5c1 0 1.6.4 2 1" /><path d="M9.5 7.5C7 8 4.5 12 4.5 16.5c0 2.3 1.4 3.5 3 3.3 1.8-.2 2.5-1.6 2.5-3.3V9.3c0-1.2-.2-1.9-.5-1.8z" /><path d="M14.5 7.5c2.5.5 5 4.5 5 9 0 2.3-1.4 3.5-3 3.3-1.8-.2-2.5-1.6-2.5-3.3V9.3c0-1.2.2-1.9.5-1.8z" /></Symbol>,
   abendroutine: <Symbol><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" /><path d="M17 3.5v3M15.5 5h3" /></Symbol>,
   staerken: <Symbol><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></Symbol>,
   wochenrueckblick: <Symbol><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9.5h16M8.5 3v4M15.5 3v4" /><path d="M8 13.5h3M8 16.5h6" /></Symbol>,
+};
+
+// Symbole je Konzentrationsspiel.
+export const SPIEL_SYMBOL: Record<string, ReactNode> = {
+  spur: <Symbol><circle cx="6" cy="17" r="2" /><circle cx="12" cy="7" r="2" /><circle cx="18" cy="15" r="2" /><path d="m7.2 15.3 3.6-6.6M13.6 8.3l3.2 5" /></Symbol>,
+  farbwort: <Symbol><path d="M4 18 8 6l4 12M5.4 14h5.2" /><path d="M14 18v-7.5a2.5 2.5 0 0 1 5 0V18M14 14.5h5" /></Symbol>,
+  merken: <Symbol><rect x="4" y="5" width="11" height="14" rx="2" /><path d="M9 3.5h9a2 2 0 0 1 2 2V17" /><path d="M7.5 15 9.5 9l2 6M8.2 13h2.6" /></Symbol>,
+  turm: <Symbol><path d="M3.5 20.5h17" /><path d="M7 20.5V9M17 20.5V9" /><circle cx="7" cy="16.5" r="2.2" /><circle cx="7" cy="12" r="2.2" /><circle cx="17" cy="16.5" r="2.2" /></Symbol>,
 };

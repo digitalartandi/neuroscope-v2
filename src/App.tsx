@@ -8,7 +8,6 @@ import Gespraech from "./pages/Gespraech";
 import Wissen from "./pages/Wissen";
 import Uebungen from "./pages/Uebungen";
 import Hilfe from "./pages/Hilfe";
-import Spiele from "./pages/Spiele";
 import { Datenschutz, Impressum, Ueber } from "./pages/Recht";
 import Plan from "./pages/Plan";
 import Sichern from "./pages/Sichern";
@@ -39,7 +38,7 @@ function Seite({ route }: { route: string }) {
       if (b === "farbwort") return <Farbwort />;
       if (b === "merken") return <Merken />;
       if (b === "turm") return <Turm />;
-      return <Spiele />;
+      return <Uebungen key="liste" />;
     case "ueber": return <Ueber />;
     case "datenschutz": return <Datenschutz />;
     case "impressum": return <Impressum />;

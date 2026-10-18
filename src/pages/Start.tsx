@@ -7,8 +7,7 @@ const WEGE: [string, string, string][] = [
   ["/spiegel", "Persönlicher Spiegel", "Deine Antworten in Worten. Du entscheidest, was dich beschäftigt."],
   ["/gespraech", "Gesprächsvorbereitung", "Deine Notizen als PDF, falls du mit jemandem darüber sprechen willst."],
   ["/wissen", "Wissen", "Kurz erklärt, mit Quellen aus Österreich und Deutschland."],
-  ["/uebungen", "Übungen", "Atmung, Abendroutine, Stärken, Wochenrückblick."],
-  ["/spiele", "Konzentrationsspiele", "Vier kurze Denkspiele mit deiner eigenen Bestmarke."],
+  ["/uebungen", "Übungen", "Zur Ruhe kommen und kleine Denkspiele zum Abschalten."],
   ["/hilfe", "Hilfe finden", "Krisennummern und Wege zu Hausarzt, Psychotherapie und Beratung."],
 ];
 

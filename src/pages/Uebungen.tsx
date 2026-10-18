@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { UEBUNGEN, type Uebung } from "../content/uebungen";
 import { sitzungLesen, sitzungSchreiben } from "../lib/speicher";
-import { UEBUNG_SYMBOL } from "../components/Icons";
+import { SPIEL_SYMBOL, UEBUNG_SYMBOL } from "../components/Icons";
+import { SPIELE } from "./Spiele";
+import { Vorlesen } from "../components/Vorlesen";
 
 function Atmung() {
   const [laeuft, setLaeuft] = useState(false);
@@ -82,7 +84,9 @@ export default function Uebungen({ id }: { id?: string }) {
     return (
       <div className="spalte spalte--breit">
         <h1>Übungen</h1>
-        <p className="einleitung">Kurze Anregungen für den Alltag. Sie ersetzen keine Beratung und keine Therapie.</p>
+        <p className="einleitung">Kurze Anregungen zum Durchatmen und kleine Denkspiele zum Abschalten.</p>
+
+        <h2 className="abschnitt abschnitt--symbol">{UEBUNG_SYMBOL.atmung}Zur Ruhe kommen</h2>
         <ul className="wissen-karten uebung-karten">
           {UEBUNGEN.map((u) => (
             <li key={u.id}>
@@ -97,6 +101,26 @@ export default function Uebungen({ id }: { id?: string }) {
             </li>
           ))}
         </ul>
+
+        <h2 className="abschnitt abschnitt--symbol" id="spiele">{SPIEL_SYMBOL.turm}Konzentration</h2>
+        <ul className="wissen-karten uebung-karten">
+          {SPIELE.map(([id, t, d, dauer]) => (
+            <li key={id}>
+              <a href={`#/spiele/${id}`}>
+                <span className="wissen-karten__symbol">{SPIEL_SYMBOL[id]}</span>
+                <span className="wissen-karten__text">
+                  <span className="wissen-karten__gruppe">{dauer}</span>
+                  <strong>{t}</strong>
+                  <span className="wissen-karten__teaser">{d}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="leise klein" style={{ marginTop: "1.25rem" }}>
+          Die Spiele sind reine Freizeitübungen ohne Vergleichswerte. Sie sagen nichts über Gesundheit oder
+          Leistungsfähigkeit aus. Du spielst nur gegen deine eigene Bestmarke.
+        </p>
       </div>
     );
   }
@@ -112,6 +136,7 @@ export default function Uebungen({ id }: { id?: string }) {
           <h1 style={{ margin: ".15rem 0 0" }}>{u.titel}</h1>
         </div>
       </div>
+      <Vorlesen />
       {u.einleitung.map((t, i) => <p key={i} className={i === 0 ? "einleitung" : undefined}>{t}</p>)}
       {u.art === "atmung" && <Atmung />}
       {u.art === "checkliste" && <Checkliste u={u} />}

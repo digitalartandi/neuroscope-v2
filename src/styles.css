@@ -896,3 +896,53 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .farbe:has(input:focus-visible) { outline: 3px solid var(--fokus); outline-offset: 2px; }
 .farbe:active { transform: scale(.95); }
 @media (prefers-color-scheme: dark) { html[data-farbe="graphit"] { --logo-1: #94a3b8; --logo-2: #cbd5e1; } }
+
+/* ---------- Einstellungen: Reiter ---------- */
+.reiter { display: flex; gap: var(--s2); margin: var(--s4) 0 0; padding: 2px; overflow-x: auto; scrollbar-width: none; }
+.reiter::-webkit-scrollbar { display: none; }
+.reiter button { flex: none; display: inline-flex; align-items: center; gap: .45rem; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer;
+  min-height: 2.75rem; padding: .4rem .95rem .4rem .75rem; border-radius: 999px; border: 1px solid var(--linie); background: var(--karte-voll); color: var(--text-2);
+  transition: background .2s, color .2s, border-color .2s, transform .15s; }
+.reiter button .symbol { width: 1.15rem; height: 1.15rem; }
+.reiter button[aria-pressed="true"] { background: var(--verlauf); color: #fff; border-color: transparent; }
+.reiter button:active { transform: scale(.95); }
+.reiter-inhalt { animation: auftauchen .35s cubic-bezier(.22, 1, .36, 1) both; }
+@media (max-width: 48rem) { .reiter { margin-left: calc(-1 * var(--s4)); margin-right: calc(-1 * var(--s4)); padding: 2px var(--s4); } }
+
+/* ---------- Untere Leiste mit 5 Einträgen ---------- */
+@media (max-width: 48rem) { .tabs { grid-template-columns: repeat(5, 1fr); } .tabs a { font-size: .72rem; } }
+
+/* ---------- Vorlesen ---------- */
+.vorlesen { margin: var(--s4) 0 0; }
+.vorlesen__start { display: inline-flex; align-items: center; gap: .5rem; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; min-height: 2.75rem;
+  padding: .4rem 1.05rem .4rem .8rem; border-radius: 999px; border: 1px solid var(--linie); background: var(--karte-voll); color: var(--blau-tief);
+  transition: background .2s, transform .15s, border-color .2s; }
+.vorlesen__start .symbol { width: 1.2rem; height: 1.2rem; }
+@media (hover: hover) { .vorlesen__start:hover { border-color: var(--akzent-rand); background: var(--blau-hell); } }
+.vorlesen__start:active { transform: scale(.95); }
+.vorlesen__start:disabled { opacity: .5; cursor: not-allowed; }
+.vorlesen__leiste { position: sticky; top: .75rem; z-index: 5; display: inline-flex; align-items: center; gap: .25rem; padding: .3rem; border-radius: 999px;
+  background: var(--karte-voll); border: 1px solid var(--linie); box-shadow: var(--schatten); animation: auftauchen .3s ease both; }
+.vorlesen__leiste button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 0; background: transparent; color: var(--text-2); cursor: pointer; transition: background .2s, transform .15s; }
+.vorlesen__leiste button svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+.vorlesen__leiste button:active { transform: scale(.9); }
+@media (hover: hover) { .vorlesen__leiste button:hover { background: var(--linie-2); } }
+.vorlesen__leiste .vorlesen__haupt { background: var(--verlauf); color: #fff; }
+.vorlesen__welle { display: inline-flex; align-items: center; gap: 3px; height: 1.2rem; padding: 0 .7rem 0 .35rem; }
+.vorlesen__welle i { width: 3px; border-radius: 3px; background: var(--violett); height: 30%; }
+.vorlesen[data-stand="laeuft"] .vorlesen__welle i { animation: welle 1s ease-in-out infinite; }
+.vorlesen__welle i:nth-child(2) { animation-delay: .15s !important; } .vorlesen__welle i:nth-child(3) { animation-delay: .3s !important; } .vorlesen__welle i:nth-child(4) { animation-delay: .45s !important; }
+@keyframes welle { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+.wird-gelesen { background: var(--violett-hell); box-shadow: 0 0 0 .4rem var(--violett-hell); border-radius: 6px; transition: background .3s, box-shadow .3s; }
+@media (max-width: 48rem) { .vorlesen__leiste { position: fixed; top: auto; bottom: calc(5.2rem + env(safe-area-inset-bottom)); left: 50%; translate: -50% 0; } }
+@media print { .vorlesen { display: none; } }
+
+/* ---------- Weiche Seitenwechsel (View Transitions) ---------- */
+::view-transition-old(root) { animation: .18s ease-out both vt-raus; }
+::view-transition-new(root) { animation: .32s cubic-bezier(.22, 1, .36, 1) both vt-rein; }
+@keyframes vt-raus { to { opacity: 0; } }
+@keyframes vt-rein { from { opacity: 0; transform: translateY(8px); } }
+.kopf, .tabs { view-transition-name: none; }
+.tabs { view-transition-name: untere-leiste; }
+.kopf { view-transition-name: kopf; }
+::view-transition-group(untere-leiste), ::view-transition-group(kopf) { animation: none; }

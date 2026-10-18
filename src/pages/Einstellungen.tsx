@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { stimmeWaehlen, useStimmen } from "../components/Vorlesen";
 import { REGIONEN } from "../content/hilfe";
 import { AchsenWahl, BEREICH_NAMEN, Schalter } from "../components/IchIntro";
-import { WISSEN_SYMBOLE } from "../components/Icons";
+import { SYMBOLE, WISSEN_SYMBOLE } from "../components/Icons";
 import { erinnerungIcs, FARBEN } from "../lib/ich";
 import { useZustand } from "../lib/zustand";
+
+const REITER: [string, string, ReactNode][] = [
+  ["du", "Über dich", WISSEN_SYMBOLE.profil],
+  ["bereich", "Mein Bereich", SYMBOLE.ich],
+  ["ansicht", "Darstellung", WISSEN_SYMBOLE.farbe],
+  ["erinnerung", "Erinnerung", WISSEN_SYMBOLE.glocke],
+  ["daten", "Daten", WISSEN_SYMBOLE.schloss],
+];
 
 export default function Einstellungen() {
   const z = useZustand();
@@ -11,6 +20,14 @@ export default function Einstellungen() {
   const [uhrzeit, setUhrzeit] = useState("20:00");
   const [loeschenFragen, setLoeschenFragen] = useState(false);
   const [meldung, setMeldung] = useState("");
+  const [reiter, setReiter] = useState<string>(() => new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("r") ?? "du");
+  const stimmen = useStimmen();
+  const probe = () => {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance("Hallo. So klingt Neuroscope, wenn es dir Texte vorliest.");
+    u.lang = "de-DE"; const v = stimmeWaehlen(e.stimme); if (v) u.voice = v; u.rate = e.tempo ?? 1;
+    window.speechSynthesis.speak(u);
+  };
 
   const erinnerung = () => {
     const adresse = `${window.location.origin}${window.location.pathname}#/ich`;
@@ -31,8 +48,15 @@ export default function Einstellungen() {
         <h1 style={{ margin: 0 }}>Einstellungen</h1>
       </div>
       <p className="leise">Kein Konto, keine Anmeldung. Alles hier bleibt in diesem Browser.</p>
+      <nav className="reiter" aria-label="Bereiche der Einstellungen">
+        {REITER.map(([id, t, sym]) => (
+          <button key={id} type="button" aria-pressed={reiter === id} onClick={() => setReiter(id)}>
+            {sym}<span>{t}</span>
+          </button>
+        ))}
+      </nav>
 
-      <section className="ich-karte" aria-labelledby="e-du">
+      {reiter === "du" && <section className="ich-karte reiter-inhalt" aria-labelledby="e-du">
         <h2 id="e-du">Über dich</h2>
         <label className="feld" htmlFor="e-name" style={{ marginTop: 0 }}>Wie dürfen wir dich nennen?</label>
         <input id="e-name" type="text" maxLength={30} autoComplete="given-name" value={e.name}
@@ -52,9 +76,9 @@ export default function Einstellungen() {
           {REGIONEN[z.land].map((r) => <option key={r.name} value={r.name}>{r.name}</option>)}
         </select>
         <p className="hinweis-feld">Damit zeigt „Hilfe finden“ gleich die passenden Nummern.</p>
-      </section>
+      </section>}
 
-      <section className="ich-karte" aria-labelledby="e-bereich">
+      {reiter === "bereich" && <section className="ich-karte reiter-inhalt" aria-labelledby="e-bereich">
         <h2 id="e-bereich">Mein Bereich</h2>
         <div className="schalter-liste">
           {BEREICH_NAMEN.map(([k, t, d]) => (
@@ -72,9 +96,9 @@ export default function Einstellungen() {
         </div>
         <h3 className="ich-unter">Lebensbereiche im Netz</h3>
         <AchsenWahl />
-      </section>
+      </section>}
 
-      <section className="ich-karte" aria-labelledby="e-ansicht">
+      {reiter === "ansicht" && <section className="ich-karte reiter-inhalt" aria-labelledby="e-ansicht">
         <h2 id="e-ansicht">Darstellung</h2>
         <fieldset style={{ border: 0, padding: 0, margin: "0 0 var(--s5)" }}>
           <legend className="feld" style={{ margin: 0, padding: 0 }}>Farbwelt</legend>
@@ -92,9 +116,28 @@ export default function Einstellungen() {
           <Schalter an={e.schrift === "gross"} titel="Größere Schrift" text="Für die ganze App" aendern={(an) => z.setEinstellungen({ schrift: an ? "gross" : "normal" })} />
           <Schalter an={e.ruhig} titel="Ruhige Darstellung" text="Ohne Animationen und Bewegung" aendern={(an) => z.setEinstellungen({ ruhig: an })} />
         </div>
-      </section>
+        <h3 className="ich-unter">Vorlesen</h3>
+        {stimmen.length === 0 ? (
+          <p className="hinweis-feld">Dieser Browser bietet keine deutsche Stimme zum Vorlesen an.</p>
+        ) : (
+          <>
+            <label className="feld" htmlFor="e-stimme" style={{ marginTop: 0 }}>Stimme</label>
+            <select id="e-stimme" value={stimmeWaehlen(e.stimme)?.name ?? ""} onChange={(ev) => z.setEinstellungen({ stimme: ev.target.value })}>
+              {stimmen.map((v) => <option key={v.name} value={v.name}>{v.name}{v.localService ? "" : " (über das Internet)"}</option>)}
+            </select>
+            <p className="hinweis-feld">Stimmen „über das Internet“ schicken den Text an den Anbieter deines Browsers. Die anderen laufen nur auf deinem Gerät.</p>
+            <p className="feld">Tempo</p>
+            <div className="segment" role="group" aria-label="Tempo">
+              {([[0.85, "ruhig"], [1, "normal"], [1.15, "zügig"]] as const).map(([t, n]) => (
+                <button key={n} type="button" aria-pressed={(e.tempo ?? 1) === t} onClick={() => z.setEinstellungen({ tempo: t })}>{n}</button>
+              ))}
+            </div>
+            <div className="knopfreihe"><button type="button" className="knopf knopf--leise" onClick={probe}>Probe hören</button></div>
+          </>
+        )}
+      </section>}
 
-      <section className="ich-karte" aria-labelledby="e-erinnerung">
+      {reiter === "erinnerung" && <section className="ich-karte reiter-inhalt" aria-labelledby="e-erinnerung">
         <h2 id="e-erinnerung">Tägliche Erinnerung</h2>
         <p className="leise" style={{ marginTop: 0 }}>
           Ein kurzer Termin in deinem eigenen Kalender, jeden Tag zur gleichen Zeit. Neuroscope schickt selbst nichts und weiß nichts davon.
@@ -105,9 +148,9 @@ export default function Einstellungen() {
           <button type="button" className="knopf knopf--leise" onClick={erinnerung}>Für meinen Kalender herunterladen</button>
         </div>
         <p role="status" className="hinweis-feld">{meldung}</p>
-      </section>
+      </section>}
 
-      <section className="ich-karte" aria-labelledby="e-daten">
+      {reiter === "daten" && <section className="ich-karte reiter-inhalt" aria-labelledby="e-daten">
         <h2 id="e-daten">Speichern und Daten</h2>
         <div className="schalter-liste">
           <Schalter an={z.ichMerken} titel="Auf diesem Gerät merken"
@@ -133,7 +176,7 @@ export default function Einstellungen() {
             </>
           ) : <button type="button" className="textknopf textknopf--warn" onClick={() => setLoeschenFragen(true)}>Alles in „Mein Bereich“ löschen</button>}
         </div>
-      </section>
+      </section>}
     </div>
   );
 }

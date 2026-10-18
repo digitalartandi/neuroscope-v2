@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
 import { ICD_INFO, VERSTEHEN, ZUGANG } from "../content/verstehen";
 import { SYMBOLE, THEMA_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
+import { Vorlesen } from "../components/Vorlesen";
 
 // Bereiche für den Filter. „gruppen“ verweist auf VerstehenSeite.gruppe, „alltag“ auf die Seiten in WISSEN.
 interface Bereich { id: string; label: string; symbol: string; gruppen?: string[] }
@@ -98,6 +99,7 @@ export default function Wissen({ id }: { id?: string }) {
       <Zurueck />
       <Kopf symbol={ALLTAG_SYMBOL[w.id] ?? "alltag"} gruppe="Alltag und Wohlbefinden" titel={w.titel} />
       <p className="einleitung">{w.einleitung}</p>
+      <Vorlesen />
       <Teile teile={teile} />
       <Verwandt id={w.id} bereich="alltag" />
       <Quellen liste={w.quellen} schluss="Die Texte fassen die Quellen in eigenen Worten zusammen. Sie sind allgemeine Information und keine Beratung im Einzelfall." />
@@ -356,6 +358,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
       <Kopf symbol={GRUPPE_SYMBOL[v.gruppe] ?? "alle"} gruppe={v.gruppe} titel={v.titel} />
       {v.icd && <p className="klein leise">ICD-11: {v.icd.code} {v.icd.titel}</p>}
       <p className="einleitung">{v.einleitung}</p>
+      <Vorlesen />
       <p className="sprungmarken">
         <a href="#/hilfe">Hilfe finden</a>
         {["trauma", "ptbs", "kptbs"].includes(v.id) && <a href="#/hilfe/gewalt">Bei Gewalt und Mobbing</a>}
