@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
-import { ICD_INFO, VERSTEHEN } from "../content/verstehen";
+import { ICD_INFO, VERSTEHEN, ZUGANG } from "../content/verstehen";
 import { SYMBOLE, THEMA_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
 
 // Bereiche für den Filter. „gruppen“ verweist auf VerstehenSeite.gruppe, „alltag“ auf die Seiten in WISSEN.
@@ -155,6 +155,22 @@ function Irrtuemer({ liste }: { liste: { irrtum: string; richtig: string }[] }) 
         </li>
       ))}
     </ul>
+  );
+}
+
+function Zugang() {
+  return (
+    <div className="zugang">
+      <details>
+        <summary>In Österreich</summary>
+        <p>{ZUGANG.at}</p>
+      </details>
+      <details>
+        <summary>In Deutschland</summary>
+        <p>{ZUGANG.de}</p>
+      </details>
+      <p className="klein" style={{ marginBottom: 0 }}>Mehr Wege und alle Nummern unter <a href="#/hilfe">Hilfe finden</a>.</p>
+    </div>
   );
 }
 
@@ -327,6 +343,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
     ...v.absaetze.filter((a) => !istIcd(a.titel)).map((a) => abschnitt(a.titel, a.text)),
     { id: "was-hilft", titel: "Was hilft", inhalt: <ul>{v.hilft.map((h, i) => <li key={i}>{h}</li>)}</ul> },
     ...(v.vertiefung ?? []).map((a) => abschnitt(a.titel, a.text)),
+    { id: "termin", titel: "So kommst du zu einem Termin", inhalt: <Zugang /> },
     ...(v.irrtuemer?.length ? [{ id: "irrtuemer", titel: "Häufige Irrtümer", inhalt: <Irrtuemer liste={v.irrtuemer} /> }] : []),
     ...(v.angehoerige?.length ? [{ id: "angehoerige", titel: "Für Angehörige und Freunde", inhalt: <ul>{v.angehoerige.map((h, i) => <li key={i}>{h}</li>)}</ul> }] : []),
     { id: "wann-hilfe", titel: "Wann ein Gespräch mit Fachleuten sinnvoll ist", kasten: true, inhalt: <WannHilfe liste={v.wannHilfe} /> },
@@ -344,7 +361,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
       </p>
       <Teile teile={teile} />
       <Verwandt id={v.id} bereich={bereich} />
-      <Quellen liste={v.quellen} schluss="Allgemeine Information in eigenen Worten. Sie ersetzt keine Untersuchung und keine Diagnose durch Fachleute." />
+      <Quellen liste={[...v.quellen, ...ZUGANG.quellen]} schluss="Allgemeine Information in eigenen Worten. Sie ersetzt keine Untersuchung und keine Diagnose durch Fachleute." />
     </article>
   );
 }

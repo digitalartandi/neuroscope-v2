@@ -3,6 +3,9 @@
 import type { Quelle } from "./wissen";
 import { SEITEN } from "./verstehen-seiten";
 import { TRAUMA, ERGAENZUNG as TRAUMA_ERGAENZUNG } from "./trauma";
+import { VERTIEFUNG_1, ZUGANG } from "./vertiefung1";
+import { VERTIEFUNG_2 } from "./vertiefung2";
+export { ZUGANG };
 
 export interface VerstehenSeite {
   id: string;
@@ -111,7 +114,7 @@ function ergaenze(v: VerstehenSeite, e?: Ergaenzung): VerstehenSeite {
   };
 }
 
-const ERGAENZUNGEN: Record<string, Ergaenzung> = { ...TRAUMA_ERGAENZUNG };
+const ERGAENZUNGEN: Record<string, Ergaenzung> = { ...TRAUMA_ERGAENZUNG, ...VERTIEFUNG_1, ...VERTIEFUNG_2 };
 const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
 ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
 export const VERSTEHEN: VerstehenSeite[] = ALLE.map((v) => ergaenze(v, ERGAENZUNGEN[v.id]));
