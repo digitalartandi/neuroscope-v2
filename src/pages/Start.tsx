@@ -16,24 +16,26 @@ export default function Start() {
   const begonnen = Object.keys(antworten).length > 0;
   return (
     <>
-      <section className="karte held">
-        <h1>Wie geht es dir gerade wirklich?</h1>
-        <p className="einleitung">
-          Neuroscope hilft dir, das in Worte zu fassen. Deine Antworten werden nicht bewertet und verlassen
-          diesen Browser nicht.
-        </p>
-        <div className="knopfreihe">
-          <a className="knopf" href="#/reflexion">{begonnen ? "Selbstreflexion fortsetzen" : "Selbstreflexion beginnen"}</a>
-          <a className="knopf knopf--leise" href="#/hilfe">Ich brauche jetzt Hilfe</a>
-        </div>
-        <p className="vertraulich">
+      <section className="start" aria-labelledby="start-titel">
+        <h1 id="start-titel" className="start__titel">Wie geht es dir gerade wirklich?</h1>
+        <p className="start__text">Ein ruhiger Ort, um das in Worte zu fassen. Ohne Bewertung, ohne Konto.</p>
+        <a className="knopf knopf--gross" href="#/reflexion">
+          {begonnen ? "Weitermachen" : "Selbstreflexion beginnen"}
+          <svg className="knopf__pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+        <a className="start__hilfe" href="#/hilfe">Ich brauche jetzt Hilfe</a>
+        <p className="vertraulich start__vertraulich">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
-          <span>Kein Konto, kein Tracking, keine Übertragung. Alles bleibt auf deinem Gerät.</span>
+          <span>Alles bleibt auf deinem Gerät.</span>
         </p>
+        <a className="start__weiter" href="#was" onClick={(e) => { e.preventDefault(); document.getElementById("was")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
+          <span>Mehr entdecken</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </a>
       </section>
 
-      <section className="karte breit abschnitt" aria-labelledby="was">
-        <h2 id="was">Was du hier findest</h2>
+      <section className="karte breit abschnitt start__mehr" aria-labelledby="was" id="was-bereich">
+        <h2 id="was" tabIndex={-1}>Was du hier findest</h2>
         <ul className="wegweiser">
           {WEGE.map(([p, t, d]) => (
             <li key={p}><a href={"#" + p}><span className="wegweiser__symbol">{SYMBOLE[p.slice(1)]}</span><strong>{t}</strong><span>{d}</span></a></li>

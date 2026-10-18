@@ -3,6 +3,11 @@ import { schluessel } from "../lib/spiegel";
 import { useZustand } from "../lib/zustand";
 import { themaSymbol } from "../components/Icons";
 
+// Kurzes, kaum spürbares Feedback auf Geräten, die das können (nicht bei reduzierter Bewegung).
+function tippen() {
+  try { if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) navigator.vibrate?.(8); } catch { /* egal */ }
+}
+
 export default function Reflexion({ themaId }: { themaId?: string }) {
   const { antworten, antworte, notizen, notiere } = useZustand();
 
@@ -89,7 +94,7 @@ export default function Reflexion({ themaId }: { themaId?: string }) {
               <div className="skala">
                 {HAEUFIGKEIT.map((h, i) => (
                   <label key={h}>
-                    <input type="radio" name={key} value={i} checked={wert === i} onChange={() => antworte(key, i)} />
+                    <input type="radio" name={key} value={i} checked={wert === i} onChange={() => { antworte(key, i); tippen(); }} />
                     <span className="punkt" aria-hidden="true" />
                     <span className="wort">{h}</span>
                   </label>

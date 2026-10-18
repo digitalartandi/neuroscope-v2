@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { SYMBOLE } from "./Icons";
+import { LogoZeichen } from "./Logo";
 
 export function Logo() {
-  return <span className="marke__punkt" aria-hidden="true" />;
+  return <LogoZeichen className="marke__logo" />;
 }
 
 function Krisenband() {

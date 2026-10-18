@@ -534,3 +534,100 @@ section[id] { scroll-margin-top: 1rem; }
 .zugang details { border: 1px solid var(--linie); border-radius: 14px; background: var(--karte-voll); }
 .zugang summary { cursor: pointer; padding: .75rem 1rem; font-weight: 650; min-height: 2.75rem; }
 .zugang details p { margin: 0; padding: 0 1rem 1rem; }
+
+/* ---------- Logo ---------- */
+.marke__logo { width: 1.65rem; height: auto; display: block; transition: transform .4s cubic-bezier(.34, 1.56, .64, 1); }
+@media (hover: hover) { .marke:hover .marke__logo { transform: rotate(-8deg) scale(1.08); } }
+.marke:active .marke__logo { transform: scale(.92); }
+
+/* ---------- Startseite: reduzierter erster Eindruck ---------- */
+.start {
+  position: relative; min-height: calc(100svh - 12rem); max-width: 40rem; margin: 0 auto; padding: var(--s6) var(--s2) var(--s8);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.start > * { animation: auftauchen .7s cubic-bezier(.22, 1, .36, 1) both; }
+.start > :nth-child(2) { animation-delay: .08s; }
+.start > :nth-child(3) { animation-delay: .16s; }
+.start > :nth-child(4) { animation-delay: .22s; }
+.start > :nth-child(5) { animation-delay: .28s; }
+.start > :nth-child(6) { animation-delay: .5s; }
+@keyframes auftauchen { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.start__titel { font-size: clamp(2.3rem, 1.4rem + 4vw, 4rem); line-height: 1.05; letter-spacing: -0.035em; margin: 0 0 var(--s4); text-wrap: balance; }
+.start__text { font-size: clamp(1.05rem, 1rem + .4vw, 1.25rem); color: var(--text-2); margin: 0 0 var(--s6); max-width: 30ch; text-wrap: balance; }
+.knopf--gross { min-height: 3.5rem; padding: .9rem 1.9rem; font-size: 1.075rem; border-radius: 999px; box-shadow: 0 12px 28px -12px rgba(79, 70, 229, .6); }
+.start__hilfe { margin-top: var(--s4); font-weight: 600; color: var(--text-2); text-decoration: none; padding: .6rem 1rem; border-radius: 999px; transition: color .2s, background .2s; }
+.start__hilfe:hover { color: var(--rot); background: rgba(220, 38, 38, .06); }
+.start__vertraulich { justify-content: center; margin-top: var(--s5); }
+.start__weiter {
+  position: absolute; bottom: 0; left: 50%; translate: -50% 0; padding: .4rem 1rem; display: inline-flex; flex-direction: column; align-items: center; gap: .1rem;
+  color: var(--text-3); font-size: .8rem; font-weight: 600; text-decoration: none; letter-spacing: .02em;
+}
+.start__weiter svg { width: 1.3rem; height: 1.3rem; animation: wippen 2.4s ease-in-out 1.5s infinite; }
+@keyframes wippen { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+.start__mehr { scroll-margin-top: 1rem; }
+@media (max-width: 48rem) {
+  .start { min-height: calc(100svh - 11rem); padding-top: var(--s5); }
+  .knopf--gross { width: 100%; max-width: 22rem; }
+}
+
+/* ---------- Microinteractions ---------- */
+.knopf { transition: filter .15s ease, transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease; }
+.knopf:active { transform: scale(.96); }
+@media (hover: hover) { .knopf:not(.knopf--leise):hover { transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgba(79, 70, 229, .65); } }
+.knopf__pfeil { width: 1.15rem; height: 1.15rem; transition: transform .25s cubic-bezier(.34, 1.56, .64, 1); }
+@media (hover: hover) { .knopf:hover .knopf__pfeil { transform: translateX(4px); } }
+
+/* Karten heben sich an und geben beim Tippen nach */
+.wegweiser a, .wissen-karten a { transition: box-shadow .2s ease, border-color .2s ease, transform .2s cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) { .wegweiser a:hover, .wissen-karten a:hover { transform: translateY(-2px); } }
+.wegweiser a:active, .wissen-karten a:active { transform: scale(.985); }
+.wegweiser__symbol, .wissen-karten__symbol { transition: background .25s ease, color .25s ease, transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+@media (hover: hover) { .wegweiser a:hover .wegweiser__symbol, .wissen-karten a:hover .wissen-karten__symbol { transform: scale(1.06) rotate(-4deg); } }
+
+/* Chips und Sprungmarken */
+.filter__chip, .sprungmarken a, .themen a { transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease; }
+.filter__chip:active, .sprungmarken a:active, .themen a:active { transform: scale(.95); }
+.filter__chip[aria-pressed="true"] .symbol { animation: hupf .35s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes hupf { 0% { transform: scale(.7); } 100% { transform: scale(1); } }
+
+/* Skala: Auswahl springt sanft auf */
+.skala input:checked + .punkt::before { animation: auswahl .32s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes auswahl { 0% { transform: scale(.6); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.skala .wort { transition: color .2s ease; }
+.skala label:active .punkt::before { transform: scale(.88); }
+
+/* Untere Leiste: Symbol hüpft beim Wechsel */
+.tabs a { transition: color .2s ease, background .25s ease, transform .15s ease; }
+.tabs a:active { transform: scale(.92); }
+.tabs a[aria-current="page"] .symbol { animation: hupf .4s cubic-bezier(.34, 1.56, .64, 1); }
+
+/* Fortschrittsbalken füllen sich beim Erscheinen */
+.stand__balken span, .fortschritt span { transform-origin: left; animation: fuellen .8s cubic-bezier(.22, 1, .36, 1) .15s both; }
+@keyframes fuellen { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Aufklappbares mit sanftem Einblenden und drehendem Pfeil */
+details > summary { list-style: none; position: relative; padding-right: 2.6rem !important; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after {
+  content: ""; position: absolute; right: 1.1rem; top: 50%; width: .55rem; height: .55rem; margin-top: -.4rem;
+  border-right: 2px solid var(--text-3); border-bottom: 2px solid var(--text-3); transform: rotate(45deg); transition: transform .25s ease;
+}
+details[open] > summary::after { transform: rotate(225deg); margin-top: -.15rem; }
+details[open] > :not(summary) { animation: auftauchen .35s ease both; }
+
+/* Suche: Symbol reagiert auf Fokus */
+.suche__symbol { transition: color .2s ease, transform .25s ease; }
+.suche:focus-within .suche__symbol { color: var(--blau); transform: translateY(-50%) scale(1.1); }
+
+/* Krisenband: ruhiger Puls am Punkt */
+.krisenband strong::before { animation: puls 2.8s ease-in-out infinite; }
+@keyframes puls { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, .45); } 50% { box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); } }
+
+/* Seitenwechsel */
+main > * { animation: einblenden .4s cubic-bezier(.22, 1, .36, 1) both; }
+main > .start { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .start > * { animation: none; }
+}

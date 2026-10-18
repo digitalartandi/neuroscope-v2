@@ -11,8 +11,45 @@
     <title>Neuroscope – Selbstreflexion</title>
     <meta name="description" content="Kostenloses Angebot zur Selbstreflexion über das eigene Wohlbefinden. Kein Test, keine Diagnose. Alles bleibt in deinem Browser." />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <style>
+      #lader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden;
+        background: linear-gradient(120deg, #e0e7ff, #ede9fe 40%, #fce7f3); background-size: 200% 200%;
+        animation: lader-verlauf 6s ease infinite alternate; transition: opacity .55s ease, visibility .55s; }
+      #lader.fertig { opacity: 0; visibility: hidden; }
+      #lader.fertig .lader__mitte { transform: scale(1.06); }
+      #lader span.b { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(90px); opacity: .7; animation: lader-blob 9s ease-in-out infinite alternate; }
+      #lader span.b1 { background: radial-gradient(circle, rgba(99,102,241,.6), transparent 70%); top: -20vmax; left: -20vmax; }
+      #lader span.b2 { background: radial-gradient(circle, rgba(236,72,153,.45), transparent 70%); bottom: -25vmax; right: -15vmax; animation-delay: -4s; }
+      .lader__mitte { position: relative; display: grid; justify-items: center; gap: 1.1rem; transition: transform .55s ease; }
+      .lader__logo { width: 4.5rem; height: auto; overflow: visible; }
+      .lader__logo path { fill: url(#lader-g); fill-opacity: 0; stroke: #435DF8; stroke-width: 22; stroke-dasharray: 1; stroke-dashoffset: 1;
+        animation: lader-zeichnen 1.1s cubic-bezier(.65,0,.35,1) forwards, lader-fuellen .5s ease .85s forwards, lader-atmen 2.2s ease-in-out 1.4s infinite; transform-origin: center; transform-box: fill-box; }
+      .lader__text { margin: 0; font: 650 1rem/1.2 system-ui, sans-serif; letter-spacing: .02em; background: linear-gradient(90deg, #2563eb, #7c3aed);
+        -webkit-background-clip: text; background-clip: text; color: transparent; opacity: 0; animation: lader-text .8s ease .5s forwards; }
+      @keyframes lader-verlauf { to { background-position: 100% 50%; } }
+      @keyframes lader-blob { to { transform: translate(10%, 8%) scale(1.08); } }
+      @keyframes lader-zeichnen { to { stroke-dashoffset: 0; } }
+      @keyframes lader-fuellen { to { fill-opacity: 1; stroke-opacity: 0; } }
+      @keyframes lader-atmen { 50% { transform: scale(1.05); } }
+      @keyframes lader-text { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+      #lader.kurz .lader__logo path { animation: none; fill-opacity: 1; stroke-opacity: 0; }
+      #lader.kurz .lader__text { animation: none; opacity: 1; }
+      @media (prefers-reduced-motion: reduce) {
+        #lader, #lader span.b { animation: none; }
+        .lader__logo path { animation: none !important; fill-opacity: 1; stroke-opacity: 0; }
+        .lader__text { animation: none; opacity: 1; }
+      }
+      @media (prefers-color-scheme: dark) { #lader { background: linear-gradient(120deg, #0b1020, #1e1b4b 50%, #2a1530); background-size: 200% 200%; } }
+    </style>
   </head>
   <body>
+    <div id="lader" aria-hidden="true">
+      <span class="b b1"></span><span class="b b2"></span>
+      <div class="lader__mitte">
+        <svg class="lader__logo" viewBox="0 0 1605 1502"><defs><linearGradient id="lader-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#435DF8"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs><path pathLength="1" d="M420 1.4402C373.065 7.6054 329.45 15.8118 286.667 37.2035C253.255 53.9093 222.429 73.1985 194.286 97.8681C90.528 188.821 34.5169 323.546 16.3767 458.208C6.39003 532.342 7.14213 607.573 5.31394 682.208C3.82476 743.001 2.66678 804.031 2.66678 864.874V1051.54C2.66678 1158.28 1.33347 1264.81 1.33347 1371.54C1.33347 1414.34 -6.08501 1466.68 41.3335 1486.97C62.0912 1495.85 85.9061 1492.87 108 1492.87H226.667C248.669 1492.87 271.344 1493.18 285.209 1472.87C301.068 1449.65 297.333 1420.92 297.333 1394.21V1236.87C297.333 1095.51 296 954.282 296 812.874V667.541C296 642.64 298.474 616.23 295.233 591.541C292.169 568.21 294.667 543.072 294.667 519.541C294.667 451.836 294.272 369.765 362.667 331.958C374.809 325.245 387.839 320.016 401.333 316.739C415.985 313.18 433.009 312.983 448 314.434C499.45 319.414 540.487 357.768 565.133 400.874C610.437 480.11 626.554 579.254 645.613 667.541C660.585 736.891 675.262 806.385 691.132 875.541C733.46 1059.99 752.94 1273.33 906.667 1404.3C935.198 1428.61 965.185 1448.47 998.667 1465.2C1034 1482.87 1074.22 1493.73 1113.33 1498.41C1154.44 1503.33 1195.12 1503.68 1236 1496.31C1276.45 1489.01 1317.11 1477.26 1353.33 1457.42C1386.41 1439.31 1417.9 1419.05 1445.33 1392.82C1532.56 1309.42 1582.62 1183.09 1596.95 1064.87C1606.1 989.413 1604 913.963 1604 838.208C1604 766.08 1605.04 692.779 1600.12 620.874C1596.32 565.44 1598.67 508.454 1598.67 452.874C1598.67 348.036 1596 243.086 1596 138.208C1596 98.6916 1606.12 47.9514 1561.33 28.7128C1539.5 19.3364 1511.2 23.5409 1488 23.5409C1440.86 23.5409 1393.65 21.3071 1346.67 23.5945C1329.84 24.414 1313.48 35.9347 1305.17 50.2076C1293.53 70.1892 1298.67 99.9047 1298.67 122.208C1298.67 177.398 1300 232.381 1300 287.541C1300 494.669 1304 701.814 1304 908.874C1304 950.282 1305.33 991.471 1305.33 1032.87C1305.33 1059.8 1306.7 1086.83 1298.63 1112.87C1282.69 1164.34 1234.12 1203.3 1178.67 1196.49C1126.57 1190.09 1088.92 1151.26 1066.34 1106.21C1026.83 1027.38 1015.47 935.463 996.768 850.208C974.249 747.538 951.934 644.832 929.352 542.208C903.953 426.778 875.298 309.221 809.993 208.874C739.345 100.316 631.861 20.2955 501.333 4.66741C474.936 1.50676 446.57 -2.05004 420 1.4402Z"/></svg>
+        <p class="lader__text">Neuroscope</p>
+      </div>
+    </div>
     <div id="root"></div>
     <noscript>Neuroscope braucht JavaScript. In einer Krise: Telefonseelsorge 142 (Österreich) oder 0800 111 0 111 (Deutschland), Notruf 144 bzw. 112.</noscript>
     <script type="module" src="/src/main.tsx"></script>
