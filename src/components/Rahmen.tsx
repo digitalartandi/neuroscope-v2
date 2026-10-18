@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { SYMBOLE } from "./Icons";
 import { LogoZeichen } from "./Logo";
 
@@ -15,12 +15,19 @@ const NAV: [string, string][] = [
 ];
 
 export function Rahmen({ route, children }: { route: string; children: ReactNode }) {
+  // Kopf bekommt erst beim Scrollen eine feine Kante.
+  const [gescrollt, setGescrollt] = useState(false);
+  useEffect(() => {
+    const f = () => setGescrollt(window.scrollY > 6);
+    f(); window.addEventListener("scroll", f, { passive: true });
+    return () => window.removeEventListener("scroll", f);
+  }, []);
   const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/uebungen" && route.startsWith("/spiele")) || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern" || route === "/einstellungen"));
   return (
     <>
       <div className="hintergrund" aria-hidden="true"><span /><span /><span /></div>
       <a className="springen" href="#inhalt" onClick={(e) => { e.preventDefault(); document.getElementById("inhalt")?.focus(); }}>Zum Inhalt springen</a>
-      <header className="kopf">
+      <header className="kopf" data-gescrollt={gescrollt ? "ja" : undefined}>
         <div className="kopf__innen">
           <a className="marke" href="#/"><Logo />Neuroscope</a>
           <nav className="nav" aria-label="Hauptmenü">
@@ -31,7 +38,8 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
         </div>
       </header>
       <main id="inhalt" tabIndex={-1}>{children}</main>
-      <nav className="tabs" aria-label="Hauptmenü">
+      <nav className="tabs" aria-label="Hauptmenü" style={{ ["--aktiv" as string]: Math.max(0, NAV.findIndex(([p]) => aktiv(p))), ["--sichtbar" as string]: NAV.some(([p]) => aktiv(p)) ? 1 : 0 }}>
+        <span className="tabs__marke" aria-hidden="true" />
         {NAV.map(([p, t]) => (
           <a key={p} href={"#" + p} aria-current={aktiv(p) ? "page" : undefined} data-hilfe={p === "/hilfe" ? "ja" : undefined}>
             {SYMBOLE[p.slice(1)]}

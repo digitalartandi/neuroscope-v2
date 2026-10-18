@@ -946,3 +946,128 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .tabs { view-transition-name: untere-leiste; }
 .kopf { view-transition-name: kopf; }
 ::view-transition-group(untere-leiste), ::view-transition-group(kopf) { animation: none; }
+
+/* =====================================================================
+   Mobile: ruhiger, klarer, App-artig
+   Grundidee: Inhalte liegen direkt auf ruhigem Grund (keine Außenkarte),
+   Listen sind gruppierte Blöcke mit feinen Trennlinien, eine schwebende
+   Glasleiste unten ist das einzige markante Element.
+   ===================================================================== */
+@media (max-width: 48rem) {
+  :root { --m-flaeche: #ffffff; --m-grund: #f3f4f9; --m-trenn: rgba(15, 23, 42, .07); --m-radius: 22px; }
+  html { -webkit-tap-highlight-color: transparent; }
+  body { background: var(--m-grund); }
+  .hintergrund span { opacity: .45; filter: blur(120px); }
+
+  /* Kopf: schlank, Glas, Kante erst beim Scrollen */
+  .kopf { position: sticky; top: 0; background: color-mix(in srgb, var(--m-grund) 78%, transparent); backdrop-filter: saturate(1.6) blur(18px);
+    -webkit-backdrop-filter: saturate(1.6) blur(18px); border-bottom: 1px solid transparent; transition: border-color .25s, background .25s; }
+  .kopf[data-gescrollt] { border-bottom-color: var(--m-trenn); }
+  .kopf__innen { padding: .55rem 1.25rem; min-height: 3.25rem; }
+  .marke { font-size: 1.05rem; }
+  .marke__logo { width: 1.45rem; }
+
+  /* Seiten: keine Außenkarte mehr */
+  main { padding: .75rem 1.25rem calc(7rem + env(safe-area-inset-bottom)); }
+  .spalte, .karte { background: transparent; border: 0; box-shadow: none; padding: 0; border-radius: 0; }
+  .karte.breit.abschnitt { margin-top: 2.5rem; }
+  .spalte > h1, .ich-kopf h1, .artikel-kopf h1 { font-size: 2rem; line-height: 1.1; letter-spacing: -0.025em; font-weight: 700; }
+  .spalte > h1 { margin: .5rem 0 .6rem; }
+  .einleitung { font-size: 1.05rem; line-height: 1.55; color: var(--text-2); }
+  h2 { font-size: 1.3rem; letter-spacing: -0.015em; }
+  .abschnitt { margin-top: 2.25rem; }
+  .abschnitt--symbol .symbol { width: 1.35rem; height: 1.35rem; }
+  p, li { line-height: 1.6; }
+
+  /* Karten-Inhalte: weiße Flächen ohne Rahmen, sehr weicher Schatten */
+  .ich-karte, .kasten, .speicher, .intro__notiz, .leer, .inhaltsverzeichnis, .zugang details, .tabelle table {
+    border: 0; border-radius: var(--m-radius); background: var(--m-flaeche); box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 6px 20px -12px rgba(15, 23, 42, .12); }
+  .ich-karte { padding: 1.25rem; margin-top: 1rem; }
+  .kasten--licht { background: var(--violett-hell); box-shadow: none; }
+  .leer { border: 1px dashed var(--m-trenn); box-shadow: none; background: transparent; }
+
+  /* Gruppierte Listen statt einzelner Kästen */
+  .wissen-karten, .liste-ruhig, .muster, .irrtuemer, .schalter-liste, .nummern {
+    gap: 0; border-radius: var(--m-radius); overflow: hidden; background: var(--m-flaeche); border: 0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 6px 20px -12px rgba(15, 23, 42, .12); }
+  .wissen-karten > li + li, .liste-ruhig > li + li, .muster > li + li, .irrtuemer > li + li, .nummern > li + li { border-top: 1px solid var(--m-trenn); }
+  .wissen-karten a, .liste-ruhig > li, .muster > li, .irrtuemer li, .nummern li { border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+  .wissen-karten a { padding: .95rem 1rem; gap: .85rem; align-items: center; transform: none !important; }
+  .wissen-karten a:active { background: var(--m-grund); }
+  .wissen-karten a::after { content: ""; flex: none; width: .5rem; height: .5rem; margin-left: auto; border-right: 2px solid var(--text-3); border-top: 2px solid var(--text-3);
+    transform: rotate(45deg); opacity: .5; }
+  .wissen-karten__symbol { width: 2.4rem; height: 2.4rem; border-radius: 11px; border: 0; }
+  .wissen-karten__symbol .symbol { width: 1.3rem; height: 1.3rem; }
+  .wissen-karten__text strong { font-size: 1rem; }
+  .wissen-karten__teaser { font-size: .875rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .wissen-karten__gruppe { color: var(--text-3); font-weight: 600; letter-spacing: 0; }
+  .liste-ruhig > li { padding: 1rem; }
+  .nummern li { padding: .85rem 1rem; }
+  .schalter + .schalter { border-top-color: var(--m-trenn); }
+  .irrtuemer li { padding: 1rem; }
+  .muster summary { padding: .9rem 1rem; }
+
+  /* Wegweiser auf der Startseite ebenfalls als ruhige Liste */
+  .wegweiser { gap: 0; border-radius: var(--m-radius); overflow: hidden; background: var(--m-flaeche); box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 6px 20px -12px rgba(15, 23, 42, .12); }
+  .wegweiser li + li { border-top: 1px solid var(--m-trenn); }
+  .wegweiser a, .wegweiser li:last-child a { display: grid; grid-template-columns: auto 1fr; column-gap: .85rem; align-items: center; border: 0; border-radius: 0; background: transparent; padding: .9rem 1rem; }
+  .wegweiser__symbol { grid-row: span 2; margin: 0; width: 2.4rem; height: 2.4rem; border: 0; border-radius: 11px; }
+  .wegweiser strong { font-size: 1rem; margin: 0; }
+  .wegweiser a > span:last-child { font-size: .875rem; }
+  .wegweiser a:active { background: var(--m-grund); }
+
+  /* Knöpfe: groß, ruhig, eindeutig */
+  .knopf { min-height: 3.25rem; border-radius: 16px; font-size: 1rem; }
+  .knopf--leise { border: 0; background: var(--m-flaeche); box-shadow: 0 1px 2px rgba(15, 23, 42, .06), inset 0 0 0 1px var(--m-trenn); color: var(--text); }
+  .knopfreihe { gap: .6rem; }
+
+  /* Eingaben */
+  textarea, input[type="text"], input[type="password"], select, .suche input { border: 0; background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); border-radius: 14px; font-size: 1rem; }
+  .suche input { min-height: 3rem; border-radius: 14px; box-shadow: 0 1px 2px rgba(15, 23, 42, .05), inset 0 0 0 1px var(--m-trenn); }
+
+  /* Chips und Segmente zurückhaltender */
+  .filter__chip, .reiter button, .sprungmarken a, .vorlesen__start, .achse-chip { border: 0; background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); }
+  .filter__zahl { background: transparent; padding: 0; }
+  .segment { background: rgba(15, 23, 42, .06); }
+
+  /* Schwebende Glasleiste unten mit gleitender Markierung */
+  .tabs { left: .75rem; right: .75rem; bottom: calc(.6rem + env(safe-area-inset-bottom)); padding: .35rem; border: 0; border-radius: 26px;
+    background: color-mix(in srgb, var(--m-flaeche) 72%, transparent); backdrop-filter: saturate(1.8) blur(22px); -webkit-backdrop-filter: saturate(1.8) blur(22px);
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, .25), inset 0 0 0 1px rgba(255, 255, 255, .5), 0 0 0 1px var(--m-trenn); }
+  .tabs a { position: relative; z-index: 1; min-height: 3.35rem; border-radius: 20px; color: var(--text-3); font-size: .68rem; gap: .2rem; transition: color .25s; }
+  .tabs a[aria-current="page"], .tabs a[aria-current="page"][data-hilfe="ja"] { background: transparent; color: var(--text); }
+  .tabs a[aria-current="page"] .symbol { color: var(--violett); }
+  .tabs a[data-hilfe="ja"] .symbol { color: var(--rot); }
+  .tabs__marke { position: absolute; z-index: 0; top: .35rem; bottom: .35rem; left: .35rem; width: calc((100% - .7rem) / 5); border-radius: 20px;
+    background: var(--m-flaeche); box-shadow: 0 2px 10px -2px rgba(15, 23, 42, .18); opacity: var(--sichtbar);
+    transform: translateX(calc(var(--aktiv) * 100%)); transition: transform .45s cubic-bezier(.34, 1.3, .64, 1), opacity .2s; }
+  .vorlesen__leiste { bottom: calc(5.4rem + env(safe-area-inset-bottom)); }
+
+  /* Fußzeile: klein und leise */
+  .fuss { background: transparent; border: 0; backdrop-filter: none; }
+  .fuss__innen { padding: 1.5rem 1.25rem calc(7rem + env(safe-area-inset-bottom)); font-size: .8rem; text-align: left; }
+  .fuss__innen p { font-size: .8rem; }
+
+  /* Start: ruhiger Auftakt */
+  .start { min-height: calc(100svh - 10rem); padding-bottom: 5rem; }
+  .start__titel { font-size: 2.6rem; }
+  .start__weiter { bottom: .5rem; }
+
+  /* Themenleiste in der Selbstreflexion */
+  .themen a { border: 0; background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); }
+  .frage { border-bottom-color: var(--m-trenn); }
+}
+@media (max-width: 48rem) and (prefers-color-scheme: dark) {
+  :root { --m-flaeche: #141b2f; --m-grund: #0b1020; --m-trenn: rgba(255, 255, 255, .07); }
+  .tabs { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .6), 0 0 0 1px var(--m-trenn); }
+  .tabs__marke { background: #222b45; }
+}
+@media (min-width: 48.01rem) { .tabs__marke { display: none; } }
+@media (max-width: 48rem) {
+  .filter, .reiter { margin-left: -1.25rem; margin-right: -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; }
+  .wahl__knopf { border: 0; box-shadow: inset 0 0 0 1px var(--m-trenn); background: var(--m-grund); }
+  .wahl__feld input:checked + .wahl__knopf { box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--akzent-tief) 70%, transparent); }
+  #wissen-anzahl { font-size: .8rem; color: var(--text-3); }
+  .speicher-chip { background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); }
+  .rund-knopf { border: 0; box-shadow: 0 1px 2px rgba(15, 23, 42, .06), inset 0 0 0 1px var(--m-trenn); }
+}
