@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Antworten } from "./spiegel";
 import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
-import { EINSTELLUNGEN_START, type Einstellungen, type Eintrag, type RadStand } from "./ich";
+import { EINSTELLUNGEN_START, FARBEN, type Einstellungen, type Eintrag, type RadStand } from "./ich";
 
 export type Land = "AT" | "DE";
 export type Markierung = "beschaeftigt" | "kraft";
@@ -94,7 +94,10 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     const h = document.documentElement;
     if (einstellungen.schrift === "gross") h.dataset.schrift = "gross"; else delete h.dataset.schrift;
     if (einstellungen.ruhig) h.dataset.ruhig = "ja"; else delete h.dataset.ruhig;
-  }, [einstellungen.schrift, einstellungen.ruhig]);
+    if (einstellungen.farbe && einstellungen.farbe !== "standard") h.dataset.farbe = einstellungen.farbe; else delete h.dataset.farbe;
+    const f = FARBEN.find((x) => x.id === einstellungen.farbe);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", f && f.id !== "standard" ? f.von : "#6366f1");
+  }, [einstellungen.schrift, einstellungen.ruhig, einstellungen.farbe]);
 
   const wert: Zustand = {
     land, setLand,

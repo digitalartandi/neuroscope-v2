@@ -2,7 +2,7 @@ import { useState } from "react";
 import { REGIONEN } from "../content/hilfe";
 import { AchsenWahl, BEREICH_NAMEN, Schalter } from "../components/IchIntro";
 import { WISSEN_SYMBOLE } from "../components/Icons";
-import { erinnerungIcs } from "../lib/ich";
+import { erinnerungIcs, FARBEN } from "../lib/ich";
 import { useZustand } from "../lib/zustand";
 
 export default function Einstellungen() {
@@ -76,6 +76,18 @@ export default function Einstellungen() {
 
       <section className="ich-karte" aria-labelledby="e-ansicht">
         <h2 id="e-ansicht">Darstellung</h2>
+        <fieldset style={{ border: 0, padding: 0, margin: "0 0 var(--s5)" }}>
+          <legend className="feld" style={{ margin: 0, padding: 0 }}>Farbwelt</legend>
+          <div className="farbwahl">
+            {FARBEN.map((f) => (
+              <label key={f.id} className="farbe">
+                <input type="radio" name="farbe" checked={e.farbe === f.id} onChange={() => z.setEinstellungen({ farbe: f.id })} />
+                <span className="farbe__muster" style={{ background: `linear-gradient(135deg, ${f.von}, ${f.bis})` }} aria-hidden="true" />
+                {f.name}
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <div className="schalter-liste">
           <Schalter an={e.schrift === "gross"} titel="Größere Schrift" text="Für die ganze App" aendern={(an) => z.setEinstellungen({ schrift: an ? "gross" : "normal" })} />
           <Schalter an={e.ruhig} titel="Ruhige Darstellung" text="Ohne Animationen und Bewegung" aendern={(an) => z.setEinstellungen({ ruhig: an })} />

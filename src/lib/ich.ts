@@ -36,6 +36,16 @@ export function eintragen(liste: Eintrag[], neu: Eintrag): Eintrag[] {
   return [...liste.filter((e) => e.datum !== neu.datum), neu].sort((a, b) => a.datum.localeCompare(b.datum));
 }
 
+export type Farbe = "standard" | "meer" | "wald" | "abendrot" | "lavendel" | "graphit";
+export const FARBEN: { id: Farbe; name: string; von: string; bis: string }[] = [
+  { id: "standard", name: "Morgenlicht", von: "#2563eb", bis: "#7c3aed" },
+  { id: "meer", name: "Meer", von: "#1d4ed8", bis: "#0e7490" },
+  { id: "wald", name: "Wald", von: "#047857", bis: "#0f766e" },
+  { id: "abendrot", name: "Abendrot", von: "#be123c", bis: "#c2410c" },
+  { id: "lavendel", name: "Lavendel", von: "#7c3aed", bis: "#a21caf" },
+  { id: "graphit", name: "Graphit", von: "#1e293b", bis: "#475569" },
+];
+
 // Persönliche Einstellungen. Liegen wie alle Einträge nur im Browser
 // (Sitzung, oder mit Zustimmung dauerhaft auf dem Gerät).
 export interface Einstellungen {
@@ -46,6 +56,7 @@ export interface Einstellungen {
   zeitraum: 7 | 14 | 30;
   achsen: string[]; // Lebensbereiche im Netz
   schrift: "normal" | "gross";
+  farbe: Farbe;
   ruhig: boolean;
   intro: boolean; // Einführung schon gesehen
   land?: "AT" | "DE";
@@ -59,6 +70,7 @@ export const EINSTELLUNGEN_START: Einstellungen = {
   zeitraum: 14,
   achsen: ["schlaf", "energie", "stress", "stimmung", "beziehungen", "alltag", "gewohnheiten", "staerken"],
   schrift: "normal",
+  farbe: "standard",
   ruhig: false,
   intro: false,
 };
