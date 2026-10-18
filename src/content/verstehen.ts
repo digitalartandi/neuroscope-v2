@@ -1,6 +1,7 @@
 // „Psychische Gesundheit verstehen“: allgemeine Information zu Krankheitsbildern nach ICD-11.
 // Nie mit den Antworten der Person verknüpft. Kein Selbsttest, keine Kriterienliste.
 import type { Quelle } from "./wissen";
+import { SEITEN } from "./verstehen-seiten";
 
 export interface VerstehenSeite {
   id: string;
@@ -15,8 +16,12 @@ export interface VerstehenSeite {
 }
 
 export const ICD_INFO = {
-  text: "", // wird mit der Recherche befüllt
-  quellen: [] as Quelle[],
+  text: "Die Einordnung folgt der ICD-11, der Internationalen Klassifikation der Krankheiten der WHO, seit 1. Jänner 2022 in Kraft. Für Diagnosen und Abrechnung wird in Österreich und Deutschland derzeit noch die ICD-10 verwendet; die Umstellung in Deutschland dauert laut BfArM noch einige Jahre. Häufigkeiten für Deutschland stammen, wo nicht anders angegeben, aus der Studie DEGS1-MH (Erwachsene 18 bis 79 Jahre, innerhalb eines Jahres).",
+  quellen: [
+    { text: "WHO: International Classification of Diseases", url: "https://www.who.int/standards/classifications/classification-of-diseases" },
+    { text: "BfArM: ICD-11", url: "https://www.bfarm.de/EN/Code-systems/Classifications/ICD/ICD-11/_node.html" },
+    { text: "ICD-11 Browser der WHO", url: "https://icd.who.int/browse/2025-01/mms/en" },
+  ] as Quelle[],
 };
 
 export const TRANSGENERATIONAL: VerstehenSeite = {
@@ -80,4 +85,4 @@ export const TRANSGENERATIONAL: VerstehenSeite = {
   ],
 };
 
-export const VERSTEHEN: VerstehenSeite[] = [TRANSGENERATIONAL];
+export const VERSTEHEN: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
