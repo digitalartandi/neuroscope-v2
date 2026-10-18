@@ -7,6 +7,8 @@ import { VERTIEFUNG_1, ZUGANG } from "./vertiefung1";
 import { VERTIEFUNG_2 } from "./vertiefung2";
 import { NS_ERGAENZUNG } from "./ns-erziehung";
 import { DROGEN } from "./drogen";
+import { KOENIG } from "./koenig";
+import { SOZIALE_ANGST } from "./sozialeangst";
 export { ZUGANG };
 
 export interface VerstehenSeite {
@@ -23,6 +25,7 @@ export interface VerstehenSeite {
   irrtuemer?: Irrtum[];
   angehoerige?: string[];
   vertiefung?: { titel: string; text: string[] }[]; // nach „Was hilft“
+  weiter?: { text: string; url: string }[]; // Zum Weiterlesen und Hören
 }
 export interface Irrtum { irrtum: string; richtig: string }
 
@@ -98,7 +101,7 @@ export const TRANSGENERATIONAL: VerstehenSeite = {
 };
 
 // Ergänzungen aus den Vertiefungen. Abschnitte zu Behandlung und Selbsthilfe kommen nach „Was hilft“, der Rest davor.
-export interface Ergaenzung { einleitung?: string; absaetze: { titel: string; text: string[] }[]; vertiefung?: { titel: string; text: string[] }[]; irrtuemer: Irrtum[]; angehoerige: string[]; quellen: Quelle[]; stichworte?: string[]; nachAbsatz?: number }
+export interface Ergaenzung { einleitung?: string; absaetze: { titel: string; text: string[] }[]; vertiefung?: { titel: string; text: string[] }[]; irrtuemer: Irrtum[]; angehoerige: string[]; quellen: Quelle[]; stichworte?: string[]; nachAbsatz?: number; weiter?: { text: string; url: string }[] }
 const NACH_HILFT = /behandlung|selbst tun|erholung/i;
 
 function ergaenze(v: VerstehenSeite, e?: Ergaenzung): VerstehenSeite {
@@ -118,15 +121,18 @@ function ergaenze(v: VerstehenSeite, e?: Ergaenzung): VerstehenSeite {
     irrtuemer: [...(v.irrtuemer ?? []), ...e.irrtuemer],
     angehoerige: [...(v.angehoerige ?? []), ...e.angehoerige],
     quellen: [...v.quellen, ...e.quellen],
+    weiter: [...(v.weiter ?? []), ...(e.weiter ?? [])],
   };
 }
 
 const ERGAENZUNGEN: Record<string, Ergaenzung[]> = {};
 for (const quelle of [TRAUMA_ERGAENZUNG, VERTIEFUNG_1, VERTIEFUNG_2] as Record<string, Ergaenzung>[])
   for (const [id, e] of Object.entries(quelle)) (ERGAENZUNGEN[id] ??= []).push(e);
+(ERGAENZUNGEN.trauma ??= []).push({ absaetze: KOENIG.absaetze, irrtuemer: [], angehoerige: [], quellen: KOENIG.quellen, weiter: KOENIG.weiter, stichworte: ["Verena König", "König", "Nervensystem", "Körper"] });
 (ERGAENZUNGEN.transgenerational ??= []).push({ ...NS_ERGAENZUNG, angehoerige: [], nachAbsatz: 1 });
 const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
 ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
+ALLE.splice(ALLE.findIndex((v) => v.id === "angst") + 1, 0, SOZIALE_ANGST);
 // „Im Notfall“ gehört direkt hinter die Substanzen, nicht ans Ende.
 const notfall = DROGEN.vertiefung.filter((a) => /notfall/i.test(a.titel));
 const nachSubstanzen = DROGEN.absaetze.findIndex((a) => /anfühlen/i.test(a.titel));

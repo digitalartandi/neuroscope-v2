@@ -346,6 +346,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
     { id: "termin", titel: "So kommst du zu einem Termin", inhalt: <Zugang /> },
     ...(v.irrtuemer?.length ? [{ id: "irrtuemer", titel: "Häufige Irrtümer", inhalt: <Irrtuemer liste={v.irrtuemer} /> }] : []),
     ...(v.angehoerige?.length ? [{ id: "angehoerige", titel: "Für Angehörige und Freunde", inhalt: <ul>{v.angehoerige.map((h, i) => <li key={i}>{h}</li>)}</ul> }] : []),
+    ...(v.weiter?.length ? [{ id: "weiter", titel: "Zum Weiterlesen und Hören", inhalt: <ul>{v.weiter.map((w) => <li key={w.url}><a href={w.url} target="_blank" rel="noopener noreferrer">{w.text}</a></li>)}</ul> }] : []),
     { id: "wann-hilfe", titel: "Wann ein Gespräch mit Fachleuten sinnvoll ist", kasten: true, inhalt: <WannHilfe liste={v.wannHilfe} /> },
     ...v.absaetze.filter((a) => istIcd(a.titel)).map((a) => ({ ...abschnitt(a.titel, a.text), klein: true })),
   ];
