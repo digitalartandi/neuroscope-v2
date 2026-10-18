@@ -4,7 +4,7 @@ import { ichForm, spiegelSaetze } from "../lib/spiegel";
 import { useZustand } from "../lib/zustand";
 
 export default function Gespraech() {
-  const { antworten, notizen, markierungen, gespraech, setGespraech } = useZustand();
+  const { antworten, notizen, markierungen, gespraech, setGespraech, plan } = useZustand();
   const [nurMarkiert, setNurMarkiert] = useState(false);
   const datum = new Date().toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric" });
 
@@ -56,6 +56,12 @@ export default function Gespraech() {
           <>
             <h3>Was ich ansprechen möchte</h3>
             <p style={{ whiteSpace: "pre-wrap" }}>{gespraech.trim()}</p>
+          </>
+        )}
+        {plan.length > 0 && (
+          <>
+            <h3>Mein nächster Schritt</h3>
+            <ol>{plan.map((p) => <li key={p}>{p}</li>)}</ol>
           </>
         )}
         {themen.length === 0 && !gespraech.trim() && (

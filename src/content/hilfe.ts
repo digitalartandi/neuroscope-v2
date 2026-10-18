@@ -56,3 +56,7 @@ export const WEGE: Record<"AT" | "DE", Weg[]> = {
     { titel: "Anlaufstellen bei Krisen", text: "Überblick über Krisendienste und Kliniken.", link: { text: "Anlaufstellen bei psychischen Krisen – gesund.bund.de", url: "https://gesund.bund.de/wege-im-gesundheitswesen/erwachsenenleben/psychische-gesundheit/anlaufstellen-bei-psychischen-krisen" } },
   ],
 };
+
+// Regionale Krisendienste. Wird nach der Recherche je Bundesland befüllt.
+export interface Region { name: string; eintraege: Nummer[]; hinweis?: string }
+export const REGIONEN: Record<"AT" | "DE", Region[]> = { AT: [], DE: [] };

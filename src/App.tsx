@@ -10,6 +10,8 @@ import Uebungen from "./pages/Uebungen";
 import Hilfe from "./pages/Hilfe";
 import Spiele from "./pages/Spiele";
 import { Datenschutz, Impressum, Ueber } from "./pages/Recht";
+import Plan from "./pages/Plan";
+import Sichern from "./pages/Sichern";
 
 const Spur = lazy(() => import("./games/Spur"));
 const Farbwort = lazy(() => import("./games/Farbwort"));
@@ -23,6 +25,8 @@ function Seite({ route }: { route: string }) {
     case "reflexion": return <Reflexion themaId={b} key={b ?? "uebersicht"} />;
     case "spiegel": return <Spiegel />;
     case "gespraech": return <Gespraech />;
+    case "plan": return <Plan />;
+    case "sichern": return <Sichern />;
     case "wissen": return <Wissen id={b} />;
     case "uebungen": return <Uebungen id={b} key={b ?? "liste"} />;
     case "hilfe": return <Hilfe />;

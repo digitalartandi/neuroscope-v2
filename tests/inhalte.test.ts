@@ -5,7 +5,8 @@ import { THEMEN, HAEUFIGKEIT } from "../src/content/reflexion";
 import { ichForm, spiegelSaetze, schluessel } from "../src/lib/spiegel";
 import { WISSEN } from "../src/content/wissen";
 import { UEBUNGEN } from "../src/content/uebungen";
-import { KRISE } from "../src/content/hilfe";
+import { KRISE, REGIONEN } from "../src/content/hilfe";
+import { VERSTEHEN } from "../src/content/verstehen";
 
 // Begriffe, die eine Bewertung oder Diagnose nahelegen. Dürfen in Fragen,
 // Spiegel, Wissen, Übungen und Spielen nicht vorkommen.
@@ -34,7 +35,7 @@ describe("Keine bewertende Sprache in den Inhalten", () => {
 
   it("Spiele und Spiegel-Seiten", () => {
     const dirs = ["src/games", "src/pages"];
-    const ausnahmen = new Set(["Recht.tsx", "Start.tsx"]); // Zweckbestimmung verneint ausdrücklich „Test“ und „Diagnose“
+    const ausnahmen = new Set(["Recht.tsx", "Start.tsx", "Wissen.tsx"]); // verneinen ausdrücklich „Test“ und „Diagnose“ bzw. erklären Krankheitsbilder (eigene Prüfung unten)
     for (const d of dirs) for (const f of readdirSync(d)) {
       if (ausnahmen.has(f)) continue;
       const code = readFileSync(join(d, f), "utf8").replace(/\/\/.*$/gm, "");
@@ -93,5 +94,29 @@ describe("Ich-Form für die Gesprächsvorbereitung", () => {
       const satz = ichForm(f.spiegel.replace("{h}", "oft"));
       expect(satz, f.id).not.toMatch(/\b(du|dich|dir|dein\w*|hast|bist|hattest|konntest|warst)\b/i);
     }
+  });
+});
+
+describe("Psychische Gesundheit verstehen: allgemeine Information, kein Selbsttest", () => {
+  const VERKNUEPFUNG = [/deine antworten/i, /dein ergebnis/i, /passt zu dir/i, /du hast (eine|ein|wahrscheinlich)/i, /selbsttest machen/i, /screening/i, /\bscore\b/i, /punktwert/i, /cut-?off/i, /trifft auf dich zu/i];
+  it("keine Verknüpfung mit der Person", () => {
+    const t = JSON.stringify(VERSTEHEN);
+    for (const re of VERKNUEPFUNG) expect(t, String(re)).not.toMatch(re);
+  });
+  it("jede Seite hat Quellen und den Hinweis auf Hilfe", () => {
+    for (const v of VERSTEHEN) {
+      expect(v.quellen.length, v.id).toBeGreaterThan(0);
+      expect(v.wannHilfe.length, v.id).toBeGreaterThan(0);
+    }
+  });
+  it("Seiten-IDs kollidieren nicht mit den Alltagsthemen", () => {
+    const ids = new Set(WISSEN.map((w) => w.id));
+    for (const v of VERSTEHEN) expect(ids.has(v.id), v.id).toBe(false);
+  });
+});
+
+describe("Regionale Hilfe", () => {
+  it("jede Nummer hat eine Quelle", () => {
+    for (const land of ["AT", "DE"] as const) for (const r of REGIONEN[land]) for (const n of r.eintraege) expect(n.quelle, r.name).toMatch(/^https:\/\//);
   });
 });

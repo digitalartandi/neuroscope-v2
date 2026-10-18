@@ -1,8 +1,10 @@
-import { GEPRUEFT_AM, KRISE, KRISEN_UEBERSICHT_AT, WEGE } from "../content/hilfe";
+import { GEPRUEFT_AM, KRISE, KRISEN_UEBERSICHT_AT, REGIONEN, WEGE, type Nummer } from "../content/hilfe";
 import { useZustand } from "../lib/zustand";
 
 export default function Hilfe() {
-  const { land, setLand } = useZustand();
+  const { land, setLand, region, setRegion } = useZustand();
+  const regionen = REGIONEN[land];
+  const gewaehlt = regionen.find((r) => r.name === region);
   const name = land === "AT" ? "Österreich" : "Deutschland";
   return (
     <div className="spalte">
@@ -17,18 +19,26 @@ export default function Hilfe() {
       </div>
 
       <h2>Sofort erreichbar in {name}</h2>
-      <ul className="nummern">
-        {KRISE[land].map((n) => (
-          <li key={n.nummer + n.was}>
-            <span className="was">{n.was}</span>
-            <span className="wann">{n.wann}</span>
-            <a className="tel" href={`tel:${n.tel}`} aria-label={`${n.was} anrufen: ${n.nummer}`}>{n.nummer}</a>
-          </li>
-        ))}
-      </ul>
+      <Liste nummern={KRISE[land]} />
+      {regionen.length > 0 && (
+        <>
+          <h2 className="abschnitt">In deinem Bundesland</h2>
+          <label className="feld" htmlFor="region">Bundesland</label>
+          <select id="region" value={gewaehlt ? region : ""} onChange={(e) => setRegion(e.target.value)}>
+            <option value="">Bitte wählen</option>
+            {regionen.map((r) => <option key={r.name} value={r.name}>{r.name}</option>)}
+          </select>
+          {gewaehlt && (
+            <div style={{ marginTop: "1rem" }}>
+              {gewaehlt.eintraege.length > 0 && <Liste nummern={gewaehlt.eintraege} />}
+              {gewaehlt.hinweis && <p className="klein" style={{ marginTop: ".75rem" }}>{gewaehlt.hinweis}</p>}
+            </div>
+          )}
+        </>
+      )}
       {land === "AT" && (
         <p className="klein" style={{ marginTop: "1rem" }}>
-          Krisendienste in deinem Bundesland: <a href={KRISEN_UEBERSICHT_AT} target="_blank" rel="noopener noreferrer">Übersicht auf gesundheit.gv.at</a>
+          Übersicht aller Krisentelefone: <a href={KRISEN_UEBERSICHT_AT} target="_blank" rel="noopener noreferrer">gesundheit.gv.at</a>
         </p>
       )}
 
@@ -53,5 +63,19 @@ export default function Hilfe() {
       )}
       <p className="quellen">Alle Nummern und Links geprüft am {GEPRUEFT_AM} auf den Seiten der jeweiligen Anbieter.</p>
     </div>
+  );
+}
+
+function Liste({ nummern }: { nummern: Nummer[] }) {
+  return (
+    <ul className="nummern">
+      {nummern.map((n) => (
+        <li key={n.nummer + n.was}>
+          <span className="was">{n.was}</span>
+          <span className="wann">{n.wann}</span>
+          <a className="tel" href={`tel:${n.tel}`} aria-label={`${n.was} anrufen: ${n.nummer}`}>{n.nummer}</a>
+        </li>
+      ))}
+    </ul>
   );
 }

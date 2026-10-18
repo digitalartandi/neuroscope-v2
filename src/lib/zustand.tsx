@@ -16,7 +16,22 @@ interface Zustand {
   markiere: (themaId: string, m: Markierung) => void;
   gespraech: string;
   setGespraech: (t: string) => void;
+  plan: string[];
+  setPlan: (p: string[]) => void;
+  region: string;
+  setRegion: (r: string) => void;
   allesLoeschen: () => void;
+  laden: (d: Sicherung) => void;
+  sicherung: () => Sicherung;
+}
+
+export interface Sicherung {
+  version: 1;
+  antworten: Antworten;
+  notizen: Record<string, string>;
+  markierungen: Record<string, Markierung[]>;
+  gespraech: string;
+  plan: string[];
 }
 
 const Ctx = createContext<Zustand | null>(null);
@@ -38,6 +53,8 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
   const [notizen, setNotizen] = useSitzung<Record<string, string>>("notizen", {});
   const [markierungen, setMarkierungen] = useSitzung<Record<string, Markierung[]>>("markierungen", {});
   const [gespraech, setGespraech] = useSitzung<string>("gespraech", "");
+  const [plan, setPlan] = useSitzung<string[]>("plan", []);
+  const [region, setRegion] = useSitzung<string>("region", "");
 
   const wert: Zustand = {
     land, setLand,
@@ -55,9 +72,16 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
       return { ...alt, [id]: liste.includes(m) ? liste.filter((x) => x !== m) : [...liste, m] };
     }),
     gespraech, setGespraech,
+    plan, setPlan,
+    region, setRegion,
     allesLoeschen: () => {
       sitzungLoeschen();
-      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech("");
+      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]);
+    },
+    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan }),
+    laden: (d) => {
+      setAntworten(d.antworten ?? {}); setNotizen(d.notizen ?? {}); setMarkierungen(d.markierungen ?? {});
+      setGespraech(d.gespraech ?? ""); setPlan(Array.isArray(d.plan) ? d.plan : []);
     },
   };
   return <Ctx.Provider value={wert}>{children}</Ctx.Provider>;

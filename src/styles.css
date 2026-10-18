@@ -248,7 +248,7 @@ main { padding: var(--s6) var(--s4) var(--s8); }
 .frage__leeren { margin-top: var(--s2); font-size: .875rem; }
 
 /* ---------- Formularfelder ---------- */
-textarea, input[type="text"] {
+textarea, input[type="text"], input[type="password"], input[type="file"], select {
   width: 100%; font: inherit; color: var(--text); background: var(--karte-voll);
   border: 1px solid var(--linie); border-radius: var(--r-klein); padding: var(--s3) var(--s4);
 }
@@ -256,6 +256,7 @@ textarea { min-height: 7rem; resize: vertical; }
 textarea:focus { border-color: var(--blau); outline: 3px solid rgba(59, 130, 246, .2); outline-offset: 0; }
 label.feld { display: block; font-weight: 650; margin: var(--s5) 0 var(--s2); }
 .hinweis-feld { font-size: .875rem; color: var(--text-3); margin-top: var(--s1); }
+select { min-height: 3rem; }
 input[type="checkbox"] { accent-color: var(--violett); width: 1.15rem; height: 1.15rem; }
 
 /* ---------- Spiegel ---------- */
@@ -269,6 +270,15 @@ input[type="checkbox"] { accent-color: var(--violett); width: 1.15rem; height: 1
 .marke-knopf:hover { border-color: var(--indigo); }
 .marke-knopf[aria-pressed="true"] { background: var(--verlauf); border-color: transparent; color: #fff; }
 .weiter-links { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); }
+
+/* ---------- Plan ---------- */
+.plan { padding-left: 1.4rem; display: grid; gap: var(--s2); }
+.plan li { padding: var(--s2) 0; }
+.plan li span { display: block; }
+.ideen { list-style: none; padding: 0; margin: var(--s4) 0 0; display: grid; gap: var(--s2); }
+.ideen li { display: grid; grid-template-columns: 1fr auto; gap: var(--s3); align-items: center; padding: var(--s3) var(--s4); border: 1px solid var(--linie); border-radius: 14px; background: var(--karte-voll); }
+.ideen .knopf { min-height: 2.75rem; padding: .4rem 1rem; font-size: .9rem; }
+@media (max-width: 48rem) { .ideen li { grid-template-columns: 1fr; } .ideen .knopf { width: 100%; } }
 
 /* ---------- Listen, Kästen, Hilfe ---------- */
 .liste-ruhig { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s3); }

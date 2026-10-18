@@ -70,8 +70,9 @@ export default function Spiegel() {
           deinem Hausarzt oder einer Fachperson. Deine Antworten und Notizen kannst du dafür als PDF mitnehmen.
         </p>
         <div className="knopfreihe">
-          <a className="knopf" href="#/gespraech">Gesprächsvorbereitung erstellen</a>
-          <a className="knopf knopf--leise" href="#/hilfe">Hilfe finden</a>
+          <a className="knopf" href="#/plan">Nächsten Schritt planen</a>
+          <a className="knopf knopf--leise" href="#/gespraech">Gesprächsvorbereitung erstellen</a>
+          <a className="knopf knopf--leise" href="#/sichern">Speichern und später weitermachen</a>
         </div>
       </section>
     </div>
