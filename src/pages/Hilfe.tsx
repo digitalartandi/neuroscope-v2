@@ -9,7 +9,7 @@ export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
     if (abschnitt) document.getElementById(abschnitt)?.scrollIntoView({ block: "start" });
   }, [abschnitt]);
   const sofort = new Set(KRISE[land].map((n) => n.nummer));
-  const gewalt = ANLAUFSTELLEN.filter((a) => a.land === land && !(a.nummer && sofort.has(a.nummer)) && !/telefonseelsorge/i.test(a.name));
+  const gewalt = ANLAUFSTELLEN.filter((a) => a.land === land && !(a.nummer && sofort.has(a.nummer)) && !a.name.toLowerCase().includes("telefonseelsorge"));
   const regionen = REGIONEN[land];
   const gewaehlt = regionen.find((r) => r.name === region);
   const name = land === "AT" ? "Österreich" : "Deutschland";
