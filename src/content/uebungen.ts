@@ -326,3 +326,9 @@ const NEU: Uebung[] = [
 // Reihenfolge innerhalb der Gruppen.
 const REIHENFOLGE = ["atmung", "muskelentspannung", "koerperreise", "sinne", "gefuehle", "selbstmitgefuehl", "schreiben", "sorgenzeit", "gedanken", "staerken", "schoenes", "abendroutine", "wochenrueckblick"];
 export const UEBUNGEN: Uebung[] = [...BASIS, ...NEU].sort((a, b) => REIHENFOLGE.indexOf(a.id) - REIHENFOLGE.indexOf(b.id));
+
+// Gefühlsfamilie eines Wortes (für die Farbe in „Mein Bereich“), -1 wenn unbekannt.
+export function gefuehlFamilie(wort: string): number {
+  const f = UEBUNGEN.find((u) => u.id === "gefuehle")?.gefuehle ?? [];
+  return f.findIndex((x) => x.woerter.includes(wort));
+}

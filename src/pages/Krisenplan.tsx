@@ -3,6 +3,7 @@ import { useZustand } from "../lib/zustand";
 import { KRISE } from "../content/hilfe";
 import { KRISENPLAN_QUELLEN, PLAN_SCHRITTE, type Kontakt, type PlanSchritt } from "../content/krisenplan";
 import { Schalter } from "../components/IchIntro";
+import { UEBUNGEN } from "../content/uebungen";
 
 const telLink = (n: string) => `tel:${n.replace(/[^0-9+]/g, "")}`;
 
@@ -118,6 +119,9 @@ function SchrittBearbeiten({ s, nr }: { s: PlanSchritt; nr: number }) {
     setze([...liste, typeof wert === "string" ? name : { name, nummer: wert.nummer.trim() }]);
   };
   const id = `plan-${s.id}`;
+  // Bei „Was ich selbst tun kann“: zuerst die Übungen, die mit einem Herz markiert sind.
+  const gemerkt = s.id === "selbst" ? UEBUNGEN.filter((u) => z.merkliste.includes(u.id)).map((u) => `Übung „${u.titel}“ in Neuroscope`) : [];
+  const ideen = [...gemerkt, ...s.ideen];
   return (
     <section className="plan-schritt" aria-labelledby={`${id}-t`}>
       <div className="plan-schritt__kopf">
@@ -156,9 +160,9 @@ function SchrittBearbeiten({ s, nr }: { s: PlanSchritt; nr: number }) {
         </>}
         <button type="submit" className="knopf knopf--leise" disabled={!text.trim()}>Hinzufügen</button>
       </form>
-      {s.ideen.length > 0 && (
+      {ideen.length > 0 && (
         <div className="plan-ideen" aria-label="Ideen zum Übernehmen">
-          {s.ideen.filter((i) => !liste.includes(i)).map((i) => (
+          {ideen.filter((i) => !liste.includes(i)).map((i) => (
             <button key={i} type="button" className="plan-idee" onClick={() => dazu(i)}><span aria-hidden="true">+</span> {i}</button>
           ))}
         </div>

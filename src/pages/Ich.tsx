@@ -7,6 +7,8 @@ import { themaSymbol } from "../components/Icons";
 import { ENERGIE, STIMMUNG, datumLang, eintragen, heute, tageZurueck } from "../lib/ich";
 import { schluessel } from "../lib/spiegel";
 import { useZustand } from "../lib/zustand";
+import { UEBUNGEN, gefuehlFamilie } from "../content/uebungen";
+import { UEBUNG_SYMBOL } from "../components/Icons";
 
 const KURZ: Record<string, string> = {
   schlaf: "Schlaf", energie: "Energie", stress: "Belastung", stimmung: "Stimmung",
@@ -150,6 +152,49 @@ export default function Ich() {
       </section>
 
       }
+      {/* ---------- Gefühle ---------- */}
+      {e.bereiche.gefuehle && <section className="ich-karte" aria-labelledby="gefuehle-titel">
+        <div className="ich-karte__kopf">
+          <h2 id="gefuehle-titel">Deine Gefühle</h2>
+          <div className="segment" role="group" aria-label="Zeitraum Gefühle">
+            {[7, 14, 30].map((n) => <button key={n} type="button" aria-pressed={zeitraum === n} onClick={() => setZeitraum(n)}>{n} Tage</button>)}
+          </div>
+        </div>
+        {(() => {
+          const tage = new Set(tageZurueck(zeitraum));
+          const liste = z.gefuehle.filter((g) => tage.has(g.datum)).slice().reverse();
+          return liste.length === 0 ? (
+            <p className="leer">Noch nichts festgehalten. In der Übung <a href="#/uebungen/gefuehle">Gefühle benennen</a> kannst du Wörter für den Tag hierher übernehmen.</p>
+          ) : (
+            <ul className="gefuehl-verlauf">
+              {liste.map((g) => (
+                <li key={g.datum}>
+                  <span className="gefuehl-verlauf__tag">{datumLang(g.datum)}</span>
+                  <span className="gefuehl-woerter">
+                    {g.woerter.map((w) => <span key={w} className="gefuehl gefuehl--klein" style={{ ["--farbe" as string]: `var(--gefuehl-${gefuehlFamilie(w) + 1}, var(--violett))` }}>{w}</span>)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          );
+        })()}
+        <p className="hinweis-feld">Nur deine Wörter, in der Reihenfolge der Tage. Neuroscope wertet sie nicht aus.</p>
+      </section>}
+
+      {/* ---------- Was mir guttut ---------- */}
+      {e.bereiche.hilft && <section className="ich-karte" aria-labelledby="hilft-titel">
+        <h2 id="hilft-titel">Was mir guttut</h2>
+        {z.merkliste.length === 0 ? (
+          <p className="leer">Markiere bei einer <a href="#/uebungen">Übung</a> das Herz „Hat mir gutgetan“. Sie erscheint dann hier, zum schnellen Wiederfinden.</p>
+        ) : (
+          <ul className="gut-tut">
+            {UEBUNGEN.filter((u) => z.merkliste.includes(u.id)).map((u) => (
+              <li key={u.id}><a href={`#/uebungen/${u.id}`}><span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id] ?? UEBUNG_SYMBOL.atmung}</span>{u.titel}</a></li>
+            ))}
+          </ul>
+        )}
+      </section>}
+
       {/* ---------- Lebensrad ---------- */}
       {e.bereiche.rad && <section className="ich-karte" aria-labelledby="rad-titel">
         <h2 id="rad-titel">Deine Lebensbereiche</h2>

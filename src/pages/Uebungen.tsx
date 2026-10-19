@@ -4,6 +4,8 @@ import { sitzungLesen, sitzungSchreiben } from "../lib/speicher";
 import { SPIEL_SYMBOL, UEBUNG_SYMBOL } from "../components/Icons";
 import { SPIELE } from "./Spiele";
 import { Vorlesen } from "../components/Vorlesen";
+import { useZustand } from "../lib/zustand";
+import { heute } from "../lib/ich";
 
 function Atmung() {
   const [laeuft, setLaeuft] = useState(false);
@@ -79,6 +81,19 @@ function Schreiben({ u }: { u: Uebung }) {
   );
 }
 
+// Herz: „Hat mir gutgetan“. Landet in „Mein Bereich“ unter „Was mir guttut“.
+export function MerkKnopf({ id, titel }: { id: string; titel: string }) {
+  const z = useZustand();
+  const an = z.merkliste.includes(id);
+  return (
+    <button type="button" className="merk-knopf" aria-pressed={an} onClick={() => z.setMerkliste((l) => (l.includes(id) ? l.filter((x) => x !== id) : [...l, id]))}
+      aria-label={an ? `${titel}: aus „Was mir guttut“ entfernen` : `${titel}: hat mir gutgetan`}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.5-7.5-10A4.2 4.2 0 0 1 12 7.4 4.2 4.2 0 0 1 19.5 10c0 5.5-7.5 10-7.5 10z" /></svg>
+      <span>{an ? "Tut mir gut" : "Hat mir gutgetan"}</span>
+    </button>
+  );
+}
+
 // Angeleitete Übung: ein Schritt nach dem anderen, mit ruhigem Zeitkreis, wo es passt.
 function Schritte({ u }: { u: Uebung }) {
   const liste = u.schritte!;
@@ -105,6 +120,7 @@ function Schritte({ u }: { u: Uebung }) {
     <div className="schritte-karte schritte-karte--fertig" ref={karte} tabIndex={-1}>
       <p className="schritte-karte__titel">Gut gemacht.</p>
       <p>Nimm dir noch einen Moment, bevor du weitermachst.</p>
+      <MerkKnopf id={u.id} titel={u.titel} />
       <div className="knopfreihe" style={{ justifyContent: "center" }}><button type="button" className="knopf knopf--leise" onClick={() => gehe(0)}>Noch einmal</button></div>
     </div>
   );
@@ -137,6 +153,8 @@ function Schritte({ u }: { u: Uebung }) {
 
 // Gefühle benennen: Wörter antippen, nichts wird ausgewertet.
 function Gefuehle({ u }: { u: Uebung }) {
+  const z = useZustand();
+  const [festgehalten, setFestgehalten] = useState(false);
   const [wahl, setWahl] = useState<string[]>(() => sitzungLesen("ue-" + u.id + "-wahl", []));
   const [texte, setTexte] = useState<string[]>(() => sitzungLesen("ue-" + u.id, (u.impulse ?? []).map(() => "")));
   useEffect(() => sitzungSchreiben("ue-" + u.id + "-wahl", wahl), [u.id, wahl]);
@@ -162,8 +180,35 @@ function Gefuehle({ u }: { u: Uebung }) {
           <textarea id={`gf-${i}`} value={texte[i] ?? ""} onChange={(e) => setTexte((t) => t.map((x, j) => (j === i ? e.target.value : x)))} />
         </div>
       ))}
-      <p className="hinweis-feld">Es gibt keine richtigen oder falschen Gefühle. Deine Auswahl bleibt nur in diesem Tab.</p>
+      <div className="knopfreihe">
+        <button type="button" className={`knopf${festgehalten ? " knopf--erledigt" : ""}`} disabled={wahl.length === 0}
+          onClick={() => { const tag = heute(); z.setGefuehle((alt) => [...alt.filter((g) => g.datum !== tag), { datum: tag, woerter: wahl }].sort((a, b) => a.datum.localeCompare(b.datum))); setFestgehalten(true); window.setTimeout(() => setFestgehalten(false), 2400); }}>
+          {festgehalten ? "In Mein Bereich festgehalten" : "In Mein Bereich festhalten"}
+        </button>
+      </div>
+      <p className="sr-only" role="status">{festgehalten ? "Deine Gefühlswörter für heute sind in Mein Bereich festgehalten." : ""}</p>
+      <p className="hinweis-feld">
+        Es gibt keine richtigen oder falschen Gefühle. Festgehalten werden nur das Datum und die Wörter, nicht deine Notizen.
+        {z.ichMerken ? " Sie bleiben auf diesem Gerät." : <> Ohne Zustimmung nur bis zum Schließen des Tabs. <a href="#/einstellungen">Dauerhaft merken</a></>}
+      </p>
     </div>
+  );
+}
+
+function GutTut() {
+  const z = useZustand();
+  const liste = UEBUNGEN.filter((u) => z.merkliste.includes(u.id));
+  if (liste.length === 0) return null;
+  return (
+    <section aria-labelledby="gr-gut">
+      <h2 className="abschnitt" id="gr-gut">Was dir guttut</h2>
+      <p className="leise gruppe-text">Übungen, die du mit einem Herz markiert hast.</p>
+      <ul className="gut-tut">
+        {liste.map((u) => (
+          <li key={u.id}><a href={`#/uebungen/${u.id}`}><span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id] ?? UEBUNG_SYMBOL.atmung}</span>{u.titel}</a></li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -180,6 +225,8 @@ export default function Uebungen({ id }: { id?: string }) {
       <div className="spalte spalte--breit">
         <h1>Übungen</h1>
         <p className="einleitung">Kurze, erprobte Übungen für Körper, Gefühle und Gedanken. Und kleine Denkspiele zum Abschalten.</p>
+
+        <GutTut />
 
         {UEBUNG_GRUPPEN.map((g) => {
           const liste = UEBUNGEN.filter((u) => u.gruppe === g.id);
@@ -241,6 +288,7 @@ export default function Uebungen({ id }: { id?: string }) {
           <h1 style={{ margin: ".15rem 0 0" }}>{u.titel}</h1>
         </div>
       </div>
+      <MerkKnopf id={u.id} titel={u.titel} />
       <Vorlesen />
       {u.einleitung.map((t, i) => <p key={i} className={i === 0 ? "einleitung" : undefined}>{t}</p>)}
       {u.achtung && <p className="hinweis-feld uebung-achtung">{u.achtung}</p>}

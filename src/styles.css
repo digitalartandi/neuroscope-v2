@@ -1219,3 +1219,21 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .gefuehl[aria-pressed="true"] { background: color-mix(in srgb, var(--farbe) 18%, var(--karte-voll)); border-color: var(--farbe); font-weight: 600; }
 .gefuehl--gewaehlt { background: var(--verlauf); color: #fff; border-color: transparent; min-height: 2.1rem; padding: .2rem .75rem; font-size: .88rem; }
 @media (max-width: 48rem) { .gefuehl-auswahl { top: 3.6rem; } }
+
+/* ---------- Herz, „Was mir guttut“, Gefühlsverlauf ---------- */
+.merk-knopf { display: inline-flex; align-items: center; gap: .45rem; font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; min-height: 2.5rem; padding: .35rem .95rem .35rem .75rem; margin: var(--s3) 0 var(--s2);
+  border-radius: 999px; border: 1px solid var(--linie); background: var(--karte-voll); color: var(--text-2); transition: background .2s, color .2s, border-color .2s; }
+.merk-knopf svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), fill .2s; }
+.merk-knopf[aria-pressed="true"] { color: #e11d48; border-color: color-mix(in srgb, #e11d48 35%, var(--linie)); background: color-mix(in srgb, #e11d48 7%, var(--karte-voll)); }
+.merk-knopf[aria-pressed="true"] svg { fill: #e11d48; transform: scale(1.12); }
+.schritte-karte--fertig .merk-knopf { margin: var(--s2) auto var(--s3); }
+.gut-tut { list-style: none; padding: 0; margin: var(--s2) 0 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.gut-tut a { display: inline-flex; align-items: center; gap: .55rem; padding: .35rem .95rem .35rem .4rem; min-height: 2.75rem; border-radius: 999px; background: var(--karte-voll); border: 1px solid var(--linie); color: var(--text); text-decoration: none; font-weight: 600; font-size: .92rem; }
+.gut-tut .wissen-karten__symbol { width: 2rem; height: 2rem; border-radius: 50%; }
+.gut-tut .wissen-karten__symbol .symbol { width: 1.05rem; height: 1.05rem; }
+.gefuehl-verlauf { list-style: none; padding: 0; margin: var(--s2) 0 0; display: grid; }
+.gefuehl-verlauf li { display: grid; grid-template-columns: 7.5rem 1fr; gap: var(--s3); align-items: start; padding: .6rem 0; border-top: 1px solid var(--linie-2); }
+.gefuehl-verlauf li:first-child { border-top: 0; }
+.gefuehl-verlauf__tag { color: var(--text-2); font-size: .88rem; padding-top: .3rem; }
+.gefuehl--klein { cursor: default; min-height: 0; padding: .2rem .7rem; font-size: .85rem; background: color-mix(in srgb, var(--farbe) 14%, var(--karte-voll)); border-color: color-mix(in srgb, var(--farbe) 45%, var(--linie)); }
+@media (max-width: 30rem) { .gefuehl-verlauf li { grid-template-columns: 1fr; gap: .3rem; } }

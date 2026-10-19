@@ -2,6 +2,7 @@
 // Keine Summen, keine Durchschnitte, keine Schwellen. Ein Test prüft das.
 
 export interface Eintrag { datum: string; stimmung: number; energie?: number; wort?: string }
+export interface GefuehlEintrag { datum: string; woerter: string[] }
 export interface RadStand { datum: string; werte: Record<string, number> }
 
 export const STIMMUNG = ["sehr schwer", "eher schwer", "mittel", "eher gut", "sehr gut"];
@@ -50,7 +51,7 @@ export const FARBEN: { id: Farbe; name: string; von: string; bis: string }[] = [
 // (Sitzung, oder mit Zustimmung dauerhaft auf dem Gerät).
 export interface Einstellungen {
   name: string;
-  bereiche: { checkin: boolean; verlauf: boolean; rad: boolean; muster: boolean };
+  bereiche: { checkin: boolean; verlauf: boolean; gefuehle: boolean; hilft: boolean; rad: boolean; muster: boolean };
   energie: boolean;
   wort: boolean;
   zeitraum: 7 | 14 | 30;
@@ -67,7 +68,7 @@ export interface Einstellungen {
 }
 export const EINSTELLUNGEN_START: Einstellungen = {
   name: "",
-  bereiche: { checkin: true, verlauf: true, rad: true, muster: true },
+  bereiche: { checkin: true, verlauf: true, gefuehle: true, hilft: true, rad: true, muster: true },
   energie: true,
   wort: true,
   zeitraum: 14,

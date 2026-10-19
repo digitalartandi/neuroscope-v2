@@ -11,6 +11,8 @@ const SCHRITTE = ["Willkommen", "Über dich", "Was du sehen willst", "Merken"];
 export const BEREICH_NAMEN: [keyof Einstellungen["bereiche"], string, string][] = [
   ["checkin", "Wie geht es dir heute?", "Stimmung und Energie in zwei Klicks festhalten"],
   ["verlauf", "Dein Verlauf", "Linie und Kalender über die Tage"],
+  ["gefuehle", "Deine Gefühle", "Gefühlswörter aus der Übung „Gefühle benennen“"],
+  ["hilft", "Was mir guttut", "Übungen, die du mit einem Herz markiert hast"],
   ["rad", "Deine Lebensbereiche", "Eigene Einschätzung als Netz, mit Vergleich"],
   ["muster", "Selbstreflexion auf einen Blick", "Deine Antworten als Punktreihen"],
 ];

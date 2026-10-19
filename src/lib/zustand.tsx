@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Antworten } from "./spiegel";
 import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
 import { KRISENPLAN_LEER, type Krisenplan } from "../content/krisenplan";
-import { EINSTELLUNGEN_START, FARBEN, type Einstellungen, type Eintrag, type RadStand } from "./ich";
+import { EINSTELLUNGEN_START, FARBEN, type Einstellungen, type Eintrag, type GefuehlEintrag, type RadStand } from "./ich";
 
 export type Land = "AT" | "DE";
 export type Markierung = "beschaeftigt" | "kraft";
@@ -31,6 +31,10 @@ interface Zustand {
   einstellungen: Einstellungen;
   setEinstellungen: (aenderung: Partial<Einstellungen>) => void;
   ichLoeschen: () => void;
+  gefuehle: GefuehlEintrag[];
+  setGefuehle: (f: (alt: GefuehlEintrag[]) => GefuehlEintrag[]) => void;
+  merkliste: string[];
+  setMerkliste: (f: (alt: string[]) => string[]) => void;
   krisenplan: Krisenplan;
   setKrisenplan: (f: (alt: Krisenplan) => Krisenplan) => void;
   krisenplanMerken: boolean;
@@ -52,6 +56,8 @@ export interface Sicherung {
   rad?: RadStand[];
   einstellungen?: Einstellungen;
   krisenplan?: Krisenplan;
+  gefuehle?: GefuehlEintrag[];
+  merkliste?: string[];
 }
 
 const Ctx = createContext<Zustand | null>(null);
@@ -87,6 +93,8 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
   const [ichMerken, setIchMerkenState] = useState<boolean>(() => geraetLesen("ich-merken", false));
   const [eintraege, setEintraege] = useIch<Eintrag[]>("ich-eintraege", ichMerken, []);
   const [rad, setRad] = useIch<RadStand[]>("ich-rad", ichMerken, []);
+  const [gefuehle, setGefuehle] = useIch<GefuehlEintrag[]>("ich-gefuehle", ichMerken, []);
+  const [merkliste, setMerkliste] = useIch<string[]>("ich-merkliste", ichMerken, []);
   const [einstellungenRoh, setEinstellungenRoh] = useIch<Einstellungen>("ich-einstellungen", ichMerken, EINSTELLUNGEN_START);
   // „Mein Krisenplan“: eigene Zustimmung, unabhängig von „Mein Bereich“.
   const [krisenplanMerken, setKrisenplanMerkenState] = useState<boolean>(() => geraetLesen("krisenplan-merken", false));
@@ -140,6 +148,8 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     },
     eintraege, setEintraege,
     rad, setRad,
+    gefuehle, setGefuehle,
+    merkliste, setMerkliste,
     krisenplan,
     setKrisenplan: (f) => setKrisenplan((alt) => f({ ...KRISENPLAN_LEER, ...alt })),
     krisenplanMerken,
@@ -153,20 +163,22 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     setEinstellungen: (a) => setEinstellungenRoh((alt) => ({ ...alt, ...a })),
     ichLoeschen: () => {
       geraetEntfernen((k) => k.startsWith("ich-"));
-      setIchMerkenState(false); setEintraege(() => []); setRad(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
+      setIchMerkenState(false); setEintraege(() => []); setRad(() => []); setGefuehle(() => []); setMerkliste(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
     },
     allesLoeschen: () => {
       sitzungLoeschen();
       geraetEntfernen((k) => k.startsWith("ich-") || k.startsWith("krisenplan"));
       setIchMerkenState(false); setKrisenplanMerkenState(false); setKrisenplan(KRISENPLAN_LEER);
-      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
+      setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []); setGefuehle(() => []); setMerkliste(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
     },
-    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad, einstellungen, krisenplan }),
+    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad, einstellungen, krisenplan, gefuehle, merkliste }),
     laden: (d) => {
       setAntworten(d.antworten ?? {}); setNotizen(d.notizen ?? {}); setMarkierungen(d.markierungen ?? {});
       setGespraech(d.gespraech ?? ""); setPlan(Array.isArray(d.plan) ? d.plan : []);
       if (Array.isArray(d.eintraege)) setEintraege(() => d.eintraege!);
       if (Array.isArray(d.rad)) setRad(() => d.rad!);
+      if (Array.isArray(d.gefuehle)) setGefuehle(() => d.gefuehle!);
+      if (Array.isArray(d.merkliste)) setMerkliste(() => d.merkliste!);
       if (d.krisenplan && typeof d.krisenplan === "object") setKrisenplan({ ...KRISENPLAN_LEER, ...d.krisenplan });
       if (d.einstellungen && typeof d.einstellungen === "object") setEinstellungenRoh({ ...EINSTELLUNGEN_START, ...d.einstellungen });
     },
