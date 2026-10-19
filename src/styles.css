@@ -1237,3 +1237,27 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .gefuehl-verlauf__tag { color: var(--text-2); font-size: .88rem; padding-top: .3rem; }
 .gefuehl--klein { cursor: default; min-height: 0; padding: .2rem .7rem; font-size: .85rem; background: color-mix(in srgb, var(--farbe) 14%, var(--karte-voll)); border-color: color-mix(in srgb, var(--farbe) 45%, var(--linie)); }
 @media (max-width: 30rem) { .gefuehl-verlauf li { grid-template-columns: 1fr; gap: .3rem; } }
+
+/* ---------- Was war heute? / Hervorheben / Druckblatt ---------- */
+.einfluesse { border: 0; padding: 0; margin: var(--s4) 0 0; }
+.einfluesse legend { font-weight: 650; margin-bottom: .5rem; padding: 0; }
+.einfluss { --farbe: var(--violett); }
+.hervorheben { margin: 0 0 var(--s3); }
+.kalender--markiert .kalender__tag.gedimmt { opacity: .28; }
+.kalender__tag.markiert { box-shadow: 0 0 0 2.5px var(--karte-voll), 0 0 0 4.5px var(--text); position: relative; z-index: 1; }
+.tage-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.tage-liste li { display: grid; grid-template-columns: 8rem 1fr; gap: var(--s3); padding: .75rem var(--s4); border-radius: 14px; background: var(--karte-voll); border: 1px solid var(--linie); break-inside: avoid; }
+.tage-liste__datum { font-weight: 650; }
+.tage-liste dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .2rem .8rem; }
+.tage-liste dt { color: var(--text-3); font-size: .85rem; padding-top: .1rem; }
+.tage-liste dd { margin: 0; display: flex; align-items: center; gap: .45rem; }
+.tage-liste .punkt { width: .8rem; height: .8rem; border-radius: 50%; flex: none; }
+.tage-liste .punkt.stufe-0 { background: var(--stufe-0); } .tage-liste .punkt.stufe-1 { background: var(--stufe-1); }
+.tage-liste .punkt.stufe-2 { background: var(--stufe-2); } .tage-liste .punkt.stufe-3 { background: var(--stufe-3); } .tage-liste .punkt.stufe-4 { background: var(--stufe-4); }
+@media (max-width: 30rem) { .tage-liste li { grid-template-columns: 1fr; gap: .35rem; } }
+@media print {
+  .ueberblick .zurueck, .ueberblick .krisenplan__leiste { display: none; }
+  .tage-liste li { padding: .35rem 0; border: 0; border-bottom: 1px solid #ccc; border-radius: 0; }
+  .ueberblick .kalender__tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .tage-liste .punkt { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

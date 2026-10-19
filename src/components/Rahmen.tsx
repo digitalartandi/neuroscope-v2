@@ -22,7 +22,7 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
     f(); window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
   }, []);
-  const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/uebungen" && route.startsWith("/spiele")) || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern" || route === "/einstellungen"));
+  const aktiv = (p: string) => route === p || route.startsWith(p + "/") || (p === "/uebungen" && route.startsWith("/spiele")) || (p === "/ich" && (route === "/spiegel" || route === "/gespraech" || route === "/plan" || route === "/sichern" || route === "/einstellungen" || route === "/ueberblick"));
   return (
     <>
       <div className="hintergrund" aria-hidden="true"><span /><span /><span /></div>

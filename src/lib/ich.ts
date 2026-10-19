@@ -1,11 +1,17 @@
 // „Mein Bereich“: eigene Einträge der Person, nur dargestellt, nie ausgewertet.
 // Keine Summen, keine Durchschnitte, keine Schwellen. Ein Test prüft das.
 
-export interface Eintrag { datum: string; stimmung: number; energie?: number; wort?: string }
+export interface Eintrag { datum: string; stimmung: number; energie?: number; wort?: string; einfluesse?: string[] }
 export interface GefuehlEintrag { datum: string; woerter: string[] }
 export interface RadStand { datum: string; werte: Record<string, number> }
 
 export const STIMMUNG = ["sehr schwer", "eher schwer", "mittel", "eher gut", "sehr gut"];
+// „Was war heute?“: Stichwörter zum Antippen. Bewusst allgemein, keine Mahlzeiten oder Kalorien.
+export const EINFLUESSE = [
+  "wenig geschlafen", "gut geschlafen", "draußen gewesen", "Bewegung", "Streit", "schöne Begegnung", "allein gewesen",
+  "Druck in der Arbeit", "freier Tag", "Alkohol", "viel Koffein", "spät am Bildschirm", "unregelmäßig gegessen", "Schmerzen", "Zyklus",
+];
+export const EIGENE_MAX = 5;
 export const ENERGIE = ["sehr wenig", "eher wenig", "mittel", "eher viel", "sehr viel"];
 
 export function tagText(d: Date) {
@@ -54,6 +60,8 @@ export interface Einstellungen {
   bereiche: { checkin: boolean; verlauf: boolean; gefuehle: boolean; hilft: boolean; rad: boolean; muster: boolean };
   energie: boolean;
   wort: boolean;
+  einfluesse: boolean; // „Was war heute?“ beim Eintrag
+  eigeneEinfluesse: string[];
   zeitraum: 7 | 14 | 30;
   achsen: string[]; // Lebensbereiche im Netz
   schrift: "normal" | "gross";
@@ -71,6 +79,8 @@ export const EINSTELLUNGEN_START: Einstellungen = {
   bereiche: { checkin: true, verlauf: true, gefuehle: true, hilft: true, rad: true, muster: true },
   energie: true,
   wort: true,
+  einfluesse: true,
+  eigeneEinfluesse: [],
   zeitraum: 14,
   achsen: ["schlaf", "energie", "stress", "stimmung", "beziehungen", "alltag", "gewohnheiten", "staerken"],
   schrift: "normal",

@@ -4,7 +4,7 @@ import { WISSEN_SYMBOLE } from "../components/Icons";
 import { HAEUFIGKEIT, THEMEN } from "../content/reflexion";
 import { Kalender, Netz, Punktreihe, Verlauf, type Achse } from "../components/Diagramme";
 import { themaSymbol } from "../components/Icons";
-import { ENERGIE, STIMMUNG, datumLang, eintragen, heute, tageZurueck } from "../lib/ich";
+import { EIGENE_MAX, EINFLUESSE, ENERGIE, STIMMUNG, datumLang, eintragen, heute, tageZurueck } from "../lib/ich";
 import { schluessel } from "../lib/spiegel";
 import { useZustand } from "../lib/zustand";
 import { UEBUNGEN, gefuehlFamilie } from "../content/uebungen";
@@ -44,6 +44,9 @@ export default function Ich() {
   const [stimmung, setStimmung] = useState<number | undefined>(vorhanden?.stimmung);
   const [energie, setEnergie] = useState<number | undefined>(vorhanden?.energie);
   const [wort, setWort] = useState(vorhanden?.wort ?? "");
+  const [einfluesse, setEinfluesse] = useState<string[]>(vorhanden?.einfluesse ?? []);
+  const [eigenes, setEigenes] = useState("");
+  const [markiert, setMarkiert] = useState("");
   const [gespeichert, setGespeichert] = useState(false);
   const e = z.einstellungen;
   const [zeitraum, setZeitraum] = useState<number>(e.zeitraum);
@@ -60,7 +63,7 @@ export default function Ich() {
 
   const eintragenKlick = () => {
     if (stimmung === undefined || (e.energie && energie === undefined)) return;
-    z.setEintraege((alt) => eintragen(alt, { datum: heuteTag, stimmung, energie: e.energie ? energie : undefined, wort: e.wort ? wort.trim() || undefined : undefined }));
+    z.setEintraege((alt) => eintragen(alt, { datum: heuteTag, stimmung, energie: e.energie ? energie : undefined, wort: e.wort ? wort.trim() || undefined : undefined, einfluesse: e.einfluesse && einfluesse.length ? einfluesse : undefined }));
     setGespeichert(true);
     window.setTimeout(() => setGespeichert(false), 2400);
   };
@@ -124,6 +127,28 @@ export default function Ich() {
         <input id="wort" type="text" maxLength={40} value={wort} onChange={(e) => setWort(e.target.value)} placeholder="zum Beispiel: müde, dankbar, unruhig" />
           </>
         )}
+        {e.einfluesse && (
+          <fieldset className="einfluesse">
+            <legend>Was war heute? <span className="leise" style={{ fontWeight: 400 }}>(freiwillig)</span></legend>
+            <div className="gefuehl-woerter">
+              {[...EINFLUESSE, ...e.eigeneEinfluesse].map((w) => (
+                <button key={w} type="button" className="gefuehl einfluss" aria-pressed={einfluesse.includes(w)}
+                  onClick={() => setEinfluesse((a) => (a.includes(w) ? a.filter((x) => x !== w) : [...a, w]))}>{w}</button>
+              ))}
+            </div>
+            {e.eigeneEinfluesse.length < EIGENE_MAX && (
+              <form className="plan-eingabe" onSubmit={(ev) => {
+                ev.preventDefault(); const t = eigenes.trim();
+                if (t && ![...EINFLUESSE, ...e.eigeneEinfluesse].includes(t)) { z.setEinstellungen({ eigeneEinfluesse: [...e.eigeneEinfluesse, t] }); setEinfluesse((a) => [...a, t]); }
+                setEigenes("");
+              }}>
+                <label className="sr-only" htmlFor="eigenes">Eigenes Stichwort</label>
+                <input id="eigenes" type="text" maxLength={30} value={eigenes} onChange={(ev) => setEigenes(ev.target.value)} placeholder="Eigenes Stichwort, z. B. Nachtdienst" />
+                <button type="submit" className="knopf knopf--leise" disabled={!eigenes.trim()}>Dazu</button>
+              </form>
+            )}
+          </fieldset>
+        )}
         <div className="knopfreihe">
           <button className={`knopf${gespeichert ? " knopf--erledigt" : ""}`} type="button" onClick={eintragenKlick} disabled={stimmung === undefined || (e.energie && energie === undefined)}>
             {gespeichert ? <><Haken /> Eingetragen</> : vorhanden ? "Eintrag aktualisieren" : "Eintragen"}
@@ -146,7 +171,21 @@ export default function Ich() {
           <>
             <Verlauf tage={tageZurueck(zeitraum)} eintraege={z.eintraege} energie={e.energie} />
             <h3 className="ich-unter">Die letzten fünf Wochen</h3>
-            <Kalender eintraege={z.eintraege} />
+            {(() => {
+              const tage = new Set(tageZurueck(35));
+              const genutzt = [...new Set(z.eintraege.filter((x) => tage.has(x.datum)).flatMap((x) => x.einfluesse ?? []))];
+              return genutzt.length > 0 && (
+                <div className="hervorheben">
+                  <p className="leise klein" style={{ margin: "0 0 .4rem" }}>Stichwort im Kalender hervorheben:</p>
+                  <div className="gefuehl-woerter">
+                    {genutzt.map((w) => <button key={w} type="button" className="gefuehl einfluss" aria-pressed={markiert === w} onClick={() => setMarkiert(markiert === w ? "" : w)}>{w}</button>)}
+                  </div>
+                </div>
+              );
+            })()}
+            <Kalender eintraege={z.eintraege} markiert={markiert || undefined} />
+            {markiert && <p className="hinweis-feld">Umrandet: Tage mit „{markiert}“. Ein Zusammenhang, den du siehst, ist noch keine Ursache. Wenn dir ein Muster wichtig erscheint, besprich es mit einer Fachperson.</p>}
+            <p style={{ marginTop: "1rem" }}><a className="knopf knopf--leise" href="#/ueberblick">Druckblatt für einen Termin</a></p>
           </>
         )}
       </section>

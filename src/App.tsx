@@ -14,6 +14,7 @@ import Sichern from "./pages/Sichern";
 import Ich from "./pages/Ich";
 import Einstellungen from "./pages/Einstellungen";
 import Krisenplan from "./pages/Krisenplan";
+import Ueberblick from "./pages/Ueberblick";
 
 const Spur = lazy(() => import("./games/Spur"));
 const Farbwort = lazy(() => import("./games/Farbwort"));
@@ -27,6 +28,7 @@ function Seite({ route }: { route: string }) {
     case "reflexion": return <Reflexion themaId={b} key={b ?? "uebersicht"} />;
     case "ich": return <Ich />;
     case "einstellungen": return <Einstellungen />;
+    case "ueberblick": return <Ueberblick />;
     case "spiegel": return <Spiegel />;
     case "gespraech": return <Gespraech />;
     case "plan": return <Plan />;

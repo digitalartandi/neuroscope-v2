@@ -115,7 +115,7 @@ export function Verlauf({ tage, eintraege, energie = true }: { tage: string[]; e
 }
 
 // ---------- Kalender: fünf Wochen, Farbe nach eigener Stimmungsangabe ----------
-export function Kalender({ eintraege }: { eintraege: Eintrag[] }) {
+export function Kalender({ eintraege, markiert }: { eintraege: Eintrag[]; markiert?: string }) {
   const nachTag = new Map(eintraege.map((e) => [e.datum, e]));
   const heute = new Date();
   const montag = new Date(heute.getFullYear(), heute.getMonth(), heute.getDate() - ((heute.getDay() + 6) % 7) - 28);
@@ -124,14 +124,15 @@ export function Kalender({ eintraege }: { eintraege: Eintrag[] }) {
   const key = (d: Date) => `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`;
   return (
     <div className="kalender-wrap">
-      <div className="kalender" role="list" aria-label="Deine Stimmung der letzten fünf Wochen">
+      <div className={`kalender${markiert ? " kalender--markiert" : ""}`} role="list" aria-label="Deine Stimmung der letzten fünf Wochen">
         {["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((t) => <span key={t} className="kalender__kopf" aria-hidden="true">{t}</span>)}
         {tage.map((d) => {
           const e = nachTag.get(key(d));
           const zukunft = d > heute;
-          const text = `${datumLang(key(d))}: ${e ? STIMMUNG[e.stimmung] : zukunft ? "noch offen" : "kein Eintrag"}`;
+          const mit = Boolean(markiert && e?.einfluesse?.includes(markiert));
+          const text = `${datumLang(key(d))}: ${e ? STIMMUNG[e.stimmung] : zukunft ? "noch offen" : "kein Eintrag"}${mit ? `, mit „${markiert}“` : ""}`;
           return (
-            <span key={key(d)} role="listitem" className={`kalender__tag${e ? ` stufe-${e.stimmung}` : ""}${zukunft ? " zukunft" : ""}${key(d) === key(heute) ? " heute" : ""}`}
+            <span key={key(d)} role="listitem" className={`kalender__tag${e ? ` stufe-${e.stimmung}` : ""}${zukunft ? " zukunft" : ""}${key(d) === key(heute) ? " heute" : ""}${markiert ? (mit ? " markiert" : " gedimmt") : ""}`}
               title={text} aria-label={text}>
               {d.getDate()}
             </span>

@@ -89,7 +89,15 @@ export default function Einstellungen() {
         <div className="schalter-liste">
           <Schalter an={e.energie} titel="Energie mit abfragen" text="Sonst nur die Stimmung" aendern={(an) => z.setEinstellungen({ energie: an })} />
           <Schalter an={e.wort} titel="Ein Wort für den Tag" text="Freies Feld für ein Stichwort" aendern={(an) => z.setEinstellungen({ wort: an })} />
+          <Schalter an={e.einfluesse} titel="Was war heute?" text="Stichwörter wie Schlaf, Bewegung oder Streit zum Antippen" aendern={(an) => z.setEinstellungen({ einfluesse: an })} />
         </div>
+        {e.eigeneEinfluesse.length > 0 && <>
+          <p className="feld">Eigene Stichwörter</p>
+          <div className="gefuehl-woerter">
+            {e.eigeneEinfluesse.map((w) => <button key={w} type="button" className="gefuehl gefuehl--gewaehlt" aria-label={`${w} entfernen`} onClick={() => z.setEinstellungen({ eigeneEinfluesse: e.eigeneEinfluesse.filter((x) => x !== w) })}>{w} <span aria-hidden="true">×</span></button>)}
+          </div>
+          <p className="hinweis-feld">Entfernen nimmt das Stichwort nur aus der Auswahl. Alte Einträge bleiben, wie sie sind.</p>
+        </>}
         <p className="feld">Verlauf zeigt zuerst</p>
         <div className="segment" role="group" aria-label="Zeitraum">
           {([7, 14, 30] as const).map((n) => <button key={n} type="button" aria-pressed={e.zeitraum === n} onClick={() => z.setEinstellungen({ zeitraum: n })}>{n} Tage</button>)}
