@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 // Vorlesen mit den Stimmen des Geräts (Web Speech API).
 // Bevorzugt deutsche Stimmen, die direkt auf dem Gerät laufen: Der Text verlässt das Gerät dann nicht.
 import { useEffect, useRef, useState } from "react";
@@ -54,7 +55,7 @@ function bloecke(wurzel: HTMLElement): HTMLElement[] {
     .filter((el) => !el.closest(AUSLASSEN) && !el.querySelector("p, li") && (el.textContent ?? "").trim().length > 1);
 }
 
-export function Vorlesen() {
+function GeraeteVorlesen() {
   const { einstellungen } = useZustand();
   const stimmen = useStimmen();
   const [stand, setStand] = useState<"aus" | "laeuft" | "pause">("aus");
@@ -150,4 +151,112 @@ function Lautsprecher() {
 }
 function Pfeil({ links }: { links?: boolean }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" style={links ? { transform: "scaleX(-1)" } : undefined}><path d="M6 5.5v13l8.5-6.5zM16 5.5h2.5v13H16z" /></svg>;
+}
+
+// ---------- Aufnahmen (z. B. aus ElevenLabs) ----------
+// Liegt zu einer Seite eine Aufnahme unter public/audio/, spielt „Vorlesen“ diese ab.
+// Dateinamen: wissen-<id>.mp3 bzw. uebung-<id>.mp3, lange Seiten als -teil1.mp3, -teil2.mp3 …
+const gefunden = new Map<string, string[]>();
+
+function basisName(): string | null {
+  const [, bereich, id] = window.location.hash.replace(/^#/, "").split("?")[0].split("/");
+  if (!id) return null;
+  if (bereich === "wissen") return `wissen-${id}`;
+  if (bereich === "uebungen") return `uebung-${id}`;
+  return null;
+}
+
+async function gibtEs(url: string): Promise<boolean> {
+  try {
+    const r = await fetch(url, { method: "HEAD", cache: "no-cache" });
+    return r.ok && (r.headers.get("content-type") ?? "").startsWith("audio");
+  } catch { return false; }
+}
+
+async function aufnahmenSuchen(basis: string): Promise<string[]> {
+  if (gefunden.has(basis)) return gefunden.get(basis)!;
+  let liste: string[] = [];
+  if (await gibtEs(`audio/${basis}.mp3`)) liste = [`audio/${basis}.mp3`];
+  else for (let i = 1; i <= 9; i++) {
+    const url = `audio/${basis}-teil${i}.mp3`;
+    if (await gibtEs(url)) liste.push(url); else break;
+  }
+  gefunden.set(basis, liste);
+  return liste;
+}
+
+const zeit = (s: number) => (isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}` : "–:––");
+
+function Aufnahme({ teile }: { teile: string[] }) {
+  const { einstellungen } = useZustand();
+  const audio = useRef<HTMLAudioElement>(null);
+  const [offen, setOffen] = useState(false);
+  const [teil, setTeil] = useState(0);
+  const [laeuft, setLaeuft] = useState(false);
+  const [pos, setPos] = useState(0);
+  const [dauer, setDauer] = useState(NaN);
+  const titel = document.querySelector("main h1")?.textContent ?? "Neuroscope";
+
+  useEffect(() => {
+    const a = audio.current;
+    if (!a) return;
+    a.playbackRate = einstellungen.tempo ?? 1;
+  }, [einstellungen.tempo, teil]);
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !offen) return;
+    navigator.mediaSession.metadata = new MediaMetadata({ title: titel, artist: "Neuroscope" });
+    navigator.mediaSession.setActionHandler("play", () => audio.current?.play());
+    navigator.mediaSession.setActionHandler("pause", () => audio.current?.pause());
+    navigator.mediaSession.setActionHandler("seekbackward", () => springen(-15));
+    navigator.mediaSession.setActionHandler("seekforward", () => springen(15));
+  }, [offen, titel]);
+
+  const start = () => { setOffen(true); window.setTimeout(() => audio.current?.play(), 0); };
+  const springen = (d: number) => { const a = audio.current; if (a) a.currentTime = Math.max(0, Math.min((a.duration || 0), a.currentTime + d)); };
+  const schliessen = () => { audio.current?.pause(); if (audio.current) audio.current.currentTime = 0; setTeil(0); setOffen(false); setLaeuft(false); };
+
+  return (
+    <div className="vorlesen" data-stand={laeuft ? "laeuft" : offen ? "pause" : "aus"}>
+      <audio ref={audio} src={teile[teil]} preload="metadata"
+        onPlay={() => setLaeuft(true)} onPause={() => setLaeuft(false)}
+        onTimeUpdate={(e) => setPos(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => { setDauer(e.currentTarget.duration); e.currentTarget.playbackRate = einstellungen.tempo ?? 1; }}
+        onEnded={() => { if (teil < teile.length - 1) { setTeil(teil + 1); window.setTimeout(() => audio.current?.play(), 0); } else schliessen(); }} />
+      {!offen ? (
+        <button type="button" className="vorlesen__start" onClick={start}><Lautsprecher />Anhören</button>
+      ) : (
+        createPortal(<div className="hoeren" role="group" aria-label="Aufnahme abspielen">
+          <button type="button" className="hoeren__knopf" onClick={() => springen(-15)} aria-label="15 Sekunden zurück"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6V3L6.5 7 11 11V8a5.5 5.5 0 1 1-5.4 6.5h-2A7.5 7.5 0 1 0 11 6z" /></svg></button>
+          <button type="button" className="hoeren__knopf hoeren__haupt" onClick={() => (laeuft ? audio.current?.pause() : audio.current?.play())} aria-label={laeuft ? "Pause" : "Abspielen"}>
+            {laeuft ? <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.5" height="14" rx="1" /><rect x="13.5" y="5" width="3.5" height="14" rx="1" /></svg>
+              : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>}
+          </button>
+          <button type="button" className="hoeren__knopf" onClick={() => springen(15)} aria-label="15 Sekunden vor"><svg viewBox="0 0 24 24" aria-hidden="true" style={{ transform: "scaleX(-1)" }}><path d="M11 6V3L6.5 7 11 11V8a5.5 5.5 0 1 1-5.4 6.5h-2A7.5 7.5 0 1 0 11 6z" /></svg></button>
+          <div className="hoeren__spur">
+            <input type="range" min={0} max={isFinite(dauer) ? dauer : 0} step={1} value={pos} aria-label="Position"
+              aria-valuetext={`${zeit(pos)} von ${zeit(dauer)}`}
+              onChange={(e) => { if (audio.current) audio.current.currentTime = Number(e.target.value); }}
+              style={{ ["--fortschritt" as string]: `${isFinite(dauer) && dauer > 0 ? (pos / dauer) * 100 : 0}%` }} />
+            <span className="hoeren__zeit">{zeit(pos)} / {zeit(dauer)}{teile.length > 1 ? ` · Teil ${teil + 1} von ${teile.length}` : ""}</span>
+          </div>
+          <button type="button" className="hoeren__knopf" onClick={schliessen} aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg></button>
+        </div>, document.body)
+      )}
+    </div>
+  );
+}
+
+// Öffentliche Komponente: Aufnahme, wenn vorhanden, sonst Gerätestimme.
+export function Vorlesen() {
+  const basis = basisName();
+  const [teile, setTeile] = useState<string[] | null>(basis && gefunden.has(basis) ? gefunden.get(basis)! : null);
+  useEffect(() => {
+    if (!basis) { setTeile([]); return; }
+    let aktiv = true;
+    aufnahmenSuchen(basis).then((l) => { if (aktiv) setTeile(l); });
+    return () => { aktiv = false; };
+  }, [basis]);
+  if (teile === null) return <div className="vorlesen" aria-hidden="true" style={{ minHeight: "2.75rem" }} />;
+  return teile.length > 0 ? <Aufnahme teile={teile} /> : <GeraeteVorlesen />;
 }

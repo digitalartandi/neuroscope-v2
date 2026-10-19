@@ -1110,3 +1110,24 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
   .tabs { background: color-mix(in srgb, var(--m-flaeche) 86%, transparent); box-shadow: 0 10px 30px -8px rgba(15, 23, 42, .28), 0 0 0 1px var(--m-trenn); }
   .tabs__marke { background: var(--m-grund); box-shadow: inset 0 0 0 1px var(--m-trenn); }
 }
+
+/* ---------- Aufnahme abspielen ---------- */
+.hoeren { display: flex; align-items: center; gap: .3rem; padding: .35rem .5rem; border-radius: 20px; background: var(--karte-voll);
+  box-shadow: var(--schatten), 0 0 0 1px var(--linie); animation: auftauchen .3s ease both;
+  position: fixed; z-index: 30; bottom: 1.5rem; left: 50%; translate: -50% 0; width: min(34rem, calc(100% - 2rem)); }
+.hoeren__knopf { flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 0; background: transparent; color: var(--text-2); cursor: pointer; transition: background .2s, transform .15s; }
+.hoeren__knopf svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
+.hoeren__knopf:active { transform: scale(.9); }
+.hoeren__haupt { background: var(--verlauf); color: #fff; width: 3rem; height: 3rem; }
+.hoeren__spur { flex: 1; min-width: 0; display: grid; gap: .1rem; padding: 0 .35rem; }
+.hoeren__spur input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 1.4rem; background: transparent; cursor: pointer; }
+.hoeren__spur input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--violett) var(--fortschritt), var(--linie) var(--fortschritt)); }
+.hoeren__spur input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--violett) var(--fortschritt), var(--linie) var(--fortschritt)); }
+.hoeren__spur input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border-radius: 50%; background: var(--violett); box-shadow: 0 0 0 3px var(--karte-voll); }
+.hoeren__spur input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--violett); }
+.hoeren__zeit { font-size: .75rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+@media (max-width: 48rem) {
+  .hoeren { left: .75rem; right: .75rem; translate: none; width: auto; bottom: calc(5.6rem + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--m-flaeche) 97%, transparent); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(18px); }
+}
+@media print { .hoeren { display: none; } }
