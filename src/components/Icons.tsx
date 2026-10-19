@@ -68,6 +68,15 @@ export const UEBUNG_SYMBOL: Record<string, ReactNode> = {
   atmung: <Symbol><path d="M12 3.5v8" /><path d="M12 9.5c-1 0-1.6.4-2 1" /><path d="M12 9.5c1 0 1.6.4 2 1" /><path d="M9.5 7.5C7 8 4.5 12 4.5 16.5c0 2.3 1.4 3.5 3 3.3 1.8-.2 2.5-1.6 2.5-3.3V9.3c0-1.2-.2-1.9-.5-1.8z" /><path d="M14.5 7.5c2.5.5 5 4.5 5 9 0 2.3-1.4 3.5-3 3.3-1.8-.2-2.5-1.6-2.5-3.3V9.3c0-1.2.2-1.9.5-1.8z" /></Symbol>,
   abendroutine: <Symbol><path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z" /><path d="M17 3.5v3M15.5 5h3" /></Symbol>,
   staerken: <Symbol><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></Symbol>,
+  muskelentspannung: <Symbol><path d="M3.5 9.5 6 6l2.5 3.5L11 6l2.5 3.5" /><path d="M3.5 17c2-2.2 4-2.2 6 0s4 2.2 6 0 3-2.2 5 0" /><path d="M16.5 7.5h4" /></Symbol>,
+  koerperreise: <Symbol><circle cx="12" cy="5" r="2" /><path d="M12 7.5v7M8 10.5l4-1.5 4 1.5M9.5 20.5l2.5-6 2.5 6" /><path d="M4 13h3M17 13h3" strokeDasharray="1.5 2" /></Symbol>,
+  sinne: <Symbol><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="3" /></Symbol>,
+  gefuehle: <Symbol><path d="M4 5.5h16a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-9l-4.5 3v-3H4A1.5 1.5 0 0 1 2.5 16V7A1.5 1.5 0 0 1 4 5.5z" /><path d="M12 14.2s-3-1.8-3-3.7a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 1.9-3 3.7-3 3.7z" /></Symbol>,
+  selbstmitgefuehl: <Symbol><path d="M12 19.5s-7-4.2-7-9.2A3.7 3.7 0 0 1 12 8a3.7 3.7 0 0 1 7 2.3c0 5-7 9.2-7 9.2z" /><path d="M9 12.5c.8 1 1.8 1.5 3 1.5s2.2-.5 3-1.5" /></Symbol>,
+  schreiben: <Symbol><path d="M15.5 4.5l4 4L9 19H5v-4z" /><path d="M13 7l4 4" /><path d="M13.5 20.5h7" /></Symbol>,
+  sorgenzeit: <Symbol><circle cx="12" cy="13" r="7.5" /><path d="M12 9v4l2.5 2" /><path d="M9.5 2.5h5" /></Symbol>,
+  gedanken: <Symbol><path d="M7.5 15.5a4 4 0 0 1-.6-7.9 5 5 0 0 1 9.4-1A4 4 0 0 1 17 15.5z" /><circle cx="8" cy="19" r="1.2" /><circle cx="5" cy="21" r=".7" /></Symbol>,
+  schoenes: <Symbol><circle cx="12" cy="12" r="3.5" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4" /></Symbol>,
   wochenrueckblick: <Symbol><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 9.5h16M8.5 3v4M15.5 3v4" /><path d="M8 13.5h3M8 16.5h6" /></Symbol>,
 };
 

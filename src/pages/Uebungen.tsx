@@ -169,9 +169,9 @@ function Gefuehle({ u }: { u: Uebung }) {
 
 export const UEBUNG_GRUPPEN: { id: UebungGruppe; titel: string; text: string }[] = [
   { id: "ruhe", titel: "Zur Ruhe kommen", text: "Für Körper und Atem, wenn alles zu viel ist." },
-  { id: "gefuehle", titel: "Mit Gefühlen umgehen", text: "Gefühle wahrnehmen, benennen und freundlich mit dir sein." },
+  { id: "gefuehle", titel: "Gefühle verstehen", text: "Gefühle wahrnehmen, benennen und freundlich mit dir sein." },
   { id: "gedanken", titel: "Gedanken ordnen", text: "Wenn sich die Gedanken im Kreis drehen." },
-  { id: "kraft", titel: "Kraft sammeln", text: "Den Blick auf das lenken, was dir guttut." },
+  { id: "kraft", titel: "Alltag gestalten", text: "Kraft sammeln und Gutes fix einplanen." },
 ];
 
 export default function Uebungen({ id }: { id?: string }) {

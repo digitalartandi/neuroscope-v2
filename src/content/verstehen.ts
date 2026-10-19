@@ -9,6 +9,7 @@ import { NS_ERGAENZUNG } from "./ns-erziehung";
 import { DROGEN } from "./drogen";
 import { KOENIG } from "./koenig";
 import { SOZIALE_ANGST } from "./sozialeangst";
+import { AUTISMUS, PERFEKTIONISMUS } from "./perfektionismus-autismus";
 export { ZUGANG };
 
 export interface VerstehenSeite {
@@ -133,6 +134,8 @@ for (const quelle of [TRAUMA_ERGAENZUNG, VERTIEFUNG_1, VERTIEFUNG_2] as Record<s
 const ALLE: VerstehenSeite[] = [TRANSGENERATIONAL, ...SEITEN];
 ALLE.splice(ALLE.findIndex((v) => v.id === "ptbs"), 0, TRAUMA);
 ALLE.splice(ALLE.findIndex((v) => v.id === "angst") + 1, 0, SOZIALE_ANGST);
+ALLE.splice(ALLE.findIndex((v) => v.id === "adhs") + 1, 0, AUTISMUS);
+ALLE.splice(ALLE.findIndex((v) => v.id === "persoenlichkeit"), 0, PERFEKTIONISMUS);
 // „Im Notfall“ gehört direkt hinter die Substanzen, nicht ans Ende.
 const notfall = DROGEN.vertiefung.filter((a) => /notfall/i.test(a.titel));
 const nachSubstanzen = DROGEN.absaetze.findIndex((a) => /anfühlen/i.test(a.titel));

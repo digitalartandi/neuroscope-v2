@@ -1207,7 +1207,7 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .zeitkreis__spur { fill: none; stroke: var(--linie); stroke-width: 3; }
 .zeitkreis__wert { fill: none; stroke: var(--violett); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 119.4; transition: stroke-dashoffset 1s linear; }
 
-:root { --gefuehl-1: #f59e0b; --gefuehl-2: #10b981; --gefuehl-3: #6366f1; --gefuehl-4: #8b5cf6; --gefuehl-5: #ef4444; --gefuehl-6: #ec4899; --gefuehl-7: #0ea5e9; }
+:root { --gefuehl-1: #f59e0b; --gefuehl-2: #10b981; --gefuehl-3: #0ea5e9; --gefuehl-4: #6366f1; --gefuehl-5: #8b5cf6; --gefuehl-6: #ef4444; --gefuehl-7: #ec4899; }
 .gefuehl-auswahl { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; min-height: 3.25rem; padding: .6rem .8rem; margin: var(--s4) 0; border-radius: 16px; background: var(--karte-voll); border: 1px solid var(--linie);
   position: sticky; top: 4.25rem; z-index: 5; }
 .gefuehl-familie { margin-top: var(--s4); }
