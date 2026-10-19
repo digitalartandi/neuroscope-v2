@@ -253,7 +253,7 @@ main { padding: var(--s6) var(--s4) var(--s8); }
 .frage__leeren { margin-top: var(--s2); font-size: .875rem; }
 
 /* ---------- Formularfelder ---------- */
-textarea, input[type="text"], input[type="password"], input[type="file"], select {
+textarea, input[type="text"], input[type="tel"], input[type="password"], input[type="file"], select {
   width: 100%; font: inherit; color: var(--text); background: var(--karte-voll);
   border: 1px solid var(--linie); border-radius: var(--r-klein); padding: var(--s3) var(--s4);
 }
@@ -1022,7 +1022,7 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
   .knopfreihe { gap: .6rem; }
 
   /* Eingaben */
-  textarea, input[type="text"], input[type="password"], select, .suche input { border: 0; background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); border-radius: 14px; font-size: 1rem; }
+  textarea, input[type="text"], input[type="tel"], input[type="password"], select, .suche input { border: 0; background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); border-radius: 14px; font-size: 1rem; }
   .suche input { min-height: 3rem; border-radius: 14px; box-shadow: 0 1px 2px rgba(15, 23, 42, .05), inset 0 0 0 1px var(--m-trenn); }
 
   /* Chips und Segmente zurückhaltender */
@@ -1131,3 +1131,91 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
     background: color-mix(in srgb, var(--m-flaeche) 97%, transparent); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(18px); }
 }
 @media print { .hoeren { display: none; } }
+
+/* ---------- Mein Krisenplan ---------- */
+.plan-einstieg { display: flex; align-items: center; gap: var(--s4); margin: var(--s5) 0; padding: var(--s4) var(--s5); border-radius: 20px; text-decoration: none; color: var(--text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--logo-1) 10%, var(--karte-voll)), color-mix(in srgb, var(--logo-2) 10%, var(--karte-voll)));
+  border: 1px solid var(--akzent-rand); box-shadow: var(--schatten-klein); transition: transform .15s, box-shadow .2s; }
+.plan-einstieg:hover { box-shadow: var(--schatten); }
+.plan-einstieg:active { transform: scale(.985); }
+.plan-einstieg__symbol { flex: none; display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 16px; background: var(--verlauf); }
+.plan-einstieg__symbol svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.plan-einstieg__text { flex: 1; display: grid; gap: .15rem; }
+.plan-einstieg__text strong { font-size: 1.08rem; }
+.plan-einstieg__text span { color: var(--text-2); font-size: .92rem; line-height: 1.4; }
+.plan-einstieg__pfeil { font-size: 1.6rem; color: var(--text-3); }
+
+.krisenplan__leiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); margin: var(--s4) 0 var(--s5); }
+.segment button:disabled { opacity: .45; cursor: default; }
+.plan-nr { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--verlauf); color: #fff; font-weight: 700; font-size: .9rem; }
+.plan-schritt { padding: var(--s5); margin-bottom: var(--s4); border: 1px solid var(--linie); border-radius: 20px; background: var(--karte-voll); }
+.plan-schritt__kopf { display: flex; gap: var(--s3); align-items: flex-start; }
+.plan-schritt h2 { margin: .1rem 0 .1rem; font-size: 1.15rem; }
+.plan-schritt__frage { margin: 0; color: var(--text-2); }
+.plan-liste { list-style: none; padding: 0; margin: var(--s3) 0; display: grid; gap: .4rem; }
+.plan-liste li { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); padding: .55rem .5rem .55rem .9rem; border-radius: 12px; background: var(--linie-2); animation: auftauchen .25s ease both; }
+.plan-liste__weg { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; background: transparent; color: var(--text-3); cursor: pointer; }
+.plan-liste__weg svg { width: 1rem; height: 1rem; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; fill: none; }
+.plan-liste__weg:hover { background: var(--karte-voll); color: var(--text); }
+.plan-eingabe { display: flex; gap: var(--s2); margin-top: var(--s3); }
+.plan-eingabe input { flex: 1; min-width: 0; margin: 0; }
+.plan-eingabe--kontakt { flex-wrap: wrap; }
+.plan-eingabe--kontakt input { flex: 1 1 9rem; }
+.plan-ideen { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: var(--s3); }
+.plan-idee { font: inherit; font-size: .85rem; cursor: pointer; padding: .4rem .8rem; min-height: 2.25rem; border-radius: 999px; border: 1px dashed var(--akzent-rand); background: transparent; color: var(--text-2); transition: background .2s, color .2s; }
+.plan-idee:hover { background: var(--violett-hell); color: var(--text); border-style: solid; }
+.plan-idee span { color: var(--violett); font-weight: 700; }
+
+.plan-lesen { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s3); }
+.plan-lesen__schritt { display: flex; gap: var(--s3); padding: var(--s4) var(--s5); border-radius: 20px; background: var(--karte-voll); border: 1px solid var(--linie); }
+.plan-lesen__schritt > div { flex: 1; min-width: 0; }
+.plan-lesen h2 { margin: .15rem 0 .5rem; font-size: 1.1rem; }
+.plan-punkte { margin: 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+.plan-kontakte { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.plan-kontakte li { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.plan-kontakte__name { display: grid; font-weight: 600; }
+.plan-kontakte__name small { font-weight: 400; color: var(--text-2); font-size: .82rem; }
+.plan-kontakte a.tel { flex: none; font-weight: 700; padding: .45rem .9rem; border-radius: var(--r-klein); background: var(--verlauf); color: #fff; text-decoration: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 48rem) {
+  .plan-schritt, .plan-lesen__schritt { padding: var(--s4); }
+  .plan-einstieg { padding: var(--s4); }
+}
+@media print {
+  .krisenplan .zurueck, .krisenplan__leiste, .krisenplan .ich-karte, .krisenplan .kasten, .krisenplan .quellen { display: none; }
+  .plan-lesen__schritt { break-inside: avoid; border-color: #999; }
+  .plan-kontakte a.tel { background: none; color: #000; padding: 0; }
+}
+.plan-mehr { margin-top: .5rem; }
+.plan-mehr summary { cursor: pointer; color: var(--blau-tief); font-size: .9rem; padding: .4rem 0; }
+.plan-mehr .plan-kontakte { margin-top: .5rem; }
+
+/* ---------- Übungen: Gruppen, angeleitete Schritte, Gefühle ---------- */
+.gruppe-text { margin: -.35rem 0 var(--s3); font-size: .95rem; }
+.uebung-achtung { padding: .75rem 1rem; border-radius: 14px; background: var(--linie-2); color: var(--text-2); }
+.schritte-vorschau { margin: var(--s4) 0; padding: var(--s4) var(--s5) var(--s4) 2.6rem; border-radius: 18px; background: var(--karte-voll); border: 1px solid var(--linie); display: grid; gap: .35rem; color: var(--text-2); }
+.schritte__fortschritt { display: flex; gap: 4px; margin: var(--s4) 0 var(--s3); }
+.schritte__fortschritt span { flex: 1; height: 4px; border-radius: 4px; background: var(--linie); transition: background .4s; }
+.schritte__fortschritt span[data-stand] { background: var(--verlauf); }
+.schritte__fortschritt span[data-stand="jetzt"] { opacity: .55; }
+.schritte-karte { position: relative; padding: var(--s5) var(--s5) var(--s6); border-radius: 22px; background: var(--karte-voll); border: 1px solid var(--linie); box-shadow: var(--schatten-klein); min-height: 13rem; animation: auftauchen .35s ease both; outline: none; }
+.schritte-karte__titel { font-size: 1.3rem; font-weight: 700; margin: .25rem 0 .5rem; letter-spacing: -.01em; }
+.schritte-karte__text { font-size: 1.08rem; line-height: 1.65; margin: 0; }
+.schritte-karte--fertig { text-align: center; min-height: 0; padding: var(--s6) var(--s5); margin-top: var(--s4); }
+.schritte__knoepfe { justify-content: space-between; }
+.zeitkreis { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; margin: var(--s5) auto 0; border: 0; padding: 0; background: none; cursor: pointer; position: relative; color: var(--text); font: inherit; font-weight: 700; font-variant-numeric: tabular-nums; }
+.zeitkreis svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.zeitkreis__spur { fill: none; stroke: var(--linie); stroke-width: 3; }
+.zeitkreis__wert { fill: none; stroke: var(--violett); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 119.4; transition: stroke-dashoffset 1s linear; }
+
+:root { --gefuehl-1: #f59e0b; --gefuehl-2: #10b981; --gefuehl-3: #6366f1; --gefuehl-4: #8b5cf6; --gefuehl-5: #ef4444; --gefuehl-6: #ec4899; --gefuehl-7: #0ea5e9; }
+.gefuehl-auswahl { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; min-height: 3.25rem; padding: .6rem .8rem; margin: var(--s4) 0; border-radius: 16px; background: var(--karte-voll); border: 1px solid var(--linie);
+  position: sticky; top: 4.25rem; z-index: 5; }
+.gefuehl-familie { margin-top: var(--s4); }
+.gefuehl-familie h3 { display: flex; align-items: center; gap: .5rem; font-size: 1rem; margin: 0 0 .5rem; }
+.gefuehl-familie h3::before { content: ""; width: .7rem; height: .7rem; border-radius: 50%; background: var(--farbe); }
+.gefuehl-woerter { display: flex; flex-wrap: wrap; gap: .4rem; }
+.gefuehl { font: inherit; font-size: .92rem; cursor: pointer; min-height: 2.5rem; padding: .35rem .9rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--farbe, var(--violett)) 35%, var(--linie)); background: var(--karte-voll); color: var(--text); transition: background .2s, border-color .2s, transform .12s; }
+.gefuehl:active { transform: scale(.95); }
+.gefuehl[aria-pressed="true"] { background: color-mix(in srgb, var(--farbe) 18%, var(--karte-voll)); border-color: var(--farbe); font-weight: 600; }
+.gefuehl--gewaehlt { background: var(--verlauf); color: #fff; border-color: transparent; min-height: 2.1rem; padding: .2rem .75rem; font-size: .88rem; }
+@media (max-width: 48rem) { .gefuehl-auswahl { top: 3.6rem; } }

@@ -1,11 +1,17 @@
+export type UebungGruppe = "ruhe" | "gefuehle" | "gedanken" | "kraft";
+
 // Kurze Übungen zur Selbstfürsorge. Allgemeine Anregungen, keine Therapie.
 export interface Uebung {
   id: string;
   titel: string;
   dauer: string;
   kurz: string;
-  art: "atmung" | "checkliste" | "schreiben";
+  art: "atmung" | "checkliste" | "schreiben" | "schritte" | "gefuehle";
+  gruppe: UebungGruppe;
   einleitung: string[];
+  schritte?: { titel: string; text: string; sekunden?: number }[]; // angeleitete Übung, Schritt für Schritt
+  gefuehle?: { familie: string; woerter: string[] }[];             // Gefühle benennen
+  achtung?: string;                                                 // Sicherheitshinweis vor dem Start
   punkte?: string[];      // Checkliste
   impulse?: string[];     // Schreibimpulse
   quellen: { text: string; url: string }[];
@@ -14,6 +20,7 @@ export interface Uebung {
 export const UEBUNGEN: Uebung[] = [
   {
     id: "atmung",
+    gruppe: "ruhe",
     titel: "Ruhig atmen",
     dauer: "3 Minuten",
     kurz: "Langsam ein- und ausatmen, im Takt eines Kreises.",
@@ -29,6 +36,7 @@ export const UEBUNGEN: Uebung[] = [
   },
   {
     id: "abendroutine",
+    gruppe: "ruhe",
     titel: "Abendroutine",
     dauer: "5 Minuten",
     kurz: "Eine Liste kleiner Gewohnheiten für einen ruhigeren Abend.",
@@ -53,6 +61,7 @@ export const UEBUNGEN: Uebung[] = [
   },
   {
     id: "staerken",
+    gruppe: "kraft",
     titel: "Stärken sammeln",
     dauer: "10 Minuten",
     kurz: "Drei Fragen, die den Blick auf das lenken, was gelingt.",
@@ -72,6 +81,7 @@ export const UEBUNGEN: Uebung[] = [
   },
   {
     id: "wochenrueckblick",
+    gruppe: "kraft",
     titel: "Wochenrückblick",
     dauer: "10 Minuten",
     kurz: "Die Woche ordnen und einen kleinen nächsten Schritt finden.",

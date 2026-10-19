@@ -13,6 +13,7 @@ import Plan from "./pages/Plan";
 import Sichern from "./pages/Sichern";
 import Ich from "./pages/Ich";
 import Einstellungen from "./pages/Einstellungen";
+import Krisenplan from "./pages/Krisenplan";
 
 const Spur = lazy(() => import("./games/Spur"));
 const Farbwort = lazy(() => import("./games/Farbwort"));
@@ -32,7 +33,7 @@ function Seite({ route }: { route: string }) {
     case "sichern": return <Sichern />;
     case "wissen": return <Wissen id={b} />;
     case "uebungen": return <Uebungen id={b} key={b ?? "liste"} />;
-    case "hilfe": return <Hilfe abschnitt={b} />;
+    case "hilfe": return b === "krisenplan" ? <Krisenplan /> : <Hilfe abschnitt={b} />;
     case "spiele":
       if (b === "spur") return <Spur />;
       if (b === "farbwort") return <Farbwort />;

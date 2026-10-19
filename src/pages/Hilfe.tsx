@@ -5,7 +5,8 @@ import { ANLAUFSTELLEN } from "../content/trauma";
 import { KONSUM_STELLEN, KONSUM_HILFE, istGiftnotruf } from "../content/drogen";
 
 export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
-  const { land, setLand, region, setRegion } = useZustand();
+  const { land, setLand, region, setRegion, krisenplan } = useZustand();
+  const krisenplanLeer = Object.values(krisenplan).every((l) => l.length === 0);
   useEffect(() => {
     if (abschnitt) document.getElementById(abschnitt)?.scrollIntoView({ block: "start" });
   }, [abschnitt]);
@@ -28,6 +29,16 @@ export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
 
       <h2>Sofort erreichbar in {name}</h2>
       <Liste nummern={KRISE[land]} />
+      <a className="plan-einstieg" href="#/hilfe/krisenplan">
+        <span className="plan-einstieg__symbol" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3.5 5 6v5.5c0 4.3 3 7.8 7 9 4-1.2 7-4.7 7-9V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></svg>
+        </span>
+        <span className="plan-einstieg__text">
+          <strong>Mein Krisenplan</strong>
+          <span>{krisenplanLeer ? "Für schwere Momente vorsorgen: Warnzeichen, was dir hilft, wen du anrufen kannst." : "Dein Plan für schwere Momente. Antippen zum Ansehen."}</span>
+        </span>
+        <span className="plan-einstieg__pfeil" aria-hidden="true">›</span>
+      </a>
       {regionen.length > 0 && (
         <>
           <h2 className="abschnitt">In deinem Bundesland</h2>
@@ -49,6 +60,7 @@ export default function Hilfe({ abschnitt }: { abschnitt?: string }) {
           Übersicht aller Krisentelefone: <a href={KRISEN_UEBERSICHT_AT} target="_blank" rel="noopener noreferrer">gesundheit.gv.at</a>
         </p>
       )}
+
 
       <p className="kasten">
         <strong>Wichtig:</strong> Neuroscope liest nicht mit und kann niemanden verständigen.

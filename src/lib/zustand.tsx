@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Antworten } from "./spiegel";
 import { geraetEntfernen, geraetLesen, geraetSchreiben, sitzungLesen, sitzungSchreiben, sitzungLoeschen } from "./speicher";
+import { KRISENPLAN_LEER, type Krisenplan } from "../content/krisenplan";
 import { EINSTELLUNGEN_START, FARBEN, type Einstellungen, type Eintrag, type RadStand } from "./ich";
 
 export type Land = "AT" | "DE";
@@ -30,6 +31,11 @@ interface Zustand {
   einstellungen: Einstellungen;
   setEinstellungen: (aenderung: Partial<Einstellungen>) => void;
   ichLoeschen: () => void;
+  krisenplan: Krisenplan;
+  setKrisenplan: (f: (alt: Krisenplan) => Krisenplan) => void;
+  krisenplanMerken: boolean;
+  setKrisenplanMerken: (m: boolean) => void;
+  krisenplanLoeschen: () => void;
   allesLoeschen: () => void;
   laden: (d: Sicherung) => void;
   sicherung: () => Sicherung;
@@ -45,6 +51,7 @@ export interface Sicherung {
   eintraege?: Eintrag[];
   rad?: RadStand[];
   einstellungen?: Einstellungen;
+  krisenplan?: Krisenplan;
 }
 
 const Ctx = createContext<Zustand | null>(null);
@@ -81,6 +88,10 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
   const [eintraege, setEintraege] = useIch<Eintrag[]>("ich-eintraege", ichMerken, []);
   const [rad, setRad] = useIch<RadStand[]>("ich-rad", ichMerken, []);
   const [einstellungenRoh, setEinstellungenRoh] = useIch<Einstellungen>("ich-einstellungen", ichMerken, EINSTELLUNGEN_START);
+  // „Mein Krisenplan“: eigene Zustimmung, unabhängig von „Mein Bereich“.
+  const [krisenplanMerken, setKrisenplanMerkenState] = useState<boolean>(() => geraetLesen("krisenplan-merken", false));
+  const [krisenplanRoh, setKrisenplan] = useIch<Krisenplan>("krisenplan", krisenplanMerken, KRISENPLAN_LEER);
+  const krisenplan: Krisenplan = { ...KRISENPLAN_LEER, ...krisenplanRoh };
   const einstellungen: Einstellungen = { ...EINSTELLUNGEN_START, ...einstellungenRoh, bereiche: { ...EINSTELLUNGEN_START.bereiche, ...einstellungenRoh.bereiche } };
 
   // Gemerktes Land und Bundesland für „Hilfe finden“ übernehmen (einmal beim Start).
@@ -129,6 +140,15 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     },
     eintraege, setEintraege,
     rad, setRad,
+    krisenplan,
+    setKrisenplan: (f) => setKrisenplan((alt) => f({ ...KRISENPLAN_LEER, ...alt })),
+    krisenplanMerken,
+    setKrisenplanMerken: (m) => {
+      setKrisenplanMerkenState(m);
+      if (m) { geraetSchreiben("krisenplan-merken", true); try { void navigator.storage?.persist?.(); } catch { /* egal */ } }
+      else geraetEntfernen((k) => k.startsWith("krisenplan"));
+    },
+    krisenplanLoeschen: () => { geraetEntfernen((k) => k.startsWith("krisenplan")); setKrisenplanMerkenState(false); setKrisenplan(KRISENPLAN_LEER); },
     einstellungen,
     setEinstellungen: (a) => setEinstellungenRoh((alt) => ({ ...alt, ...a })),
     ichLoeschen: () => {
@@ -137,16 +157,17 @@ export function ZustandProvider({ children }: { children: ReactNode }) {
     },
     allesLoeschen: () => {
       sitzungLoeschen();
-      geraetEntfernen((k) => k.startsWith("ich-"));
-      setIchMerkenState(false);
+      geraetEntfernen((k) => k.startsWith("ich-") || k.startsWith("krisenplan"));
+      setIchMerkenState(false); setKrisenplanMerkenState(false); setKrisenplan(KRISENPLAN_LEER);
       setAntworten({}); setNotizen({}); setMarkierungen({}); setGespraech(""); setPlan([]); setEintraege(() => []); setRad(() => []); setEinstellungenRoh(EINSTELLUNGEN_START);
     },
-    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad, einstellungen }),
+    sicherung: () => ({ version: 1, antworten, notizen, markierungen, gespraech, plan, eintraege, rad, einstellungen, krisenplan }),
     laden: (d) => {
       setAntworten(d.antworten ?? {}); setNotizen(d.notizen ?? {}); setMarkierungen(d.markierungen ?? {});
       setGespraech(d.gespraech ?? ""); setPlan(Array.isArray(d.plan) ? d.plan : []);
       if (Array.isArray(d.eintraege)) setEintraege(() => d.eintraege!);
       if (Array.isArray(d.rad)) setRad(() => d.rad!);
+      if (d.krisenplan && typeof d.krisenplan === "object") setKrisenplan({ ...KRISENPLAN_LEER, ...d.krisenplan });
       if (d.einstellungen && typeof d.einstellungen === "object") setEinstellungenRoh({ ...EINSTELLUNGEN_START, ...d.einstellungen });
     },
   };

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { UEBUNGEN, type Uebung } from "../content/uebungen";
+import { UEBUNGEN, type Uebung, type UebungGruppe } from "../content/uebungen";
 import { sitzungLesen, sitzungSchreiben } from "../lib/speicher";
 import { SPIEL_SYMBOL, UEBUNG_SYMBOL } from "../components/Icons";
 import { SPIELE } from "./Spiele";
@@ -79,30 +79,135 @@ function Schreiben({ u }: { u: Uebung }) {
   );
 }
 
+// Angeleitete Übung: ein Schritt nach dem anderen, mit ruhigem Zeitkreis, wo es passt.
+function Schritte({ u }: { u: Uebung }) {
+  const liste = u.schritte!;
+  const [i, setI] = useState(-1); // -1 = noch nicht gestartet, liste.length = fertig
+  const [rest, setRest] = useState(0);
+  const [laeuft, setLaeuft] = useState(false);
+  const schritt = i >= 0 && i < liste.length ? liste[i] : null;
+  useEffect(() => { setRest(schritt?.sekunden ?? 0); setLaeuft(Boolean(schritt?.sekunden)); }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!laeuft) return;
+    const t = window.setInterval(() => setRest((r) => { if (r <= 1) { setLaeuft(false); return 0; } return r - 1; }), 1000);
+    return () => window.clearInterval(t);
+  }, [laeuft]);
+  const karte = useRef<HTMLDivElement>(null);
+  const gehe = (n: number) => { setI(n); window.setTimeout(() => karte.current?.focus({ preventScroll: true }), 0); };
+
+  if (i === -1) return (
+    <div className="schritte-start">
+      <ol className="schritte-vorschau">{liste.map((x) => <li key={x.titel}>{x.titel}</li>)}</ol>
+      <div className="knopfreihe" style={{ justifyContent: "center" }}><button type="button" className="knopf" onClick={() => gehe(0)}>Starten</button></div>
+    </div>
+  );
+  if (!schritt) return (
+    <div className="schritte-karte schritte-karte--fertig" ref={karte} tabIndex={-1}>
+      <p className="schritte-karte__titel">Gut gemacht.</p>
+      <p>Nimm dir noch einen Moment, bevor du weitermachst.</p>
+      <div className="knopfreihe" style={{ justifyContent: "center" }}><button type="button" className="knopf knopf--leise" onClick={() => gehe(0)}>Noch einmal</button></div>
+    </div>
+  );
+  const anteil = schritt.sekunden ? 1 - rest / schritt.sekunden : 0;
+  return (
+    <div className="schritte">
+      <div className="schritte__fortschritt" aria-hidden="true">
+        {liste.map((_, j) => <span key={j} data-stand={j < i ? "fertig" : j === i ? "jetzt" : undefined} />)}
+      </div>
+      <div className="schritte-karte" ref={karte} tabIndex={-1} key={i} aria-live="polite">
+        <p className="leise klein" style={{ margin: 0 }}>Schritt {i + 1} von {liste.length}</p>
+        <p className="schritte-karte__titel">{schritt.titel}</p>
+        <p className="schritte-karte__text">{schritt.text}</p>
+        {schritt.sekunden ? (
+          <button type="button" className="zeitkreis" onClick={() => (rest === 0 ? (setRest(schritt.sekunden!), setLaeuft(true)) : setLaeuft(!laeuft))}
+            aria-label={rest === 0 ? "Zeit noch einmal starten" : laeuft ? `Zeit anhalten, noch ${rest} Sekunden` : `Zeit fortsetzen, noch ${rest} Sekunden`}>
+            <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19" className="zeitkreis__spur" />
+              <circle cx="22" cy="22" r="19" className="zeitkreis__wert" style={{ strokeDashoffset: `${119.4 * (1 - anteil)}` }} /></svg>
+            <span>{rest === 0 ? "✓" : rest}</span>
+          </button>
+        ) : null}
+      </div>
+      <div className="knopfreihe schritte__knoepfe">
+        <button type="button" className="knopf knopf--leise" onClick={() => gehe(i - 1)} disabled={i === 0}>Zurück</button>
+        <button type="button" className="knopf" onClick={() => gehe(i + 1)}>{i === liste.length - 1 ? "Abschließen" : "Weiter"}</button>
+      </div>
+    </div>
+  );
+}
+
+// Gefühle benennen: Wörter antippen, nichts wird ausgewertet.
+function Gefuehle({ u }: { u: Uebung }) {
+  const [wahl, setWahl] = useState<string[]>(() => sitzungLesen("ue-" + u.id + "-wahl", []));
+  const [texte, setTexte] = useState<string[]>(() => sitzungLesen("ue-" + u.id, (u.impulse ?? []).map(() => "")));
+  useEffect(() => sitzungSchreiben("ue-" + u.id + "-wahl", wahl), [u.id, wahl]);
+  useEffect(() => sitzungSchreiben("ue-" + u.id, texte), [u.id, texte]);
+  const tausche = (w: string) => setWahl((a) => (a.includes(w) ? a.filter((x) => x !== w) : [...a, w]));
+  return (
+    <div>
+      <div className="gefuehl-auswahl" aria-live="polite">
+        {wahl.length === 0 ? <span className="leise">Tipp die Wörter an, die gerade passen. Mehrere sind möglich.</span>
+          : <><span className="leise">Gerade spüre ich:</span> {wahl.map((w) => <button key={w} type="button" className="gefuehl gefuehl--gewaehlt" onClick={() => tausche(w)} aria-label={`${w} entfernen`}>{w} <span aria-hidden="true">×</span></button>)}</>}
+      </div>
+      {u.gefuehle!.map((f, n) => (
+        <div key={f.familie} className="gefuehl-familie" style={{ ["--farbe" as string]: `var(--gefuehl-${n + 1})` }}>
+          <h3>{f.familie}</h3>
+          <div className="gefuehl-woerter">
+            {f.woerter.map((w) => <button key={w} type="button" className="gefuehl" aria-pressed={wahl.includes(w)} onClick={() => tausche(w)}>{w}</button>)}
+          </div>
+        </div>
+      ))}
+      {(u.impulse ?? []).map((imp, i) => (
+        <div key={i}>
+          <label className="feld" htmlFor={`gf-${i}`}>{imp}</label>
+          <textarea id={`gf-${i}`} value={texte[i] ?? ""} onChange={(e) => setTexte((t) => t.map((x, j) => (j === i ? e.target.value : x)))} />
+        </div>
+      ))}
+      <p className="hinweis-feld">Es gibt keine richtigen oder falschen Gefühle. Deine Auswahl bleibt nur in diesem Tab.</p>
+    </div>
+  );
+}
+
+export const UEBUNG_GRUPPEN: { id: UebungGruppe; titel: string; text: string }[] = [
+  { id: "ruhe", titel: "Zur Ruhe kommen", text: "Für Körper und Atem, wenn alles zu viel ist." },
+  { id: "gefuehle", titel: "Mit Gefühlen umgehen", text: "Gefühle wahrnehmen, benennen und freundlich mit dir sein." },
+  { id: "gedanken", titel: "Gedanken ordnen", text: "Wenn sich die Gedanken im Kreis drehen." },
+  { id: "kraft", titel: "Kraft sammeln", text: "Den Blick auf das lenken, was dir guttut." },
+];
+
 export default function Uebungen({ id }: { id?: string }) {
   if (!id) {
     return (
       <div className="spalte spalte--breit">
         <h1>Übungen</h1>
-        <p className="einleitung">Kurze Anregungen zum Durchatmen und kleine Denkspiele zum Abschalten.</p>
+        <p className="einleitung">Kurze, erprobte Übungen für Körper, Gefühle und Gedanken. Und kleine Denkspiele zum Abschalten.</p>
 
-        <h2 className="abschnitt abschnitt--symbol">{UEBUNG_SYMBOL.atmung}Zur Ruhe kommen</h2>
-        <ul className="wissen-karten uebung-karten">
-          {UEBUNGEN.map((u) => (
-            <li key={u.id}>
-              <a href={`#/uebungen/${u.id}`}>
-                <span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id]}</span>
-                <span className="wissen-karten__text">
-                  <span className="wissen-karten__gruppe">etwa {u.dauer}</span>
-                  <strong>{u.titel}</strong>
-                  <span className="wissen-karten__teaser">{u.kurz}</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        {UEBUNG_GRUPPEN.map((g) => {
+          const liste = UEBUNGEN.filter((u) => u.gruppe === g.id);
+          if (liste.length === 0) return null;
+          return (
+            <section key={g.id} aria-labelledby={`gr-${g.id}`}>
+              <h2 className="abschnitt" id={`gr-${g.id}`}>{g.titel}</h2>
+              <p className="leise gruppe-text">{g.text}</p>
+              <ul className="wissen-karten uebung-karten">
+                {liste.map((u) => (
+                  <li key={u.id}>
+                    <a href={`#/uebungen/${u.id}`}>
+                      <span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id] ?? UEBUNG_SYMBOL.atmung}</span>
+                      <span className="wissen-karten__text">
+                        <span className="wissen-karten__gruppe">etwa {u.dauer}</span>
+                        <strong>{u.titel}</strong>
+                        <span className="wissen-karten__teaser">{u.kurz}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
 
-        <h2 className="abschnitt abschnitt--symbol" id="spiele">{SPIEL_SYMBOL.turm}Konzentration</h2>
+        <h2 className="abschnitt" id="spiele">Konzentration</h2>
+        <p className="leise gruppe-text">Kleine Denkspiele zum Abschalten.</p>
         <ul className="wissen-karten uebung-karten">
           {SPIELE.map(([id, t, d, dauer]) => (
             <li key={id}>
@@ -130,7 +235,7 @@ export default function Uebungen({ id }: { id?: string }) {
     <div className="spalte">
       <p className="klein zurueck"><a href="#/uebungen"><span aria-hidden="true">←</span> Alle Übungen</a></p>
       <div className="artikel-kopf artikel-kopf--immer">
-        <span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id]}</span>
+        <span className="wissen-karten__symbol">{UEBUNG_SYMBOL[u.id] ?? UEBUNG_SYMBOL.atmung}</span>
         <div>
           <p className="leise klein" style={{ margin: 0 }}>Übung · etwa {u.dauer}</p>
           <h1 style={{ margin: ".15rem 0 0" }}>{u.titel}</h1>
@@ -138,9 +243,12 @@ export default function Uebungen({ id }: { id?: string }) {
       </div>
       <Vorlesen />
       {u.einleitung.map((t, i) => <p key={i} className={i === 0 ? "einleitung" : undefined}>{t}</p>)}
+      {u.achtung && <p className="hinweis-feld uebung-achtung">{u.achtung}</p>}
       {u.art === "atmung" && <Atmung />}
       {u.art === "checkliste" && <Checkliste u={u} />}
       {u.art === "schreiben" && <Schreiben u={u} />}
+      {u.art === "schritte" && <Schritte u={u} />}
+      {u.art === "gefuehle" && <Gefuehle u={u} />}
       <p className="kasten klein">
         Wenn dir eine Übung unangenehm ist, hör einfach auf. Wenn dich etwas über Wochen belastet,
         sprich mit deiner Hausärztin, deinem Hausarzt oder einer Fachperson. <a href="#/hilfe">Hilfe finden</a>
