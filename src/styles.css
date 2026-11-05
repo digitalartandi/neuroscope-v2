@@ -1463,3 +1463,175 @@ html[data-ruhig] .angstkreis__lauf { display: none; }
 .ich-karte__kopf > .klappe-kopf { flex: 1 1 100%; }
 [data-klappe="zu"] .ich-karte__kopf { margin: 0; }
 [data-klappe] .klappe-kopf.klappe__titel button { font-size: 1.15rem; }
+
+/* =====================================================================
+   Heute v2 – leise Zeilen statt Karten, eine Bewegung: der Atemraum.
+   ===================================================================== */
+.heute { max-width: 34rem; gap: 0; padding: var(--s5) 0 var(--s6); }
+.heute > * { animation: none; }
+.heute { animation: auftauchen .5s cubic-bezier(.22, 1, .36, 1) both; }
+.heute__kopf { padding: 0 .25rem; margin-bottom: 2rem; }
+.heute__datum { font-size: .85rem; font-weight: 500; color: var(--text-3); }
+.heute__kopf h1 { font-size: 1.85rem; font-weight: 650; letter-spacing: -.025em; line-height: 1.15; margin-top: .15rem; }
+.heute__leitsatz { font-size: .95rem; line-height: 1.55; color: var(--text-2); max-width: 36ch; margin-top: .6rem; animation: none; }
+.heute-block { margin-bottom: 2rem; }
+.heute-block__titel { font-size: .95rem; font-weight: 600; color: var(--text-2); letter-spacing: 0; margin: 0 .25rem .65rem; }
+
+/* Stimmung */
+.stimmung__reihe { display: flex; justify-content: space-between; gap: .25rem; padding: .35rem; border-radius: 20px; background: var(--karte-voll); box-shadow: inset 0 0 0 1px var(--linie-2); }
+.stimmung__punkt { flex: 1; display: grid; place-items: center; height: 3.4rem; border: 0; border-radius: 15px; background: transparent; color: var(--text-3); cursor: pointer;
+  transition: background .25s, color .25s, transform .2s cubic-bezier(.34, 1.56, .64, 1); }
+.stimmung__punkt svg { width: 1.75rem; height: 1.75rem; }
+.stimmung__punkt:hover { color: var(--text); }
+.stimmung__punkt:active { transform: scale(.9); }
+.stimmung__punkt[aria-checked="true"] { background: var(--verlauf); color: #fff; }
+.stimmung__wort { display: flex; justify-content: space-between; margin: .5rem .6rem 0; font-size: .8rem; color: var(--text-3); }
+.stimmung__gewaehlt { width: 100%; text-align: center; color: var(--text-2); font-size: .9rem; }
+.stimmung__schwer, .stimmung__hinweis { margin: .75rem .25rem 0; font-size: .88rem; color: var(--text-2); line-height: 1.5; }
+
+/* Zeilen: eine Fläche, feine Trennlinien, ein Pfeil */
+.zeilen { list-style: none; padding: 0; margin: 0; border-radius: 20px; background: var(--karte-voll); box-shadow: inset 0 0 0 1px var(--linie-2); overflow: hidden; }
+.zeilen > li { position: relative; }
+.zeilen > li + li::before { content: ""; position: absolute; top: 0; left: 3.5rem; right: 0; height: 1px; background: var(--linie-2); }
+.zeile { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: .9rem; min-height: 3.4rem; padding: .7rem 1rem; cursor: pointer; color: var(--text); font-size: 1rem; line-height: 1.3; }
+.zeilen > li { transition: background .15s; }
+.zeilen > li:active { background: var(--linie-2); }
+.zeile:focus-visible { outline: 2px solid var(--violett); outline-offset: -2px; border-radius: 14px; }
+.zeile__symbol { flex: none; width: 1.6rem; display: grid; place-items: center; color: var(--violett); }
+.zeile__symbol svg, .zeile__symbol .symbol { width: 1.3rem; height: 1.3rem; }
+.zeile[data-hilfe] .zeile__symbol { color: var(--rot); }
+.zeile__text { flex: 1; min-width: 0; display: grid; gap: .1rem; }
+.zeile__text small { font-size: .82rem; color: var(--text-3); }
+.zeile__pfeil { flex: none; width: 1.05rem; height: 1.05rem; fill: none; stroke: var(--text-3); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .6; }
+.zeile__atem { flex: none; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--verlauf); opacity: .9; animation: atemzug 10s ease-in-out infinite; }
+@keyframes atemzug { 0%, 100% { transform: scale(.72); } 40% { transform: scale(1); } }
+.heute__fuss { padding: .5rem .25rem 0; text-align: center; font-size: .82rem; color: var(--text-3); }
+.heute__fuss p { margin: .2rem 0; }
+.heute__fuss a { color: var(--text-2); }
+
+/* Atemraum: ganzer Bildschirm, nur Kugel, Wort und Zahl */
+.atemraum { position: fixed; inset: 0; z-index: 70; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; padding: calc(1rem + env(safe-area-inset-top)) 1.25rem calc(2rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--grund) 94%, var(--logo-2)); animation: einblenden .4s ease both; }
+.atemraum__zu { justify-self: end; border: 0; background: transparent; color: var(--text-2); font: inherit; font-weight: 600; padding: .6rem .8rem; border-radius: 12px; cursor: pointer; }
+.atemraum__zu:focus-visible { outline: 2px solid var(--violett); }
+.atemraum__mitte { align-self: center; display: grid; justify-items: center; gap: .4rem; }
+.atemraum__kugel { width: min(17rem, 68vw); aspect-ratio: 1; display: grid; place-items: center; margin-bottom: 2rem; }
+.atemraum__kugel span { width: 100%; height: 100%; border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--logo-1) 45%, #fff), color-mix(in srgb, var(--logo-2) 55%, #fff) 75%);
+  box-shadow: 0 30px 80px -30px color-mix(in srgb, var(--logo-2) 70%, transparent);
+  transform: scale(.45); transition: transform 4s cubic-bezier(.45, 0, .55, 1); }
+.atemraum[data-phase="ein"] .atemraum__kugel span { transform: scale(1); }
+.atemraum[data-phase="aus"] .atemraum__kugel span { transform: scale(.45); transition-duration: 6s; }
+.atemraum[data-phase="fertig"] .atemraum__kugel span { transform: scale(.7); transition-duration: 2s; }
+.atemraum__wort { margin: 0; font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; color: var(--text); }
+.atemraum__zahl { margin: 0; font-size: 1rem; color: var(--text-3); font-variant-numeric: tabular-nums; min-height: 1.5rem; }
+.atemraum__runde { margin: 0; color: var(--text-3); font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) { .atemraum__kugel span { transition: opacity 1s; transform: scale(.8) !important; } .atemraum[data-phase="aus"] .atemraum__kugel span { opacity: .55; } .zeile__atem { animation: none; } }
+html[data-ruhig] .atemraum__kugel span { transform: scale(.8) !important; }
+
+/* =====================================================================
+   Handy v3 – anspruchsvoller Minimalismus
+   Eine ruhige Grundfläche, weiße Flächen ohne Schatten, feine Linien.
+   Farbe nur für das Aktive. Leiste unten bündig und still.
+   ===================================================================== */
+@media (max-width: 48rem) {
+  :root { --m-grund: #f5f5f8; --m-flaeche: #ffffff; --m-trenn: rgba(22, 24, 48, .08); --m-radius: 18px; }
+  body { background: var(--m-grund); }
+  .hintergrund { display: none; }
+
+  /* Kopf: nur das Zeichen, kein Rahmen */
+  .kopf { background: color-mix(in srgb, var(--m-grund) 86%, transparent); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .kopf__innen { min-height: 3rem; padding: .4rem 1.25rem; }
+  .marke { font-size: .98rem; font-weight: 600; gap: .5rem; }
+  .marke__logo { width: 1.2rem; }
+
+  main { padding: .5rem 1.25rem calc(6.5rem + env(safe-area-inset-bottom)); }
+
+  /* Typografie: eine ruhige Skala */
+  .spalte > h1, .ich-kopf h1, .artikel-kopf h1 { font-size: 1.7rem; font-weight: 650; letter-spacing: -.025em; line-height: 1.15; }
+  h2 { font-size: 1.12rem; font-weight: 650; letter-spacing: -.01em; }
+  .abschnitt { margin-top: 2rem; }
+  .einleitung { font-size: 1rem; line-height: 1.6; color: var(--text-2); }
+  p, li { font-size: 1rem; }
+  .klein, small { font-size: .85rem; }
+
+  /* Flächen: weiß, ohne Schatten, mit feiner Kante */
+  .ich-karte, .kasten, .speicher, .intro__notiz, .inhaltsverzeichnis, .zugang details, .tabelle table,
+  .wissen-karten, .liste-ruhig, .muster, .irrtuemer, .schalter-liste, .nummern, .wegweiser,
+  .plan-schritt, .plan-lesen__schritt, .schritte-karte, .angstkreis__karte, .tage-liste li, .gefuehl-auswahl {
+    box-shadow: inset 0 0 0 1px var(--m-trenn) !important; border: 0 !important; background: var(--m-flaeche); border-radius: var(--m-radius); }
+  .kasten--licht { background: color-mix(in srgb, var(--violett-hell) 70%, var(--m-flaeche)); box-shadow: none !important; }
+  .heute-karte, .naechster__link, .plan-einstieg { box-shadow: inset 0 0 0 1px var(--m-trenn); border: 0; }
+  .naechster__link, .plan-einstieg { background: var(--m-flaeche); }
+
+  /* Symbole in Listen: ohne Kästchen, nur die Linie */
+  .wissen-karten__symbol, .wegweiser__symbol, .heute-links__symbol, .blatt-ziele__symbol, .naechster__symbol, .weg__symbol {
+    background: transparent !important; width: 1.6rem !important; height: 1.6rem !important; border-radius: 0; color: var(--violett); }
+  .wissen-karten__symbol .symbol, .naechster__symbol .symbol, .blatt-ziele__symbol .symbol { width: 1.3rem; height: 1.3rem; }
+  .wissen-karten a::after { width: .42rem; height: .42rem; border-width: 1.6px; opacity: .45; }
+
+  /* Beschriftungen ohne Großbuchstaben */
+  .kurz-gesagt, .naechster__label { text-transform: none; letter-spacing: 0; font-size: .85rem; font-weight: 600; color: var(--text-3); }
+
+  /* Knöpfe: ein Hauptknopf, sonst zurückhaltend */
+  .knopf { min-height: 3rem; border-radius: 14px; font-weight: 600; box-shadow: none; }
+  .knopf--leise { background: var(--m-flaeche); box-shadow: inset 0 0 0 1px var(--m-trenn); }
+  .vorlesen__start { background: transparent; box-shadow: none; padding-left: 0; color: var(--violett); }
+
+  /* Leiste unten: bündig, hell, feine Kante, Farbe nur am Aktiven */
+  .tabs { left: 0; right: 0; bottom: 0; border-radius: 0; padding: .35rem .5rem calc(.35rem + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--m-flaeche) 88%, transparent); backdrop-filter: saturate(1.4) blur(20px); -webkit-backdrop-filter: saturate(1.4) blur(20px);
+    box-shadow: 0 -1px 0 var(--m-trenn); border: 0; }
+  .tabs__marke { display: none; }
+  .tabs a { min-height: 3.1rem; gap: .18rem; font-size: .68rem; font-weight: 500; color: var(--text-3); background: transparent !important; border-radius: 12px; }
+  .tabs a .tab-symbol { width: 1.5rem; height: 1.5rem; transition: transform .2s cubic-bezier(.34, 1.56, .64, 1); }
+  .tabs a[aria-current="page"] { color: var(--text); font-weight: 600; }
+  .tabs a[aria-current="page"] .tab-symbol { color: var(--violett); stroke-width: 1.9; transform: translateY(-1px); }
+  .tabs a[data-hilfe="ja"], .tabs a[data-hilfe="ja"] .symbol, .tabs a[data-hilfe="ja"] .tab-symbol { color: var(--text-3); }
+  .tabs a[data-hilfe="ja"] { position: relative; }
+  .tabs a[data-hilfe="ja"]::after { content: ""; position: absolute; top: .45rem; left: calc(50% + .55rem); width: 6px; height: 6px; border-radius: 50%; background: var(--rot); }
+  .tabs a[data-hilfe="ja"][aria-current="page"] { color: var(--text); }
+  .tabs a[data-hilfe="ja"][aria-current="page"] .tab-symbol { color: var(--rot); }
+  .tabs a[aria-current="page"] .symbol { animation: none; }
+  .vorlesen__leiste, .hoeren { bottom: calc(4.6rem + env(safe-area-inset-bottom)); }
+
+  /* Fußzeile kleiner */
+  .fuss__innen { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+
+  /* Heute am Handy */
+  .heute { padding-top: 1rem; }
+  .heute__kopf { margin-bottom: 1.75rem; }
+  .heute__kopf h1 { font-size: 1.75rem; }
+}
+@media (max-width: 48rem) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --m-grund: #0c1020; --m-flaeche: #151a2c; --m-trenn: rgba(255, 255, 255, .08); }
+}
+
+/* Handy v3, Feinschliff: Auswahl ruhig getönt statt Farbverlauf, Listen einzeilig */
+@media (max-width: 48rem) {
+  .filter__chip, .reiter button, .land button { min-height: 2.4rem; padding: .35rem .85rem; font-size: .9rem; font-weight: 500; }
+  .filter__chip .symbol { display: none; }
+  .filter__chip[aria-pressed="true"], .reiter button[aria-pressed="true"], .land button[aria-pressed="true"], .marke-knopf[aria-pressed="true"] {
+    background: var(--text) !important; color: var(--m-flaeche) !important; box-shadow: none !important; }
+  .filter__chip[aria-pressed="true"] .filter__zahl { background: transparent; color: inherit; opacity: .7; }
+  .land { background: rgba(22, 24, 48, .06); border: 0 !important; padding: .2rem; border-radius: 12px; display: inline-flex; gap: .2rem; }
+  .land button { border: 0; border-radius: 10px; background: transparent; }
+  .land button[aria-pressed="true"] { background: var(--m-flaeche) !important; color: var(--text) !important; box-shadow: 0 1px 3px rgba(22, 24, 48, .12) !important; }
+
+  /* Telefonnummern: getönt, nicht laut. Die Zahl ist das Wichtige. */
+  .nummern a.tel, .liste-ruhig a.tel, .plan-kontakte a.tel, .blatt-nummern .tel {
+    background: var(--violett-hell); color: var(--violett); font-weight: 650; border-radius: 12px; padding: .45rem .85rem; font-size: 1rem; }
+
+  /* Listen: Teaser einzeilig, Überzeilen nur wo sie etwas sagen */
+  .wissen-karten__teaser { -webkit-line-clamp: 1; }
+  .wissen-karten__text strong { font-weight: 600; }
+  .reflexion-karten .wissen-karten__gruppe { display: none; }
+  .wissen-karten__gruppe { font-size: .78rem; font-weight: 500; }
+  .stand { opacity: .8; }
+
+  /* Aufklappbare Abschnitte: ruhiger */
+  .klappe__titel button { font-size: 1.02rem !important; font-weight: 600; padding: 1rem 0; }
+  .abschnitt--symbol .symbol { display: none; }
+  h2.abschnitt--symbol { gap: 0; }
+}
+.atemraum__kugel span { box-shadow: none; }

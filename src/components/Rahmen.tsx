@@ -1,10 +1,19 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { SYMBOLE } from "./Icons";
+import { TAB_SYMBOLE } from "./Icons";
 import { LogoZeichen } from "./Logo";
 
 export function Logo() {
   return <LogoZeichen className="marke__logo" />;
 }
+
+// Leiste unten am Handy: „Heute“ ist der Ausgangspunkt, die Selbstreflexion erreicht man von dort und von „Ich“.
+const TABS: [string, string][] = [
+  ["/", "Heute"],
+  ["/wissen", "Wissen"],
+  ["/uebungen", "Übungen"],
+  ["/ich", "Ich"],
+  ["/hilfe", "Hilfe"],
+];
 
 const NAV: [string, string][] = [
   ["/reflexion", "Selbstreflexion"],
@@ -38,14 +47,16 @@ export function Rahmen({ route, children }: { route: string; children: ReactNode
         </div>
       </header>
       <main id="inhalt" tabIndex={-1}>{children}</main>
-      <nav className="tabs" aria-label="Hauptmenü" style={{ ["--aktiv" as string]: Math.max(0, NAV.findIndex(([p]) => aktiv(p))), ["--sichtbar" as string]: NAV.some(([p]) => aktiv(p)) ? 1 : 0 }}>
-        <span className="tabs__marke" aria-hidden="true" />
-        {NAV.map(([p, t]) => (
-          <a key={p} href={"#" + p} aria-current={aktiv(p) ? "page" : undefined} data-hilfe={p === "/hilfe" ? "ja" : undefined}>
-            {SYMBOLE[p.slice(1)]}
-            <span>{p === "/reflexion" ? "Reflexion" : p === "/hilfe" ? "Hilfe" : p === "/ich" ? "Ich" : t}</span>
-          </a>
-        ))}
+      <nav className="tabs" aria-label="Hauptmenü">
+        {TABS.map(([p, t]) => {
+          const an = p === "/" ? route === "/" || route === "" : aktiv(p);
+          return (
+            <a key={p} href={"#" + p} aria-current={an ? "page" : undefined} data-hilfe={p === "/hilfe" ? "ja" : undefined}>
+              {TAB_SYMBOLE[p === "/" ? "heute" : p.slice(1)]}
+              <span>{t}</span>
+            </a>
+          );
+        })}
       </nav>
       <footer className="fuss">
         <div className="fuss__innen">

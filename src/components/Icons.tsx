@@ -87,3 +87,20 @@ export const SPIEL_SYMBOL: Record<string, ReactNode> = {
   merken: <Symbol><rect x="4" y="5" width="11" height="14" rx="2" /><path d="M9 3.5h9a2 2 0 0 1 2 2V17" /><path d="M7.5 15 9.5 9l2 6M8.2 13h2.6" /></Symbol>,
   turm: <Symbol><path d="M3.5 20.5h17" /><path d="M7 20.5V9M17 20.5V9" /><circle cx="7" cy="16.5" r="2.2" /><circle cx="7" cy="12" r="2.2" /><circle cx="17" cy="16.5" r="2.2" /></Symbol>,
 };
+
+// Leiste unten am Handy: eigene, sehr reduzierte Zeichen (feine Linie, wenige Striche).
+function Tab({ children }: { children: ReactNode }) {
+  return (
+    <svg className="tab-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+}
+export const TAB_SYMBOLE: Record<string, ReactNode> = {
+  heute: <Tab><path d="M3.5 17.5h17" /><path d="M7 17.5a5 5 0 0 1 10 0" /><path d="M12 6.5v2M6 9.2l1.3 1.3M18 9.2l-1.3 1.3" /></Tab>,
+  ich: <Tab><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20c1.1-3.4 3.8-5.2 7-5.2s5.9 1.8 7 5.2" /></Tab>,
+  wissen: <Tab><path d="M12 6.8C9.6 5 7 4.6 4 5.3v13c3-.7 5.6-.3 8 1.5 2.4-1.8 5-2.2 8-1.5v-13c-3-.7-5.6-.3-8 1.5z" /><path d="M12 6.8v13" /></Tab>,
+  uebungen: <Tab><path d="M5.5 18.5c0-7.5 4.6-12.4 13-13 0 8.4-4.9 13-13 13z" /><path d="M5.5 18.5 12 12" /></Tab>,
+  hilfe: <Tab><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3.2" /><path d="m7 7 2.7 2.7M17 7l-2.7 2.7M7 17l2.7-2.7M17 17l-2.7-2.7" /></Tab>,
+  reflexion: <Tab><path d="M6 4.5h9.5a2 2 0 0 1 2 2v13H8a2 2 0 0 1-2-2z" /><path d="M9.5 9h4.5M9.5 12.5h3" /></Tab>,
+};
