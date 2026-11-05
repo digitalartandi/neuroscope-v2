@@ -1,3 +1,4 @@
+import { LEITSATZ } from "../content/zweck";
 import { BETREIBER, STAND, VERSION } from "../content/betreiber";
 import { geraetLoeschen, sitzungLoeschen } from "../lib/speicher";
 import { useZustand } from "../lib/zustand";
@@ -21,7 +22,8 @@ export function Ueber() {
   return (
     <div className="spalte">
       <h1>Über Neuroscope</h1>
-      <p className="einleitung">{ZWECK}</p>
+      <p className="einleitung">{LEITSATZ}</p>
+      <p>{ZWECK}</p>
 
       <h2 className="abschnitt">Wofür es gedacht ist</h2>
       <p>

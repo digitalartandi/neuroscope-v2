@@ -9,6 +9,7 @@ import { WEGE, type Weg, type Ziel } from "../content/wegweiser";
 import { SYMBOLE, UEBUNG_SYMBOL, WISSEN_SYMBOLE } from "../components/Icons";
 import { Gesicht } from "./Ich";
 import { Blatt, tippen } from "../components/Blatt";
+import { LEITSATZ } from "../content/zweck";
 
 const symbol = (s: string) => UEBUNG_SYMBOL[s] ?? WISSEN_SYMBOLE[s] ?? SYMBOLE[s];
 
@@ -27,12 +28,18 @@ export default function Start() {
   const begonnen = Object.keys(z.antworten).length > 0;
   const gut = UEBUNGEN.filter((u) => z.merkliste.includes(u.id));
   const plan = Object.values(z.krisenplan).some((l) => l.length > 0);
+  // Der Leitsatz steht beim ersten Besuch unter der Begrüßung, danach nur noch unten.
+  const [ersterBesuch] = useState(!z.einstellungen.zweck);
+  const setE = useRef(z.setEinstellungen);
+  setE.current = z.setEinstellungen;
+  useEffect(() => { if (ersterBesuch) setE.current({ zweck: true }); }, [ersterBesuch]);
 
   return (
     <div className="heute">
       <header className="heute__kopf">
         <p className="heute__datum">{datum}</p>
         <h1>{gruss(name)}</h1>
+        {ersterBesuch && <p className="heute__leitsatz">{LEITSATZ}</p>}
       </header>
 
       <StimmungKarte />
@@ -66,6 +73,7 @@ export default function Start() {
 
       <details className="heute-mehr">
         <summary>Was Neuroscope ist und was nicht</summary>
+        <p className="heute-mehr__leitsatz">{LEITSATZ}</p>
         <div className="grenze">
           <div>
             <h3>Neuroscope ist</h3>

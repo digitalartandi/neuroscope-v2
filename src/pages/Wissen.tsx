@@ -1,8 +1,12 @@
+import { Naechster } from "../components/Naechster";
+import { NACH_WISSEN } from "../content/naechster";
+import { UEBUNGEN } from "../content/uebungen";
+import { ankerJetzt, useDruck, useMobil } from "../lib/mobil";
 import { Angstkreis } from "../components/Angstkreis";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
 import { ICD_INFO, VERSTEHEN, ZUGANG } from "../content/verstehen";
-import { SYMBOLE, THEMA_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
+import { SYMBOLE, THEMA_SYMBOL, UEBUNG_SYMBOL, WISSEN_SYMBOLE as S } from "../components/Icons";
 import { Vorlesen } from "../components/Vorlesen";
 
 // Bereiche für den Filter. „gruppen“ verweist auf VerstehenSeite.gruppe, „alltag“ auf die Seiten in WISSEN.
@@ -99,9 +103,11 @@ export default function Wissen({ id }: { id?: string }) {
     <article className="spalte">
       <Zurueck />
       <Kopf symbol={ALLTAG_SYMBOL[w.id] ?? "alltag"} gruppe="Alltag und Wohlbefinden" titel={w.titel} />
+      <p className="kurz-gesagt">Kurz gesagt</p>
       <p className="einleitung">{w.einleitung}</p>
       <Vorlesen />
       <Teile teile={teile} />
+      <NaechsterWissen id={w.id} />
       <Verwandt id={w.id} bereich="alltag" />
       <Quellen liste={w.quellen} schluss="Die Texte fassen die Quellen in eigenen Worten zusammen. Sie sind allgemeine Information und keine Beratung im Einzelfall." />
     </article>
@@ -115,9 +121,20 @@ const abschnitt = (titel: string, text: string[]): Teil => ({ id: slug(titel), t
 
 function Teile({ teile }: { teile: Teil[] }) {
   const sichtbar = teile.filter((t) => !t.klein);
+  const mobil = useMobil();
+  const druck = useDruck();
+  // Am Handy: Abschnitte zugeklappt, ein Tipp öffnet sie. Ein Sprung per Anker öffnet sein Ziel.
+  const [offen, setOffen] = useState<Set<string>>(() => new Set([ankerJetzt()]));
+  const auf = (id: string) => mobil && !druck && !offen.has(id) ? false : true;
+  useEffect(() => {
+    const auf = (e: Event) => setOffen((o) => new Set(o).add((e as CustomEvent<string>).detail));
+    window.addEventListener("klappe-auf", auf);
+    return () => window.removeEventListener("klappe-auf", auf);
+  }, []);
+  const tausche = (id: string) => setOffen((o) => { const n = new Set(o); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   return (
     <>
-      {sichtbar.length > 3 && (
+      {!mobil && sichtbar.length > 3 && (
         <details className="inhaltsverzeichnis">
           <summary>Auf dieser Seite <span className="leise">({sichtbar.length} Abschnitte)</span></summary>
           <ol>
@@ -127,12 +144,23 @@ function Teile({ teile }: { teile: Teil[] }) {
           </ol>
         </details>
       )}
-      {teile.map((t) => (
-        <section key={t.id} id={t.id} className={t.kasten ? "kasten kasten--licht abschnitt" : t.klein ? "abschnitt abschnitt--klein" : undefined}>
-          <h2 className={t.kasten ? undefined : "abschnitt"}>{t.titel}</h2>
-          {t.inhalt}
-        </section>
-      ))}
+      {teile.map((t) => {
+        const o = auf(t.id);
+        return (
+          <section key={t.id} id={t.id} data-klappe={mobil ? (o ? "auf" : "zu") : undefined}
+            className={t.kasten ? "kasten kasten--licht abschnitt" : t.klein ? "abschnitt abschnitt--klein" : undefined}>
+            {mobil ? (
+              <h2 className={t.kasten ? "klappe-kopf klappe__titel" : "klappe-kopf abschnitt klappe__titel"}>
+                <button type="button" aria-expanded={o} aria-controls={`${t.id}-inhalt`} onClick={() => tausche(t.id)}>
+                  <span>{t.titel}</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                </button>
+              </h2>
+            ) : <h2 className={t.kasten ? undefined : "abschnitt"}>{t.titel}</h2>}
+            <div id={`${t.id}-inhalt`} hidden={!o} className="klappe__inhalt">{t.inhalt}</div>
+          </section>
+        );
+      })}
     </>
   );
 }
@@ -308,6 +336,20 @@ function Karten({ liste, mitGruppe = true }: { liste: Eintrag[]; mitGruppe?: boo
   );
 }
 
+function NaechsterWissen({ id }: { id: string }) {
+  const ziel = NACH_WISSEN[id];
+  if (!ziel) return null;
+  const [art, wert] = ziel.split(":");
+  if (art === "h") return <Naechster href={`#/wissen/${id}#termin`} onClick={(e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent("klappe-auf", { detail: "termin" }));
+    window.setTimeout(() => document.getElementById("termin")?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  }} titel="So kommst du zu einem Termin" text="Hier helfen Fachleute am meisten. So findest du den Weg dorthin." symbol={SYMBOLE.hilfe} />;
+  const u = UEBUNGEN.find((x) => x.id === wert);
+  if (!u) return null;
+  return <Naechster href={`#/uebungen/${u.id}`} titel={`Übung: ${u.titel}`} text={`${u.kurz} Etwa ${u.dauer}.`} symbol={UEBUNG_SYMBOL[u.id]} />;
+}
+
 function Zurueck() {
   return (
     <p className="klein zurueck">
@@ -359,6 +401,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
       <Zurueck />
       <Kopf symbol={GRUPPE_SYMBOL[v.gruppe] ?? "alle"} gruppe={v.gruppe} titel={v.titel} />
       {v.icd && <p className="klein leise">ICD-11: {v.icd.code} {v.icd.titel}</p>}
+      <p className="kurz-gesagt">Kurz gesagt</p>
       <p className="einleitung">{v.einleitung}</p>
       <Vorlesen />
       <p className="sprungmarken">
@@ -367,6 +410,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
         {["drogen", "alkohol", "gaming"].includes(v.id) && <a href="#/hilfe/drogen">Beratung und Notfall</a>}
       </p>
       <Teile teile={teile} />
+      <NaechsterWissen id={v.id} />
       <Verwandt id={v.id} bereich={bereich} />
       <Quellen liste={[...v.quellen, ...ZUGANG.quellen]} schluss="Allgemeine Information in eigenen Worten. Sie ersetzt keine Untersuchung und keine Diagnose durch Fachleute." />
     </article>

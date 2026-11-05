@@ -71,6 +71,7 @@ export interface Einstellungen {
   nurGeraetestimme?: boolean; // nur Stimmen, die auf dem Gerät laufen
   tempo: number; // Vorlesetempo
   intro: boolean; // Einführung schon gesehen
+  zweck?: boolean; // Leitsatz auf „Heute“ schon gesehen
   land?: "AT" | "DE";
   region?: string;
 }

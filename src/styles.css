@@ -1416,3 +1416,50 @@ html[data-ruhig] .angstkreis__lauf { display: none; }
   .weg { font-size: .88rem; gap: .5rem; padding: .6rem; }
   .weg__symbol { width: 2rem; height: 2rem; border-radius: 10px; }
 }
+
+/* ================= Ruhe-Durchgang ================= */
+.heute__leitsatz { margin: .5rem 0 0; color: var(--text-2); font-size: 1.02rem; line-height: 1.5; max-width: 34ch; animation: auftauchen .6s .2s ease both; }
+.heute-mehr__leitsatz { margin: var(--s3) 0; font-weight: 600; text-align: center; color: var(--text); }
+.kurz-gesagt { display: none; }
+
+/* Nächster guter Schritt */
+.naechster { margin: var(--s6) 0 var(--s5); }
+.naechster__label { margin: 0 0 .5rem; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.naechster__link { display: flex; align-items: center; gap: var(--s3); padding: var(--s4); border-radius: 22px; text-decoration: none; color: var(--text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--logo-1) 9%, var(--karte-voll)), color-mix(in srgb, var(--logo-2) 9%, var(--karte-voll)));
+  border: 1px solid var(--akzent-rand); transition: transform .15s, box-shadow .2s; }
+.naechster__link:hover { box-shadow: var(--schatten-klein); }
+.naechster__link:active { transform: scale(.985); }
+.naechster__symbol { flex: none; display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 14px; background: var(--karte-voll); color: var(--violett); }
+.naechster__symbol svg, .naechster__symbol .symbol { width: 1.35rem; height: 1.35rem; }
+.naechster__text { flex: 1; display: grid; gap: .15rem; }
+.naechster__text span { color: var(--text-2); font-size: .92rem; line-height: 1.4; }
+.naechster__pfeil { color: var(--text-3); font-size: 1.6rem; }
+@media print { .naechster { display: none; } }
+
+/* Aufklappbare Abschnitte (nur am Handy aktiv) */
+.klappe__titel { margin: 0; }
+.klappe__titel button { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--s3); cursor: pointer; padding: .9rem 0; min-height: 3rem; font: inherit; font-weight: 700; color: var(--text); }
+.klappe__titel button:focus-visible { outline: 2px solid var(--violett); outline-offset: 2px; border-radius: 8px; }
+.klappe__titel svg { flex: none; width: 1.25rem; height: 1.25rem; fill: none; stroke: var(--text-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s ease; }
+.klappe__titel button[aria-expanded="true"] svg { transform: rotate(180deg); }
+.klappe__inhalt:not([hidden]) { animation: auftauchen .3s ease both; }
+[data-klappe="zu"] > :not(.ich-karte__kopf):not(.klappe-kopf) { display: none !important; }
+[data-klappe="zu"] .ich-karte__kopf > :not(.klappe-kopf) { display: none !important; }
+[data-klappe] .ich-karte__kopf { flex-wrap: wrap; }
+[data-klappe="zu"].ich-karte { padding-block: .25rem; }
+
+@media (max-width: 48rem) {
+  .kurz-gesagt { display: block; margin: var(--s4) 0 .35rem; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+  .kurz-gesagt + .einleitung { margin-top: 0; }
+  /* Artikel: Abschnitte als ruhige Liste mit Trennlinien */
+  article section[data-klappe] { margin: 0; border-top: 1px solid var(--m-trenn, var(--linie)); }
+  article section[data-klappe]:last-of-type { border-bottom: 1px solid var(--m-trenn, var(--linie)); }
+  article section[data-klappe] > h2.abschnitt { margin: 0; font-size: 1.08rem; }
+  article section[data-klappe].kasten { border: 0; margin: var(--s3) 0; padding: 0 var(--s4); }
+  article section[data-klappe] .klappe__inhalt { padding-bottom: var(--s4); }
+  .sprungmarken { margin-bottom: var(--s4); }
+}
+.ich-karte__kopf > .klappe-kopf { flex: 1 1 100%; }
+[data-klappe="zu"] .ich-karte__kopf { margin: 0; }
+[data-klappe] .klappe-kopf.klappe__titel button { font-size: 1.15rem; }

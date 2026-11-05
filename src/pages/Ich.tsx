@@ -1,3 +1,4 @@
+import { useDruck, useMobil } from "../lib/mobil";
 import { useState } from "react";
 import { IchIntro } from "../components/IchIntro";
 import { WISSEN_SYMBOLE } from "../components/Icons";
@@ -46,6 +47,18 @@ export default function Ich() {
   const [wort, setWort] = useState(vorhanden?.wort ?? "");
   const [einfluesse, setEinfluesse] = useState<string[]>(vorhanden?.einfluesse ?? []);
   const [eigenes, setEigenes] = useState("");
+  // Am Handy sind die weiteren Karten zugeklappt: zuerst nur der Eintrag und der Verlauf.
+  const mobil = useMobil();
+  const druck = useDruck();
+  const [klappen, setKlappen] = useState<Set<string>>(new Set());
+  const klappe = (id: string) => (mobil && !druck ? (klappen.has(id) ? "auf" : "zu") : undefined);
+  const klappTitel = (id: string, titel: string) => mobil && !druck ? (
+    <h2 id={`${id}-titel`} className="klappe-kopf klappe__titel">
+      <button type="button" aria-expanded={klappen.has(id)} onClick={() => setKlappen((k) => { const n = new Set(k); if (n.has(id)) n.delete(id); else n.add(id); return n; })}>
+        <span>{titel}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+    </h2>
+  ) : <h2 id={`${id}-titel`}>{titel}</h2>;
   const [markiert, setMarkiert] = useState("");
   const [gespeichert, setGespeichert] = useState(false);
   const e = z.einstellungen;
@@ -192,9 +205,9 @@ export default function Ich() {
 
       }
       {/* ---------- Gefühle ---------- */}
-      {e.bereiche.gefuehle && <section className="ich-karte" aria-labelledby="gefuehle-titel">
+      {e.bereiche.gefuehle && <section className="ich-karte" aria-labelledby="gefuehle-titel" data-klappe={klappe("gefuehle")}>
         <div className="ich-karte__kopf">
-          <h2 id="gefuehle-titel">Deine Gefühle</h2>
+          {klappTitel("gefuehle", "Deine Gefühle")}
           <div className="segment" role="group" aria-label="Zeitraum Gefühle">
             {[7, 14, 30].map((n) => <button key={n} type="button" aria-pressed={zeitraum === n} onClick={() => setZeitraum(n)}>{n} Tage</button>)}
           </div>
@@ -221,8 +234,8 @@ export default function Ich() {
       </section>}
 
       {/* ---------- Was mir guttut ---------- */}
-      {e.bereiche.hilft && <section className="ich-karte" aria-labelledby="hilft-titel">
-        <h2 id="hilft-titel">Was mir guttut</h2>
+      {e.bereiche.hilft && <section className="ich-karte" aria-labelledby="hilft-titel" data-klappe={klappe("hilft")}>
+        {klappTitel("hilft", "Was mir guttut")}
         {z.merkliste.length === 0 ? (
           <p className="leer">Markiere bei einer <a href="#/uebungen">Übung</a> das Herz „Hat mir gutgetan“. Sie erscheint dann hier, zum schnellen Wiederfinden.</p>
         ) : (
@@ -235,8 +248,8 @@ export default function Ich() {
       </section>}
 
       {/* ---------- Lebensrad ---------- */}
-      {e.bereiche.rad && <section className="ich-karte" aria-labelledby="rad-titel">
-        <h2 id="rad-titel">Deine Lebensbereiche</h2>
+      {e.bereiche.rad && <section className="ich-karte" aria-labelledby="rad-titel" data-klappe={klappe("rad")}>
+        {klappTitel("rad", "Deine Lebensbereiche")}
         <p className="leise" style={{ marginTop: 0 }}>
           Wie zufrieden bist du gerade mit diesen Bereichen deines Lebens? 0 heißt gar nicht, 10 heißt völlig. Es zählt nur deine eigene Sicht.
         </p>
@@ -277,8 +290,8 @@ export default function Ich() {
 
       }
       {/* ---------- Selbstreflexion auf einen Blick ---------- */}
-      {e.bereiche.muster && <section className="ich-karte" aria-labelledby="muster-titel">
-        <h2 id="muster-titel">Deine Selbstreflexion auf einen Blick</h2>
+      {e.bereiche.muster && <section className="ich-karte" aria-labelledby="muster-titel" data-klappe={klappe("muster")}>
+        {klappTitel("muster", "Deine Selbstreflexion auf einen Blick")}
         <p className="leise" style={{ marginTop: 0 }}>
           Jede Punktreihe ist eine Frage, von „nie“ links bis „fast immer“ rechts. Der gefüllte Punkt ist deine Antwort.
         </p>

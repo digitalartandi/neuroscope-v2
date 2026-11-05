@@ -1,3 +1,5 @@
+import { Naechster } from "../components/Naechster";
+import { SYMBOLE } from "../components/Icons";
 import { useState } from "react";
 import { useZustand } from "../lib/zustand";
 import { ENERGIE, STIMMUNG, datumLang, tageZurueck } from "../lib/ich";
@@ -65,6 +67,7 @@ export default function Ueberblick() {
           <p>{gut.map((u) => u.titel).join(", ")}</p>
         </>
       )}
+      <div className="nicht-drucken"><Naechster href="#/hilfe" titel="Hilfe finden" text="Hausarzt, Psychotherapie und Beratung in deinem Bundesland. Dorthin kannst du das Blatt mitnehmen." symbol={SYMBOLE.hilfe} /></div>
       <p className="hinweis-feld" style={{ marginTop: "1.5rem" }}>
         Erstellt mit Neuroscope. Eigene Einträge ohne Auswertung. Ein Zusammenhang, der hier sichtbar wird, ist noch keine Ursache.
       </p>

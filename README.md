@@ -61,3 +61,33 @@ tests/          Prüfungen
 - Schrift: DM Sans (SIL OFL), lokal eingebunden, kein Google-Fonts-Abruf.
 - Die Spiele beruhen auf allgemein bekannten Aufgabenprinzipien (Trail Making, Stroop, N-back, Tower of London)
   mit eigenen Aufgaben. Es werden keine lizenzierten Testfassungen oder Normtabellen verwendet.
+
+## Zweck
+
+> Neuroscope hilft dir, zu verstehen, was in dir los ist, und den nächsten guten Schritt zu finden, bis hin zu echter Hilfe.
+
+Die Bereiche ordnen sich nach diesem Satz:
+
+| Teil des Satzes | Bereiche |
+| --- | --- |
+| Verstehen, was in dir los ist | Selbstreflexion, Wissen, Mein Bereich |
+| Den nächsten guten Schritt finden | Heute, Wegweiser, Übungen |
+| Bis hin zu echter Hilfe | Hilfe finden, Mein Krisenplan, Druckblatt |
+
+Jede Seite endet mit genau einem „Nächsten guten Schritt“, nicht mit einer Liste.
+
+### Prüfstein für neue Ideen
+
+Eine Idee kommt nur hinein, wenn alle vier Antworten Ja sind:
+
+1. Hilft sie beim Verstehen, beim nächsten Schritt oder auf dem Weg zur Hilfe?
+2. Bleibt sie ohne Bewertung (keine Summen, Schwellen, Einschätzungen der Person)?
+3. Bleiben alle Daten auf dem Gerät?
+4. Wird der Handy-Bildschirm dadurch nicht voller? (Neues ersetzt etwas, liegt in einem Blatt oder ist zugeklappt.)
+
+### Regeln für ein ruhiges Handy-UI
+
+- Eine Frage pro Bildschirm, ein Hauptknopf mit Farbverlauf.
+- Tiefe auf Wunsch: „Kurz gesagt“ zuerst, Abschnitte zugeklappt.
+- Nebenwege als Blatt von unten statt als neue Seite.
+- Ein Kartenstil, drei Schriftgrößen, eine Akzentfarbe.

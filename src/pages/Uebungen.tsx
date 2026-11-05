@@ -1,3 +1,4 @@
+import { Naechster } from "../components/Naechster";
 import { useEffect, useRef, useState } from "react";
 import { UEBUNGEN, type Uebung, type UebungGruppe } from "../content/uebungen";
 import { sitzungLesen, sitzungSchreiben } from "../lib/speicher";
@@ -301,6 +302,7 @@ export default function Uebungen({ id }: { id?: string }) {
         Wenn dir eine Übung unangenehm ist, hör einfach auf. Wenn dich etwas über Wochen belastet,
         sprich mit deiner Hausärztin, deinem Hausarzt oder einer Fachperson. <a href="#/hilfe">Hilfe finden</a>
       </p>
+      <Naechster href="#/" titel="Wie geht es dir jetzt?" text="Halte kurz fest, wie es dir nach der Übung geht. Ein Tipp reicht." symbol={UEBUNG_SYMBOL.gefuehle} />
       {u.quellen.length > 0 && (
         <div className="quellen">
           <p><strong>Quellen</strong></p>
