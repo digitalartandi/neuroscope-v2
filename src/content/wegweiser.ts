@@ -5,7 +5,7 @@ export interface Weg { id: string; titel: string; symbol: string; ziele: Ziel[];
 
 export const WEGE: Weg[] = [
   {
-    id: "unruhig", titel: "Ich bin unruhig", symbol: "atmung",
+    id: "unruhig", titel: "Ich bin unruhig", symbol: "ruhe",
     ziele: [
       { art: "uebung", id: "atmung", text: "Langsam ausatmen beruhigt den Körper. Drei Minuten." },
       { art: "uebung", id: "sinne", text: "Die Sinne holen dich ins Hier und Jetzt. Zwei Minuten." },

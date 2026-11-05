@@ -12,7 +12,7 @@ import { createPortal } from "react-dom";
 import { Blatt, tippen } from "../components/Blatt";
 import { LEITSATZ } from "../content/zweck";
 
-const symbol = (s: string) => UEBUNG_SYMBOL[s] ?? WISSEN_SYMBOLE[s] ?? SYMBOLE[s];
+const symbol = (s: string) => SYMBOLE[s] ?? UEBUNG_SYMBOL[s] ?? WISSEN_SYMBOLE[s];
 
 function gruss(name: string) {
   const h = new Date().getHours();

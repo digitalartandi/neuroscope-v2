@@ -10,6 +10,8 @@ function Symbol({ children }: { children: ReactNode }) {
 }
 
 export const SYMBOLE: Record<string, ReactNode> = {
+  // Ruhe: sitzende Figur im Schneidersitz, Hände auf den Knien
+  ruhe: <Symbol><circle cx="12" cy="4.6" r="2.1" /><path d="M12 7.8v5.4" /><path d="M12 9.2c-2.7.3-4.6 1.9-5.6 4.6M12 9.2c2.7.3 4.6 1.9 5.6 4.6" /><path d="M3.5 18c2.5-2.4 5.3-3.5 8.5-3.5s6 1.1 8.5 3.5" /><path d="M6 19.6c1.9.6 3.9.9 6 .9s4.1-.3 6-.9" /></Symbol>,
   // Notizbuch mit Stift
   reflexion: <Symbol><path d="M5 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z" /><path d="M5 18a2 2 0 0 1 2-2h10" /><path d="M9 8h5M9 11h3" /><path d="m19.5 4.5 1 1-6 6-1.5.5.5-1.5z" /></Symbol>,
   // Spiegel: Oval auf Fuß
