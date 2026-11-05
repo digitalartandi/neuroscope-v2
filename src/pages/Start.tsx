@@ -181,42 +181,52 @@ function WegInhalt({ weg }: { weg: Weg }) {
 // Eine Minute durchatmen, direkt hier: 4 Sekunden ein, 6 Sekunden aus, sechs Runden.
 function Durchatmen() {
   const [laeuft, setLaeuft] = useState(false);
-  const [phase, setPhase] = useState<"ein" | "aus">("ein");
-  const [runde, setRunde] = useState(0);
+  const [phase, setPhase] = useState<"start" | "ein" | "aus">("start");
+  const karte = useRef<HTMLElement>(null);
+  const [rest, setRest] = useState(4);
+  const [runde, setRunde] = useState(1);
   const [fertig, setFertig] = useState(false);
-  const timer = useRef(0);
   useEffect(() => {
     if (!laeuft) return;
-    let p: "ein" | "aus" = "ein", r = 0;
-    setPhase("ein"); setRunde(0); tippen(20);
-    const weiter = () => {
-      if (p === "ein") { p = "aus"; setPhase("aus"); tippen(8); timer.current = window.setTimeout(weiter, 6000); }
-      else {
-        r += 1; setRunde(r);
-        if (r >= 6) { setLaeuft(false); setFertig(true); tippen(30); return; }
-        p = "ein"; setPhase("ein"); tippen(20); timer.current = window.setTimeout(weiter, 4000);
-      }
-    };
-    timer.current = window.setTimeout(weiter, 4000);
-    return () => window.clearTimeout(timer.current);
+    let p: "ein" | "aus" = "ein", r = 1, s = 4;
+    setPhase("start"); setRunde(1); setRest(4); tippen(20);
+    // erst klein zeigen, dann wachsen lassen, damit das Einatmen sichtbar beginnt
+    const los = window.requestAnimationFrame(() => window.requestAnimationFrame(() => setPhase("ein")));
+    window.setTimeout(() => karte.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
+    const t = window.setInterval(() => {
+      s -= 1;
+      if (s > 0) { setRest(s); return; }
+      if (p === "ein") { p = "aus"; s = 6; tippen(8); }
+      else if (r >= 6) { window.clearInterval(t); setLaeuft(false); setFertig(true); tippen(30); return; }
+      else { p = "ein"; s = 4; r += 1; setRunde(r); tippen(20); }
+      setPhase(p); setRest(s);
+    }, 1000);
+    return () => { window.clearInterval(t); window.cancelAnimationFrame(los); };
   }, [laeuft]);
 
+  if (laeuft) return (
+    <section ref={karte} className="heute-karte durchatmen durchatmen--laeuft" aria-labelledby="atmen-titel" data-phase={phase}>
+      <h2 id="atmen-titel" className="sr-only">Eine Minute durchatmen</h2>
+      <div className="atembuehne" aria-hidden="true">
+        <span className="atembuehne__ziel" />
+        <span className="atembuehne__welle" />
+        <span className="atembuehne__wort"><strong>{phase === "aus" ? "Ausatmen" : "Einatmen"}</strong><span>{rest}</span></span>
+      </div>
+      <p className="sr-only" aria-live="polite">{phase === "aus" ? "Langsam ausatmen" : "Einatmen"}</p>
+      <div className="durchatmen__fuss">
+        <span>Runde {runde} von 6</span>
+        <button type="button" className="textknopf" onClick={() => setLaeuft(false)}>Beenden</button>
+      </div>
+    </section>
+  );
   return (
-    <section className="heute-karte durchatmen" aria-labelledby="atmen-titel" data-laeuft={laeuft ? phase : undefined}>
+    <section className="heute-karte durchatmen" aria-labelledby="atmen-titel">
       <div className="durchatmen__text">
         <h2 id="atmen-titel">Eine Minute durchatmen</h2>
-        <p aria-live="polite">
-          {laeuft ? (phase === "ein" ? "Einatmen …" : "Langsam ausatmen …") : fertig ? "Gut gemacht. Spür kurz nach." : "Vier Sekunden ein, sechs aus. Der Kreis zeigt den Takt."}
-        </p>
-        {laeuft && <p className="klein leise">Runde {Math.min(runde + 1, 6)} von 6</p>}
+        <p role="status">{fertig ? "Gut gemacht. Spür kurz nach." : "Vier Sekunden ein, sechs aus. Ein Kreis zeigt dir den Takt."}</p>
       </div>
-      <button type="button" className="durchatmen__kreis" onClick={() => { setFertig(false); setLaeuft(!laeuft); }}
-        aria-label={laeuft ? "Atmen beenden" : "Eine Minute atmen starten"}>
-        <span className="durchatmen__welle" aria-hidden="true" />
-        <span className="durchatmen__mitte" aria-hidden="true">
-          {laeuft ? <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
-            : <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>}
-        </span>
+      <button type="button" className="durchatmen__start" onClick={() => { setFertig(false); setLaeuft(true); }} aria-label="Eine Minute atmen starten">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5v11l9-5.5z" /></svg>
       </button>
     </section>
   );

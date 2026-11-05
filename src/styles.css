@@ -19,6 +19,8 @@
 
 /* ---------- Tokens ---------- */
 :root {
+  --logo-1: #435DF8;
+  --logo-2: #7c3aed;
   --grund: #f7f8fc;
   --karte: rgba(255, 255, 255, 0.92);
   --karte-voll: #ffffff;
@@ -1277,8 +1279,6 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .heute-mehr { padding: 0 var(--s2); }
 .heute-mehr summary { cursor: pointer; color: var(--text-2); font-weight: 600; font-size: .92rem; padding: .6rem 0; list-style: none; text-align: center; }
 .heute-mehr summary::-webkit-details-marker { display: none; }
-.heute-mehr summary::after { content: " ▾"; color: var(--text-3); }
-.heute-mehr[open] summary::after { content: " ▴"; }
 
 /* Stimmung mit einem Tipp */
 .gesichter { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; }
@@ -1312,14 +1312,29 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
 .durchatmen__text { flex: 1; min-width: 0; }
 .durchatmen__text h2 { margin-bottom: .35rem; }
 .durchatmen__text p { margin: 0; color: var(--text-2); }
-.durchatmen__kreis { position: relative; flex: none; width: 6.5rem; height: 6.5rem; border: 0; padding: 0; border-radius: 50%; background: none; cursor: pointer; display: grid; place-items: center; }
-.durchatmen__welle { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--logo-1) 38%, var(--karte-voll)) 0%, color-mix(in srgb, var(--logo-2) 26%, var(--karte-voll)) 70%, color-mix(in srgb, var(--logo-2) 10%, var(--karte-voll)) 100%);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--logo-2) 25%, transparent); transform: scale(.55); transition: transform 4s cubic-bezier(.45, 0, .55, 1); }
-.durchatmen[data-laeuft="ein"] .durchatmen__welle { transform: scale(1); }
-.durchatmen[data-laeuft="aus"] .durchatmen__welle { transform: scale(.55); transition-duration: 6s; }
-.durchatmen__mitte { position: relative; display: grid; place-items: center; width: 3.1rem; height: 3.1rem; border-radius: 50%; background: var(--verlauf); box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--logo-2) 60%, transparent); }
-.durchatmen__mitte svg { width: 1.3rem; height: 1.3rem; fill: #fff; }
-.durchatmen__kreis:active .durchatmen__mitte { transform: scale(.92); }
+.durchatmen__start { flex: none; display: grid; place-items: center; width: 3.4rem; height: 3.4rem; border: 0; border-radius: 50%; background: var(--verlauf); cursor: pointer;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--logo-2) 12%, transparent), 0 6px 18px -6px color-mix(in srgb, var(--logo-2) 60%, transparent); transition: transform .15s; }
+.durchatmen__start svg { width: 1.3rem; height: 1.3rem; fill: #fff; }
+.durchatmen__start:active { transform: scale(.92); }
+/* läuft: große, ruhige Bühne */
+.durchatmen--laeuft { flex-direction: column; text-align: center; gap: var(--s3); padding-block: var(--s5) var(--s4); }
+.atembuehne { position: relative; width: min(15rem, 70vw); aspect-ratio: 1; display: grid; place-items: center; margin: var(--s2) auto; }
+.atembuehne__ziel { position: absolute; inset: 0; border-radius: 50%; border: 2px dashed color-mix(in srgb, var(--logo-2) 30%, transparent); }
+.atembuehne__welle { position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--logo-1) 55%, #fff) 0%, color-mix(in srgb, var(--logo-2) 45%, #fff) 70%, color-mix(in srgb, var(--logo-2) 30%, #fff) 100%);
+  box-shadow: 0 10px 40px -10px color-mix(in srgb, var(--logo-2) 55%, transparent);
+  transform: scale(.42); transition: transform 4s cubic-bezier(.45, 0, .55, 1), opacity 1s; }
+.durchatmen--laeuft[data-phase="ein"] .atembuehne__welle { transform: scale(1); }
+.durchatmen--laeuft[data-phase="aus"] .atembuehne__welle { transform: scale(.42); transition-duration: 6s; }
+.atembuehne__wort { position: relative; display: grid; gap: .1rem; color: #1e1b4b; }
+.atembuehne__wort strong { font-size: 1.5rem; letter-spacing: -.01em; }
+.atembuehne__wort span { font-size: 2.4rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.durchatmen__fuss { display: flex; gap: var(--s4); justify-content: center; align-items: center; color: var(--text-3); font-size: .9rem; }
+@media (prefers-reduced-motion: reduce) {
+  .atembuehne__welle { transition: opacity 1s linear; transform: scale(.8) !important; }
+  .durchatmen--laeuft[data-phase="aus"] .atembuehne__welle { opacity: .55; }
+}
+html[data-ruhig] .atembuehne__welle { transform: scale(.8) !important; }
 
 /* Schnellzugriffe */
 .heute-links { list-style: none; padding: 0; margin: 0; display: grid; }
@@ -1389,7 +1404,7 @@ html.blatt-offen body { overflow: hidden; }
 .angstkreis[data-modus="raus"] .angstkreis__karte { border-color: color-mix(in srgb, #0d9488 40%, var(--linie)); }
 .angstkreis__schritte { display: flex; justify-content: space-between; align-items: center; margin-top: .4rem; }
 @media (max-width: 30rem) { .angstkreis__station { width: 5.6rem; } .angstkreis__name { font-size: .7rem; } .angstkreis__nr { width: 2.3rem; height: 2.3rem; } }
-@media (prefers-reduced-motion: reduce) { .angstkreis__lauf { animation: none; } .durchatmen__welle { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .angstkreis__lauf { animation: none; } }
 html[data-ruhig] .angstkreis__lauf { display: none; }
 
 /* Mobil: Heute ohne äußeren Rahmen, mehr Luft */
