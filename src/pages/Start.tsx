@@ -1,69 +1,223 @@
+import { useEffect, useRef, useState } from "react";
 import { useZustand } from "../lib/zustand";
-import { SYMBOLE } from "../components/Icons";
+import { STIMMUNG, eintragen, heute } from "../lib/ich";
+import { KRISE } from "../content/hilfe";
+import { UEBUNGEN } from "../content/uebungen";
+import { WISSEN } from "../content/wissen";
+import { VERSTEHEN } from "../content/verstehen";
+import { WEGE, type Weg, type Ziel } from "../content/wegweiser";
+import { SYMBOLE, UEBUNG_SYMBOL, WISSEN_SYMBOLE } from "../components/Icons";
+import { Gesicht } from "./Ich";
+import { Blatt, tippen } from "../components/Blatt";
 
-const WEGE: [string, string, string][] = [
-  ["/reflexion", "Selbstreflexion", "Acht Themen, rund 50 kurze Fragen. Du kannst jede überspringen."],
-  ["/ich", "Mein Bereich", "Stimmung, Verlauf und Lebensbereiche als Bild. Nur deine eigenen Einträge."],
-  ["/spiegel", "Persönlicher Spiegel", "Deine Antworten in Worten. Du entscheidest, was dich beschäftigt."],
-  ["/gespraech", "Gesprächsvorbereitung", "Deine Notizen als PDF, falls du mit jemandem darüber sprechen willst."],
-  ["/wissen", "Wissen", "Kurz erklärt, mit Quellen aus Österreich und Deutschland."],
-  ["/uebungen", "Übungen", "Zur Ruhe kommen und kleine Denkspiele zum Abschalten."],
-  ["/hilfe", "Hilfe finden", "Krisennummern und Wege zu Hausarzt, Psychotherapie und Beratung."],
-];
+const symbol = (s: string) => UEBUNG_SYMBOL[s] ?? WISSEN_SYMBOLE[s] ?? SYMBOLE[s];
 
+function gruss(name: string) {
+  const h = new Date().getHours();
+  const t = h < 5 ? "Gute Nacht" : h < 11 ? "Guten Morgen" : h < 18 ? "Hallo" : "Guten Abend";
+  return name ? `${t}, ${name}` : t;
+}
+
+// „Heute“: der ruhige Einstieg. Eine Frage, ein Wegweiser, eine Minute Atmen.
 export default function Start() {
-  const { antworten } = useZustand();
-  const begonnen = Object.keys(antworten).length > 0;
-  return (
-    <>
-      <section className="start" aria-labelledby="start-titel">
-        <h1 id="start-titel" className="start__titel">Wie geht es dir gerade wirklich?</h1>
-        <p className="start__text">Ein ruhiger Ort, um das in Worte zu fassen. Ohne Bewertung, ohne Konto.</p>
-        <a className="knopf knopf--gross" href="#/reflexion">
-          {begonnen ? "Weitermachen" : "Selbstreflexion beginnen"}
-          <svg className="knopf__pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </a>
-        <a className="start__hilfe" href="#/hilfe">Ich brauche jetzt Hilfe</a>
-        <p className="vertraulich start__vertraulich">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
-          <span>Alles bleibt auf deinem Gerät.</span>
-        </p>
-        <a className="start__weiter" href="#was" onClick={(e) => { e.preventDefault(); document.getElementById("was")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>
-          <span>Mehr entdecken</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-        </a>
-      </section>
+  const z = useZustand();
+  const name = z.einstellungen.name.trim();
+  const [weg, setWeg] = useState<Weg | null>(null);
+  const datum = new Date().toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
+  const begonnen = Object.keys(z.antworten).length > 0;
+  const gut = UEBUNGEN.filter((u) => z.merkliste.includes(u.id));
+  const plan = Object.values(z.krisenplan).some((l) => l.length > 0);
 
-      <section className="karte breit abschnitt start__mehr" aria-labelledby="was" id="was-bereich">
-        <h2 id="was" tabIndex={-1}>Was du hier findest</h2>
-        <ul className="wegweiser">
-          {WEGE.map(([p, t, d]) => (
-            <li key={p}><a href={"#" + p}><span className="wegweiser__symbol">{SYMBOLE[p.slice(1)]}</span><strong>{t}</strong><span>{d}</span></a></li>
+  return (
+    <div className="heute">
+      <header className="heute__kopf">
+        <p className="heute__datum">{datum}</p>
+        <h1>{gruss(name)}</h1>
+      </header>
+
+      <StimmungKarte />
+
+      <section className="heute-karte" aria-labelledby="wegweiser-titel">
+        <h2 id="wegweiser-titel">Was brauchst du gerade?</h2>
+        <ul className="wege">
+          {WEGE.map((w) => (
+            <li key={w.id}>
+              <button type="button" className={`weg${w.hilfe ? " weg--hilfe" : ""}`} onClick={() => { tippen(); setWeg(w); }} aria-haspopup="dialog">
+                <span className="weg__symbol" aria-hidden="true">{symbol(w.symbol)}</span>
+                <span>{w.titel}</span>
+              </button>
+            </li>
           ))}
         </ul>
       </section>
 
-      <section className="karte breit abschnitt" aria-labelledby="grenze">
-        <h2 id="grenze">Was Neuroscope ist und was nicht</h2>
+      <Durchatmen />
+
+      <section className="heute-karte heute-karte--leise" aria-labelledby="weiter-titel">
+        <h2 id="weiter-titel" className="sr-only">Weiter</h2>
+        <ul className="heute-links">
+          <li><a href="#/reflexion"><span className="heute-links__symbol">{SYMBOLE.reflexion}</span><span><strong>{begonnen ? "Selbstreflexion weitermachen" : "Selbstreflexion beginnen"}</strong><small>Kurze Fragen, ohne Bewertung</small></span></a></li>
+          {plan && <li><a href="#/hilfe/krisenplan"><span className="heute-links__symbol">{SYMBOLE.hilfe}</span><span><strong>Mein Krisenplan</strong><small>Für schwere Momente</small></span></a></li>}
+          {gut.slice(0, 3).map((u) => (
+            <li key={u.id}><a href={`#/uebungen/${u.id}`}><span className="heute-links__symbol">{UEBUNG_SYMBOL[u.id]}</span><span><strong>{u.titel}</strong><small>Tut dir gut</small></span></a></li>
+          ))}
+        </ul>
+      </section>
+
+      <details className="heute-mehr">
+        <summary>Was Neuroscope ist und was nicht</summary>
         <div className="grenze">
           <div>
             <h3>Neuroscope ist</h3>
-            <ul>
-              <li>ein Spiegel für deine eigene Einschätzung</li>
-              <li>ein Einstieg in verlässliches Wissen</li>
-              <li>ein Wegweiser zu professioneller Hilfe</li>
-            </ul>
+            <ul><li>ein Spiegel für deine eigene Einschätzung</li><li>ein Einstieg in verlässliches Wissen</li><li>ein Wegweiser zu professioneller Hilfe</li></ul>
           </div>
           <div>
             <h3>Neuroscope ist nicht</h3>
-            <ul>
-              <li>ein Test und keine Diagnose</li>
-              <li>ein Ersatz für ein Gespräch mit Fachleuten</li>
-              <li>eine Stelle, die mitliest oder dir antwortet</li>
-            </ul>
+            <ul><li>ein Test und keine Diagnose</li><li>ein Ersatz für ein Gespräch mit Fachleuten</li><li>eine Stelle, die mitliest oder dir antwortet</li></ul>
           </div>
         </div>
-      </section>
+      </details>
+      <p className="vertraulich heute__vertraulich">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+        <span>Kein Konto, keine Cloud. Alles bleibt auf deinem Gerät.</span>
+      </p>
+
+      <Blatt offen={weg !== null} schliessen={() => setWeg(null)} titel={weg?.titel ?? ""}>
+        {weg && <WegInhalt weg={weg} />}
+      </Blatt>
+    </div>
+  );
+}
+
+function StimmungKarte() {
+  const z = useZustand();
+  const tag = heute();
+  const eintrag = z.eintraege.find((e) => e.datum === tag);
+  const [aendern, setAendern] = useState(false);
+  const gewaehlt = eintrag && !aendern;
+  const waehlen = (s: number) => {
+    tippen(15);
+    z.setEintraege((alt) => eintragen(alt, { ...(alt.find((e) => e.datum === tag) ?? { datum: tag }), stimmung: s }));
+    setAendern(false);
+  };
+  return (
+    <section className="heute-karte stimmung-karte" aria-labelledby="stimmung-titel" data-gewaehlt={gewaehlt ? "ja" : undefined}>
+      <h2 id="stimmung-titel">{gewaehlt ? "Heute festgehalten" : "Wie geht es dir gerade?"}</h2>
+      {gewaehlt ? (
+        <div className="stimmung-karte__danke" role="status">
+          <span className={`stimmung-karte__gesicht stufe-${eintrag.stimmung}`}><Gesicht stufe={eintrag.stimmung} /></span>
+          <div>
+            <p><strong>{STIMMUNG[eintrag.stimmung]}</strong></p>
+            <p className="stimmung-karte__aktionen">
+              <a href="#/ich">Mehr eintragen</a>
+              <button type="button" className="textknopf" onClick={() => setAendern(true)}>Ändern</button>
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="gesichter" role="group" aria-label="Stimmung wählen">
+          {STIMMUNG.map((s, i) => (
+            <button key={s} type="button" className="gesichter__knopf" aria-pressed={eintrag?.stimmung === i} onClick={() => waehlen(i)}>
+              <Gesicht stufe={i} /><span>{s}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {gewaehlt && eintrag.stimmung === 0 && (
+        <p className="stimmung-karte__schwer">
+          Das klingt nach einem schweren Tag. Du musst da nicht allein durch: <a href="#/hilfe">Hilfe finden</a>
+          {" · "}<a href="#/hilfe/krisenplan">Mein Krisenplan</a>
+        </p>
+      )}
+      {gewaehlt && !z.ichMerken && (
+        <p className="hinweis-feld">Nur bis zum Schließen des Tabs gemerkt. <a href="#/einstellungen">Dauerhaft auf diesem Gerät merken</a></p>
+      )}
+    </section>
+  );
+}
+
+function WegInhalt({ weg }: { weg: Weg }) {
+  const z = useZustand();
+  const ziel = (x: Ziel) => {
+    if (x.art === "uebung") {
+      const u = UEBUNGEN.find((y) => y.id === x.id);
+      return { href: `#/uebungen/${x.id}`, titel: u?.titel ?? x.id, symbol: UEBUNG_SYMBOL[x.id], neben: u ? `etwa ${u.dauer}` : "" };
+    }
+    if (x.art === "wissen") {
+      const [id] = x.id.split("#");
+      const w = [...WISSEN, ...VERSTEHEN].find((y) => y.id === id);
+      return { href: `#/wissen/${x.id}`, titel: x.titel ?? w?.titel ?? id, symbol: SYMBOLE.wissen, neben: "Wissen" };
+    }
+    return { href: `#${x.id}`, titel: x.titel ?? x.id, symbol: x.id.includes("hilfe") ? SYMBOLE.hilfe : SYMBOLE[x.id.slice(1)], neben: "" };
+  };
+  return (
+    <>
+      {weg.hilfe && (
+        <ul className="blatt-nummern">
+          {KRISE[z.land].slice(0, 2).map((n) => (
+            <li key={n.nummer}><span><strong>{n.was}</strong><small>{n.wann}</small></span><a className="tel" href={`tel:${n.tel}`}>{n.nummer}</a></li>
+          ))}
+        </ul>
+      )}
+      <ul className="blatt-ziele">
+        {weg.ziele.map((x) => {
+          const d = ziel(x);
+          return (
+            <li key={x.art + x.id}>
+              <a href={d.href}>
+                <span className="blatt-ziele__symbol" aria-hidden="true">{d.symbol}</span>
+                <span className="blatt-ziele__text"><strong>{d.titel}</strong><span>{x.text}</span>{d.neben && <small>{d.neben}</small>}</span>
+                <span className="blatt-ziele__pfeil" aria-hidden="true">›</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="hinweis-feld">Vorschläge passend zu deiner Wahl. Neuroscope schätzt dich nicht ein.</p>
     </>
+  );
+}
+
+// Eine Minute durchatmen, direkt hier: 4 Sekunden ein, 6 Sekunden aus, sechs Runden.
+function Durchatmen() {
+  const [laeuft, setLaeuft] = useState(false);
+  const [phase, setPhase] = useState<"ein" | "aus">("ein");
+  const [runde, setRunde] = useState(0);
+  const [fertig, setFertig] = useState(false);
+  const timer = useRef(0);
+  useEffect(() => {
+    if (!laeuft) return;
+    let p: "ein" | "aus" = "ein", r = 0;
+    setPhase("ein"); setRunde(0); tippen(20);
+    const weiter = () => {
+      if (p === "ein") { p = "aus"; setPhase("aus"); tippen(8); timer.current = window.setTimeout(weiter, 6000); }
+      else {
+        r += 1; setRunde(r);
+        if (r >= 6) { setLaeuft(false); setFertig(true); tippen(30); return; }
+        p = "ein"; setPhase("ein"); tippen(20); timer.current = window.setTimeout(weiter, 4000);
+      }
+    };
+    timer.current = window.setTimeout(weiter, 4000);
+    return () => window.clearTimeout(timer.current);
+  }, [laeuft]);
+
+  return (
+    <section className="heute-karte durchatmen" aria-labelledby="atmen-titel" data-laeuft={laeuft ? phase : undefined}>
+      <div className="durchatmen__text">
+        <h2 id="atmen-titel">Eine Minute durchatmen</h2>
+        <p aria-live="polite">
+          {laeuft ? (phase === "ein" ? "Einatmen …" : "Langsam ausatmen …") : fertig ? "Gut gemacht. Spür kurz nach." : "Vier Sekunden ein, sechs aus. Der Kreis zeigt den Takt."}
+        </p>
+        {laeuft && <p className="klein leise">Runde {Math.min(runde + 1, 6)} von 6</p>}
+      </div>
+      <button type="button" className="durchatmen__kreis" onClick={() => { setFertig(false); setLaeuft(!laeuft); }}
+        aria-label={laeuft ? "Atmen beenden" : "Eine Minute atmen starten"}>
+        <span className="durchatmen__welle" aria-hidden="true" />
+        <span className="durchatmen__mitte" aria-hidden="true">
+          {laeuft ? <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" /></svg>
+            : <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>}
+        </span>
+      </button>
+    </section>
   );
 }

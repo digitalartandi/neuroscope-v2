@@ -1261,3 +1261,143 @@ html[data-farbe="graphit"] { --logo-1: #1e293b; --logo-2: #475569; --verlauf: li
   .ueberblick .kalender__tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .tage-liste .punkt { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ================= Heute ================= */
+.heute { max-width: 40rem; margin: 0 auto; padding: var(--s5) 0 var(--s7); display: grid; gap: var(--s4); }
+.heute > * { animation: auftauchen .55s cubic-bezier(.22, 1, .36, 1) both; }
+.heute > :nth-child(2) { animation-delay: .05s; } .heute > :nth-child(3) { animation-delay: .1s; }
+.heute > :nth-child(4) { animation-delay: .15s; } .heute > :nth-child(5) { animation-delay: .2s; }
+.heute__kopf { padding: 0 var(--s1); }
+.heute__datum { margin: 0; color: var(--text-3); font-size: .9rem; font-weight: 600; letter-spacing: .01em; }
+.heute__kopf h1 { margin: .1rem 0 0; font-size: clamp(2rem, 1.5rem + 2.4vw, 2.8rem); letter-spacing: -.03em; line-height: 1.1; }
+.heute-karte { padding: var(--s5); border-radius: 26px; background: var(--karte-voll); box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 28px -12px rgba(15, 23, 42, .14); border: 1px solid var(--linie-2); }
+.heute-karte h2 { font-size: 1.15rem; margin: 0 0 var(--s4); letter-spacing: -.01em; }
+.heute-karte--leise { padding: var(--s2); }
+.heute__vertraulich { justify-content: center; margin: 0; }
+.heute-mehr { padding: 0 var(--s2); }
+.heute-mehr summary { cursor: pointer; color: var(--text-2); font-weight: 600; font-size: .92rem; padding: .6rem 0; list-style: none; text-align: center; }
+.heute-mehr summary::-webkit-details-marker { display: none; }
+.heute-mehr summary::after { content: " ▾"; color: var(--text-3); }
+.heute-mehr[open] summary::after { content: " ▴"; }
+
+/* Stimmung mit einem Tipp */
+.gesichter { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; }
+.gesichter__knopf { display: grid; justify-items: center; gap: .35rem; padding: .65rem .2rem .55rem; border: 0; border-radius: 18px; background: var(--linie-2); color: var(--text-2); font: inherit; font-size: .74rem; font-weight: 600; line-height: 1.15; cursor: pointer; text-align: center;
+  transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), background .2s, color .2s; }
+.gesichter__knopf svg { width: 2rem; height: 2rem; }
+.gesichter__knopf:hover { background: var(--violett-hell); color: var(--text); }
+.gesichter__knopf:active { transform: scale(.9); }
+.gesichter__knopf[aria-pressed="true"] { background: var(--verlauf); color: #fff; }
+.stimmung-karte__danke { display: flex; align-items: center; gap: var(--s4); animation: auftauchen .4s ease both; }
+.stimmung-karte__danke p { margin: 0; }
+.stimmung-karte__danke strong { font-size: 1.25rem; }
+.stimmung-karte__gesicht { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; border-radius: 50%; background: var(--verlauf); color: #fff; flex: none; animation: ploppen .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+.stimmung-karte__gesicht svg { width: 2.2rem; height: 2.2rem; }
+.stimmung-karte__aktionen { display: flex; gap: var(--s4); align-items: center; margin-top: .2rem !important; font-size: .92rem; }
+.stimmung-karte__schwer { margin: var(--s4) 0 0; padding: .75rem 1rem; border-radius: 14px; background: color-mix(in srgb, #e11d48 7%, var(--karte-voll)); font-size: .95rem; }
+@keyframes ploppen { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Wegweiser */
+.wege { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.weg { width: 100%; height: 100%; display: flex; align-items: center; gap: .6rem; text-align: left; padding: .7rem .75rem; min-height: 3.6rem; border-radius: 16px; border: 1px solid var(--linie); background: var(--karte-voll);
+  color: var(--text); font: inherit; font-weight: 600; font-size: .92rem; line-height: 1.25; cursor: pointer; transition: transform .15s ease, border-color .2s, background .2s; }
+.weg:hover { border-color: var(--akzent-rand); background: color-mix(in srgb, var(--violett-hell) 60%, var(--karte-voll)); }
+.weg:active { transform: scale(.96); }
+.weg__symbol { flex: none; display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 12px; background: var(--violett-hell); color: var(--violett); }
+.weg__symbol svg, .weg__symbol .symbol { width: 1.2rem; height: 1.2rem; }
+.weg--hilfe .weg__symbol { background: color-mix(in srgb, #e11d48 10%, var(--karte-voll)); color: #e11d48; }
+
+/* Eine Minute durchatmen */
+.durchatmen { display: flex; align-items: center; gap: var(--s4); }
+.durchatmen__text { flex: 1; min-width: 0; }
+.durchatmen__text h2 { margin-bottom: .35rem; }
+.durchatmen__text p { margin: 0; color: var(--text-2); }
+.durchatmen__kreis { position: relative; flex: none; width: 6.5rem; height: 6.5rem; border: 0; padding: 0; border-radius: 50%; background: none; cursor: pointer; display: grid; place-items: center; }
+.durchatmen__welle { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--logo-1) 38%, var(--karte-voll)) 0%, color-mix(in srgb, var(--logo-2) 26%, var(--karte-voll)) 70%, color-mix(in srgb, var(--logo-2) 10%, var(--karte-voll)) 100%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--logo-2) 25%, transparent); transform: scale(.55); transition: transform 4s cubic-bezier(.45, 0, .55, 1); }
+.durchatmen[data-laeuft="ein"] .durchatmen__welle { transform: scale(1); }
+.durchatmen[data-laeuft="aus"] .durchatmen__welle { transform: scale(.55); transition-duration: 6s; }
+.durchatmen__mitte { position: relative; display: grid; place-items: center; width: 3.1rem; height: 3.1rem; border-radius: 50%; background: var(--verlauf); box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--logo-2) 60%, transparent); }
+.durchatmen__mitte svg { width: 1.3rem; height: 1.3rem; fill: #fff; }
+.durchatmen__kreis:active .durchatmen__mitte { transform: scale(.92); }
+
+/* Schnellzugriffe */
+.heute-links { list-style: none; padding: 0; margin: 0; display: grid; }
+.heute-links li + li { border-top: 1px solid var(--linie-2); }
+.heute-links a { display: flex; align-items: center; gap: var(--s3); padding: .8rem .75rem; border-radius: 16px; text-decoration: none; color: var(--text); transition: background .2s; }
+.heute-links a:hover { background: var(--linie-2); }
+.heute-links a::after { content: "›"; margin-left: auto; color: var(--text-3); font-size: 1.4rem; }
+.heute-links__symbol { flex: none; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 12px; background: var(--violett-hell); color: var(--violett); }
+.heute-links__symbol svg, .heute-links__symbol .symbol { width: 1.25rem; height: 1.25rem; }
+.heute-links span:not(.heute-links__symbol) { display: grid; }
+.heute-links small { color: var(--text-3); font-size: .82rem; }
+
+/* ================= Blatt von unten ================= */
+.blatt-hintergrund { position: fixed; inset: 0; z-index: 60; background: rgba(15, 23, 42, .32); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); display: flex; align-items: flex-end; justify-content: center; animation: einblenden .2s ease both; }
+.blatt { width: 100%; max-width: 36rem; max-height: 88vh; overflow: auto; background: var(--karte-voll); border-radius: 28px 28px 0 0; padding: 0 var(--s5) calc(var(--s5) + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 40px -10px rgba(15, 23, 42, .3); animation: hochfahren .38s cubic-bezier(.22, 1, .36, 1) both; transition: transform .25s ease; overscroll-behavior: contain; }
+@media (min-width: 48rem) { .blatt-hintergrund { align-items: center; } .blatt { border-radius: 28px; } }
+.blatt__griff { display: grid; place-items: center; height: 1.6rem; cursor: grab; touch-action: none; }
+.blatt__griff span { width: 2.6rem; height: 5px; border-radius: 5px; background: var(--linie); }
+.blatt__kopf { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s3); }
+.blatt__kopf h2 { margin: 0; font-size: 1.3rem; outline: none; }
+.blatt__zu { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 0; background: var(--linie-2); color: var(--text-2); cursor: pointer; }
+.blatt__zu svg { width: 1.1rem; height: 1.1rem; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; fill: none; }
+html.blatt-offen body { overflow: hidden; }
+@keyframes hochfahren { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes einblenden { from { opacity: 0; } to { opacity: 1; } }
+.blatt-ziele { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.blatt-ziele a { display: flex; align-items: center; gap: var(--s3); padding: .85rem .9rem; border-radius: 18px; background: var(--linie-2); text-decoration: none; color: var(--text); transition: transform .15s, background .2s; }
+.blatt-ziele a:hover { background: var(--violett-hell); }
+.blatt-ziele a:active { transform: scale(.98); }
+.blatt-ziele__symbol { flex: none; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 14px; background: var(--karte-voll); color: var(--violett); }
+.blatt-ziele__symbol svg, .blatt-ziele__symbol .symbol { width: 1.3rem; height: 1.3rem; }
+.blatt-ziele__text { flex: 1; display: grid; gap: .1rem; }
+.blatt-ziele__text span { color: var(--text-2); font-size: .9rem; line-height: 1.4; }
+.blatt-ziele__text small { color: var(--text-3); font-size: .78rem; font-weight: 600; }
+.blatt-ziele__pfeil { color: var(--text-3); font-size: 1.5rem; }
+.blatt-nummern { list-style: none; padding: 0; margin: 0 0 var(--s4); display: grid; gap: .5rem; }
+.blatt-nummern li { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: .7rem .9rem; border-radius: 18px; border: 1px solid color-mix(in srgb, #e11d48 25%, var(--linie)); }
+.blatt-nummern span { display: grid; }
+.blatt-nummern small { color: var(--text-2); font-size: .82rem; }
+.blatt-nummern .tel { flex: none; font-weight: 700; padding: .5rem 1rem; border-radius: 999px; background: var(--verlauf); color: #fff; text-decoration: none; }
+
+/* ================= Teufelskreis der Angst ================= */
+.angstkreis { display: grid; gap: var(--s4); }
+.angstkreis .segment { justify-self: start; }
+.angstkreis__bild { position: relative; width: 100%; max-width: 26rem; margin: 0 auto; aspect-ratio: 1; }
+.angstkreis__bild svg { width: 100%; height: 100%; overflow: visible; }
+.angstkreis__bogen { fill: none; stroke: var(--akzent-rand); stroke-width: 2.5; transition: stroke .3s, opacity .3s; }
+#ak-pfeil path { fill: var(--akzent-rand); }
+.angstkreis__lauf { transform-box: view-box; transform-origin: 170px 170px; animation: kreisen 7s linear infinite; }
+.angstkreis__lauf circle { fill: #e11d48; filter: drop-shadow(0 0 6px rgba(225, 29, 72, .5)); }
+.angstkreis[data-modus="raus"] .angstkreis__lauf { animation-duration: 22s; opacity: .25; }
+.angstkreis[data-modus="raus"] .angstkreis__bogen { stroke-dasharray: 4 7; opacity: .6; }
+@keyframes kreisen { to { transform: rotate(360deg); } }
+.angstkreis__mitte { font-size: 17px; font-weight: 700; fill: var(--text); }
+.angstkreis__mitte-klein { font-size: 13px; fill: var(--text-2); }
+.angstkreis__station { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: .2rem; width: 7.2rem; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; color: var(--text); }
+.angstkreis__nr { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; background: var(--karte-voll); border: 2px solid var(--akzent-rand); font-weight: 700; color: var(--violett);
+  box-shadow: var(--schatten-klein); transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), background .2s, color .2s; }
+.angstkreis__name { font-size: .76rem; font-weight: 600; line-height: 1.2; text-align: center; background: color-mix(in srgb, var(--karte-voll) 85%, transparent); border-radius: 6px; padding: 0 .2rem; }
+.angstkreis__station[aria-pressed="true"] .angstkreis__nr { background: var(--verlauf); color: #fff; border-color: transparent; transform: scale(1.15); }
+.angstkreis[data-modus="raus"] .angstkreis__nr { border-color: #0d9488; color: #0d9488; }
+.angstkreis[data-modus="raus"] .angstkreis__station[aria-pressed="true"] .angstkreis__nr { background: #0d9488; color: #fff; }
+.angstkreis__karte { padding: var(--s4) var(--s5); border-radius: 20px; background: var(--karte-voll); border: 1px solid var(--linie); animation: auftauchen .3s ease both; }
+.angstkreis__karte p { margin: 0 0 .6rem; }
+.angstkreis__titel { font-weight: 700; font-size: 1.05rem; }
+.angstkreis[data-modus="raus"] .angstkreis__karte { border-color: color-mix(in srgb, #0d9488 40%, var(--linie)); }
+.angstkreis__schritte { display: flex; justify-content: space-between; align-items: center; margin-top: .4rem; }
+@media (max-width: 30rem) { .angstkreis__station { width: 5.6rem; } .angstkreis__name { font-size: .7rem; } .angstkreis__nr { width: 2.3rem; height: 2.3rem; } }
+@media (prefers-reduced-motion: reduce) { .angstkreis__lauf { animation: none; } .durchatmen__welle { transition: none; } }
+html[data-ruhig] .angstkreis__lauf { display: none; }
+
+/* Mobil: Heute ohne äußeren Rahmen, mehr Luft */
+@media (max-width: 48rem) {
+  .heute { padding-top: var(--s3); gap: var(--s3); }
+  .heute-karte { padding: var(--s4); border-radius: 24px; }
+  .gesichter__knopf { font-size: .68rem; padding: .55rem .1rem .5rem; }
+  .gesichter__knopf svg { width: 1.8rem; height: 1.8rem; }
+  .weg { font-size: .88rem; gap: .5rem; padding: .6rem; }
+  .weg__symbol { width: 2rem; height: 2rem; border-radius: 10px; }
+}

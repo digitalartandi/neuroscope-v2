@@ -50,6 +50,7 @@ export const SEITEN: VerstehenSeite[] = [
     hilft: ["Am wirksamsten ist Psychotherapie, vor allem kognitive Verhaltenstherapie, in der man sich der Angst schrittweise stellt.", "Je nach Form können zusätzlich bestimmte Antidepressiva helfen.", "Beruhigungsmittel aus der Gruppe der Benzodiazepine nur in Ausnahmefällen und kurz, weil sie abhängig machen können."],
     wannHilfe: ["wenn Angst dazu führt, dass du Orte, Menschen oder Situationen meidest", LAENGER, "Bei Herzrasen oder Atemnot zum ersten Mal: körperliche Ursachen ärztlich abklären lassen."],
     quellen: [
+      { text: "Mit Angst umgehen (Teufelskreis der Angst) – gesund.bund.de", url: "https://gesund.bund.de/mit-angst-umgehen" },
       { text: "Angststörung: Diagnose und Therapie – gesundheit.gv.at", url: "https://www.gesundheit.gv.at/krankheiten/psyche/neurose/angststoerung-diagnose.html" },
       { text: "Generalisierte Angststörung – gesund.bund.de", url: "https://gesund.bund.de/generalisierte-angststoerung" }, DEGS, WHO_MD,
     ],

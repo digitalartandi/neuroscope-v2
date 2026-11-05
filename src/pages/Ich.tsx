@@ -20,7 +20,7 @@ const FRAGE_RAD: Record<string, string> = {
 const ALLE_ACHSEN: Achse[] = THEMEN.map((t) => ({ id: t.id, kurz: KURZ[t.id] ?? t.titel }));
 
 // Gesichter für die Stimmungsauswahl: eigene, schlichte Linien.
-function Gesicht({ stufe }: { stufe: number }) {
+export function Gesicht({ stufe }: { stufe: number }) {
   const mund = ["M8 16.5c1.2-1.6 2.5-2.2 4-2.2s2.8.6 4 2.2", "M8.5 16c1-.9 2.2-1.3 3.5-1.3s2.5.4 3.5 1.3", "M8.5 15.5h7", "M8.5 14.8c1 .9 2.2 1.3 3.5 1.3s2.5-.4 3.5-1.3", "M8 14.5c1.2 1.7 2.5 2.4 4 2.4s2.8-.7 4-2.4"][stufe];
   return (
     <svg className="symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">

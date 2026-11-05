@@ -1,3 +1,4 @@
+import { Angstkreis } from "../components/Angstkreis";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { WISSEN } from "../content/wissen";
 import { ICD_INFO, VERSTEHEN, ZUGANG } from "../content/verstehen";
@@ -343,6 +344,7 @@ function VerstehenArtikel({ v }: { v: (typeof VERSTEHEN)[number] }) {
   const istIcd = (t: string) => /ICD-11/.test(t);
   const teile: Teil[] = [
     ...v.absaetze.filter((a) => !istIcd(a.titel)).map((a) => abschnitt(a.titel, a.text)),
+    ...(v.id === "angst" ? [{ id: "teufelskreis", titel: "Der Teufelskreis der Angst", inhalt: <Angstkreis /> }] : []),
     { id: "was-hilft", titel: "Was hilft", inhalt: <ul>{v.hilft.map((h, i) => <li key={i}>{h}</li>)}</ul> },
     ...(v.vertiefung ?? []).map((a) => abschnitt(a.titel, a.text)),
     { id: "termin", titel: "So kommst du zu einem Termin", inhalt: <Zugang /> },
