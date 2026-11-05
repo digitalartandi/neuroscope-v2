@@ -1537,7 +1537,8 @@ html[data-ruhig] .atemraum__kugel span { transform: scale(.8) !important; }
 @media (max-width: 48rem) {
   :root { --m-grund: #f5f5f8; --m-flaeche: #ffffff; --m-trenn: rgba(22, 24, 48, .08); --m-radius: 18px; }
   body { background: var(--m-grund); }
-  .hintergrund { display: none; }
+  .hintergrund { display: block; }
+  .hintergrund span { opacity: .55; filter: blur(110px); }
 
   /* Kopf: nur das Zeichen, kein Rahmen */
   .kopf { background: color-mix(in srgb, var(--m-grund) 86%, transparent); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
